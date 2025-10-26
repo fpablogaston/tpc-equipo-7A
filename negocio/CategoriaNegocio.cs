@@ -100,7 +100,7 @@ namespace negocio
             Categoria aux = new Categoria();
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Descripcion from CATEGORIAS where Id = @Id");
+                Datos.SetQuery("Select Id, Nombre, Descripcion from Categorias where Id = @Id");
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarLectura();
 
