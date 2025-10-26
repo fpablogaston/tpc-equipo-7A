@@ -13,7 +13,7 @@ namespace dominio
         public DateTime FechaPedido { get; set; }
         public string Estado { get; set; }
         public decimal Total { get; set; }
-        public Pago pago { get; set; }
-        public Envio envio { get; set; }
+        public Pago Pago { get; set; }
+        public Envio Envio { get; set; }
     }
 }
