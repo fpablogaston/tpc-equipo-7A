@@ -5,4 +5,5 @@
     <h1>PAGO</h1>
     <h2>Elegir metodo de pago</h2>
     <a href="Envio.aspx" class="btn btn-primary">Continuar al envio</a>
+    <a href="Carrito.aspx" class="btn btn-primary">Volver al carrito</a>
 </asp:Content>

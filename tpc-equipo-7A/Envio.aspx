@@ -5,4 +5,5 @@
     <h1>ENVIO</h1>
     <h2>Agregar direccion</h2>
     <a href="ConfirmarCompra.aspx" class="btn btn-primary">Confirmar compra</a>
+    <a href="Pago.aspx" class="btn btn-primary">Volver al pago</a>
 </asp:Content>

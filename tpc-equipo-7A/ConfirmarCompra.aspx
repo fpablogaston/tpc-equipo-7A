@@ -3,4 +3,5 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <h1>COMPRA REALIZADA EXITOSAMENTE!</h1>
+    <a href="Default.aspx" class="btn btn-primary">Volver al inicio</a>
 </asp:Content>
