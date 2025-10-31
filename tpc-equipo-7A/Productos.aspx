@@ -4,6 +4,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <h3>PRODUCTOS</h3>
 
+<<<<<<< Updated upstream
     <asp:Repeater runat="server" id="repProducto">
         <ItemTemplate>
             <div class="col">
@@ -20,5 +21,8 @@
         </ItemTemplate>
     </asp:Repeater>
     
+=======
+ 
+>>>>>>> Stashed changes
 
 </asp:Content>
