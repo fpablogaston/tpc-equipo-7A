@@ -3,14 +3,22 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <h3>PRODUCTOS</h3>
-<%--    <a href="DetalleProducto.aspx" class="btn btn-primary">Ver detalle</a>--%>
 
-    <div class="card" style="width: 18rem;">
-  <img src="..." class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-    <a href="DetalleProducto.aspx" class="btn btn-primary">Ver detalle</a>
-  </div>
-</div>
+    <asp:Repeater runat="server" id="repProducto">
+        <ItemTemplate>
+            <div class="col">
+               <div class="card">
+                 <img src="<%#Eval("ImagenURL") %>" class="card-img-top" alt="...">
+                 <div class="card-body">
+                     <h5 class="card-title"><%#Eval("Nombre")%> </h5>
+                     <p class="card-text"><%#Eval("Descripcion")%>.</p>
+                     <a href="DetalleProducto.aspx?id=<%#Eval("Id") %>">Ver detalle</a>
+                     <asp:button text="Detalle" CssClass="btn btn-primary" runat="server" id="btnDetalle" CommandArgument='<%#Eval("Id") %>' CommandName="ProductoId" OnClick="btnDetalle_Click"/>
+                 </div>
+                </div> 
+            </div>
+        </ItemTemplate>
+    </asp:Repeater>
+    
+
 </asp:Content>
