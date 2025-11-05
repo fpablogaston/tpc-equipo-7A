@@ -13,7 +13,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Insert Into Clientes (Nombre, Descripcion, Email, Telefono, Direccion, Contraseña, FechaRegistro) Values (@Nombre, @Descripcion, @Email, @Telefono, @Direccion, @Contraseña, @FechaRegistro); SELECT SCOPE_IDENTITY();");
+                Datos.SetQuery("Insert Into Clientes (Nombre, Apellido, Email, Telefono, Direccion, Contraseña, FechaRegistro) Values (@Nombre, @Apellido, @Email, @Telefono, @Direccion, @Contraseña, @FechaRegistro); SELECT SCOPE_IDENTITY();");
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);
                 Datos.SetearParametro("@Email", cliente.Email);
@@ -39,7 +39,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Update Clientes set Nombre = @Nombre, Descripcion = @Descripcion, Email = @Email, Telefono = @Telefono, Direccion = @Direccion, Contraseña = @Contraseña, FechaRegistro = @FechaRegistro Where Id = @Id) Values (@Nombre, @Descripcion, @Email, @Telefono, @Direccion, @Contraseña, @FechaRegistro); SELECT SCOPE_IDENTITY();");
+                Datos.SetQuery("Update Clientes set Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono, Direccion = @Direccion, Contraseña = @Contraseña, FechaRegistro = @FechaRegistro Where Id = @Id) Values (@Nombre, @Descripcion, @Email, @Telefono, @Direccion, @Contraseña, @FechaRegistro); SELECT SCOPE_IDENTITY();");
                 Datos.SetearParametro("@Id", cliente.Id);
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);

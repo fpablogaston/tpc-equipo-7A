@@ -39,7 +39,7 @@ namespace negocio
             AccesoDatos Datos = new AccesoDatos();
             try
             {
-                Datos.SetQuery("Update Productos set Nombre = @Nombre, Descipcion = @Descipcion, Precio = @Precio, Stock = @Stock, ImagenUrl = @ImagenUrl, IdCategoria = @IdCategoria Where Id = @Id");
+                Datos.SetQuery("Update Productos set Nombre = @Nombre, Descripcion = @Descripcion, Precio = @Precio, Stock = @Stock, ImagenUrl = @ImagenUrl, IdCategoria = @IdCategoria Where Id = @Id");
                 Datos.SetearParametro("@Id", producto.Id);
                 Datos.SetearParametro("@Nombre", producto.Nombre);
                 Datos.SetearParametro("@Descripcion", producto.Descripcion);
@@ -118,7 +118,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select P.Id, P.Nombre, P.Descripcion, P.Precio, P.Stock, P.ImagenUrl, C.Id as IdCategoria, C.Nombre as CategoriaNombre, C.Descripcion as CategoriaDescripcion From Productos as P, Categorias as C Where P.IdCategoria = C.Id Where Id = @Id");
+                Datos.SetQuery("Select P.Id, P.Nombre, P.Descripcion, P.Precio, P.Stock, P.ImagenUrl, C.Id as IdCategoria, C.Nombre as CategoriaNombre, C.Descripcion as CategoriaDescripcion From Productos as P, Categorias as C Where P.IdCategoria = C.Id AND Id = @Id");
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarLectura();
 
