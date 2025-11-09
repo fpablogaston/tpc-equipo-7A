@@ -12,8 +12,38 @@ namespace negocio
         private List<Envio> Envios = new List<Envio>();
         public Envio GetById(int id)
         {
-            return null;
-            // Falta crear logica para obtener un envio por su ID
+            Envio aux = new Envio();
+            AccesoDatos Datos = new AccesoDatos();
+
+            try
+            {
+                Datos.SetQuery("Select Id, DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, FechaEntrega, Estado, IdPedido From Envios Where Id = @Id");
+                Datos.SetearParametro("@Id", id);
+                Datos.EjecutarLectura();
+
+                while (Datos.Reader.Read())
+                {
+                    aux.Id = (int)Datos.Reader["Id"];
+                    aux.DireccionEnvio = (string)Datos.Reader["DireccionEnvio"];
+                    aux.Ciudad = (string)Datos.Reader["Ciudad"];
+                    aux.Provincia = (string)Datos.Reader["Provincia"];
+                    aux.CodigoPostal = (string)Datos.Reader["CodigoPostal"];
+                    aux.FechaEnvio = (DateTime)Datos.Reader["FechaEnvio"];
+                    aux.FechaEntrega = Datos.Reader["FechaEntrega"] == DBNull.Value ? (DateTime?)null : (DateTime)Datos.Reader["FechaEntrega"];
+                    aux.Estado = (string)Datos.Reader["Estado"];
+                    aux.IdPedido = (int)Datos.Reader["IdPedido"];
+                }
+                return aux;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            finally
+            {
+                Datos.CerrarConexion();
+            }
         }
         public void CrearEnvio(Envio envio)
         {

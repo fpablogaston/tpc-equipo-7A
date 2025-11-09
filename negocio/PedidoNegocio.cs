@@ -41,5 +41,36 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
+        public Pedido GetById(int id)
+        {
+            Pedido aux = new Pedido();
+            AccesoDatos data = new AccesoDatos();
+            try
+            {
+                data.SetQuery("Select Id, FechaPedido, Estado, Total, IdCliente, IdEnvio, IdPago From Pedidos Where Id = @Id");
+                data.SetearParametro("@Id", id);
+                data.EjecutarLectura();
+                while (data.Reader.Read())
+                {
+                    aux.Id = (int)data.Reader["Id"];
+                    aux.FechaPedido = (DateTime)data.Reader["FechaPedido"];
+                    aux.Estado = (string)data.Reader["Estado"];
+                    aux.Total = (decimal)data.Reader["Total"];
+                    aux.Cliente = new ClienteNegocio().GetById((int)data.Reader["IdCliente"]);
+                    aux.Envio = new EnvioNegocio().GetById((int)data.Reader["IdEnvio"]);
+                    aux.Pago = new PagoNegocio().GetById((int)data.Reader["IdPago"]);
+                }
+                return aux;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.ToString());
+                throw ex;
+            }
+            finally
+            {
+                data.CerrarConexion();
+            }
+        }
     }
 }

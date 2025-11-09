@@ -13,6 +13,6 @@ namespace dominio
         public string Estado { get; set; }
         public decimal Monto { get; set; }
         public DateTime FechaPago { get; set; }
-        public Pedido Pedido { get; set; }
+        public int IdPedido { get; set; }
     }
 }
