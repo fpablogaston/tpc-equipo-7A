@@ -84,7 +84,7 @@ CREATE TABLE [dbo].[Envios](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-
+/*
 CREATE TABLE [dbo].[DetallePedidos](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Cantidad] [int] NULL,
@@ -97,7 +97,7 @@ CREATE TABLE [dbo].[DetallePedidos](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-
+*/
 CREATE TABLE [dbo].[Pedidos](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[FechaPedido] [datetime] NULL,
@@ -126,14 +126,14 @@ GO
 
 ALTER TABLE [dbo].[Envios] CHECK CONSTRAINT [FK_Envios_Pedidos]
 GO
-
+/*
 ALTER TABLE [dbo].[DetallePedidos]  WITH CHECK ADD  CONSTRAINT [FK_DetallePedidos_Pedidos] FOREIGN KEY([IdPedido])
 REFERENCES [dbo].[Pedidos] ([Id])
 GO
 
 ALTER TABLE [dbo].[DetallePedidos] CHECK CONSTRAINT [FK_DetallePedidos_Pedidos]
 GO
-
+*/
 ALTER TABLE [dbo].[Pedidos]  WITH CHECK ADD  CONSTRAINT [FK_Pedidos_Clientes] FOREIGN KEY([IdCliente])
 REFERENCES [dbo].[Clientes] ([Id])
 GO
@@ -217,4 +217,39 @@ SELECT * FROM Pedidos;
 SELECT * FROM DetallePedidos;
 SELECT * FROM Pagos;
 SELECT * FROM Envios;
+GO
+
+CREATE TABLE [dbo].[DetallesPedido](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+    [IdPedido] [int] NOT NULL,
+	[IdProducto] [int] NOT NULL,
+	[Cantidad] [int] NULL,
+	[PrecioUnitario] [money] NULL,
+	[Subtotal] [money] NULL,
+ CONSTRAINT [PK_DetallesPedido] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[DetallesPedido]  WITH CHECK ADD  CONSTRAINT [FK_DetallesPedido_Pedidos] FOREIGN KEY([IdPedido])
+REFERENCES [dbo].[Pedidos] ([Id])
+GO
+
+ALTER TABLE [dbo].[DetallesPedido] CHECK CONSTRAINT [FK_DetallesPedido_Pedidos]
+GO
+
+ALTER TABLE [dbo].[DetallesPedido]  WITH CHECK ADD  CONSTRAINT [FK_DetallesPedido_Producto] FOREIGN KEY([IdProducto])
+REFERENCES [dbo].[Productos] ([Id])
+GO
+
+ALTER TABLE [dbo].[DetallesPedido] CHECK CONSTRAINT [FK_DetallesPedido_Producto]
+GO
+
+INSERT INTO DetallesPedido (IdPedido, IdProducto, Cantidad, PrecioUnitario, Subtotal)
+VALUES
+(1, 1, 1, 15000, 15000),
+(1, 3, 2, 7000, 14000),
+(2, 2, 3, 3500, 10500);
 GO

@@ -11,9 +11,10 @@ namespace dominio
         public int Id { get; set; }
         public Cliente Cliente { get; set; }
         public DateTime FechaPedido { get; set; }
-        public string Estado { get; set; }
         public decimal Total { get; set; }
+        public string Estado { get; set; }
         public Pago Pago { get; set; }
         public Envio Envio { get; set; }
+        public List<DetallesPedido> Detalles { get; set; }
     }
 }
