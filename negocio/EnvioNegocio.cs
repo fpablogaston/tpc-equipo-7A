@@ -9,7 +9,12 @@ namespace negocio
 {
     public class EnvioNegocio
     {
-        private List<Envio> envios = new List<Envio>();
+        private List<Envio> Envios = new List<Envio>();
+        public Envio GetById(int id)
+        {
+            return null;
+            // Falta crear logica para obtener un envio por su ID
+        }
         public void CrearEnvio(Envio envio)
         {
             // Falta crear logica para programar el envio
@@ -18,9 +23,9 @@ namespace negocio
         {
             // Falta crear logica para actualizar el estado del envio
         }
-        public List<Envio> listar()
+        public List<Envio> Listar()
         {
-            return envios;
+            return Envios;
         }
 
         public Envio Buscar(int id)

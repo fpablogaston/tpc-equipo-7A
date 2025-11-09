@@ -9,7 +9,12 @@ namespace negocio
 {
     public class PagoNegocio
     {
-        private List<Pago> pagos = new List<Pago>();
+        private List<Pago> Pagos = new List<Pago>();
+        public Pago GetById(int id)
+        {
+            return null;
+            // Falta crear logica para obtener un pago por su ID
+        }
         public void ProcesarPago(Pago pago)
         {
             // Falta crear logica para procesar el pago
@@ -19,11 +24,9 @@ namespace negocio
         {
             // Falta crear logica para cambiar el estado del pago
         }
-        public List<Pago> listar()
+        public List<Pago> Listar()
         {
-            return pagos;
-        }
-
-       
+            return Pagos;
+        }       
     }
 }

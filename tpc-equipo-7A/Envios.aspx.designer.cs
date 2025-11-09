@@ -9,9 +9,7 @@
 
 namespace tpc_equipo_7A
 {
-
-
-    public partial class Carrito
+    public partial class Envios
     {
     }
 }

@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace tpc_equipo_7A
 {
-    public partial class Pago : System.Web.UI.Page
+    public partial class Pagos : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

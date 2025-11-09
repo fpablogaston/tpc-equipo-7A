@@ -11,7 +11,7 @@ namespace tpc_equipo_7A
 {
 
 
-    public partial class Categoria
+    public partial class Categorias
     {
 
         /// <summary>
