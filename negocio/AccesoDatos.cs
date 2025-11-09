@@ -91,5 +91,10 @@ namespace negocio
                 Conexion.Close();
             }
         }
+        public void SetearProcedimiento(string procedure)
+        {
+            Comando.CommandType = System.Data.CommandType.StoredProcedure;
+            Comando.CommandText = procedure;
+        }
     }
 }
