@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Pagos.aspx.cs" Inherits="tpc_equipo_7A.Pago" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Pagos.aspx.cs" Inherits="tpc_equipo_7A.Pagos" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -20,8 +20,13 @@
             Transferencia
         </div>
         <div>
-            <a href="Envio.aspx" class="btn btn-primary">Continuar al envio</a>
-            <a href="Carrito.aspx" class="btn btn-secondary">Volver al carrito</a>
+            <a href="Envios.aspx" class="btn btn-primary">Continuar al envio</a>
+            <button type="button" class="btn btn-secondary"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasExample"
+                aria-controls="offcanvasExample">
+                Volver al carrito
+            </button>
         </div>
        </div>
     </div>

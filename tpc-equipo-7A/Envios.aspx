@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Envios.aspx.cs" Inherits="tpc_equipo_7A.Envio" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Envios.aspx.cs" Inherits="tpc_equipo_7A.Envios" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -20,7 +20,7 @@
         </div>
         <div>
             <a href="ConfirmarCompra.aspx" class="btn btn-primary">Confirmar compra</a>
-            <a href="Pago.aspx" class="btn btn-secondary">Volver al pago</a>
+            <a href="Pagos.aspx" class="btn btn-secondary">Volver al pago</a>
         </div>
     </div>
 
