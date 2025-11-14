@@ -5,9 +5,19 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <div class=" d-flex justify-content-center align-items-center mt-5">
-    <div class="card p-4 text-center"> 
-        <h2>Elegir metodo de pago</h2>
-        <div>
+        <div class="card p-4 text-center">
+            <h2>Elegir metodo de pago</h2>
+
+            <asp:Repeater ID="repMetodos" runat="server">
+                <ItemTemplate>
+                    <div>
+                        <input type="radio" name="metodoPago" value='<%# Eval("Id") %>' />
+                        <%# Eval("Nombre") %>
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
+
+            <%--<div>
             <input type="radio" name="metodoPago" value="tarjeta">
             Tarjeta
         </div>
@@ -18,7 +28,7 @@
         <div>
             <input type="radio" name="metodoPago" value="transferencia">
             Transferencia
-        </div>
+        </div>--%>
         <div>
             <a href="Envios.aspx" class="btn btn-primary">Continuar al envio</a>
             <button type="button" class="btn btn-secondary"
@@ -28,6 +38,6 @@
                 Volver al carrito
             </button>
         </div>
-       </div>
+    </div>
     </div>
 </asp:Content>

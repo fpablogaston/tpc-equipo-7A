@@ -47,6 +47,8 @@
     <Compile Include="DetallesPedido.cs" />
     <Compile Include="ElementoCarrito.cs" />
     <Compile Include="Envio.cs" />
+    <Compile Include="EstadoPago.cs" />
+    <Compile Include="MetodoPago.cs" />
     <Compile Include="Pago.cs" />
     <Compile Include="Pedido.cs" />
     <Compile Include="Producto.cs" />

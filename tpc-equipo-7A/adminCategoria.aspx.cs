@@ -26,6 +26,14 @@ namespace tpc_equipo_7A
         {
             try
             {
+                ///aca validacion
+                if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(TxtDescripcion.Text))
+                {
+                    lblMensaje.Text = "Debe completar los campos nombre y descripcion.";
+                    lblMensaje.CssClass = "text-danger";
+                    return;
+                }
+
                 dominio.Categoria nuevo = new dominio.Categoria();
                 nuevo.Nombre = txtNombre.Text;
                 nuevo.Descripcion = TxtDescripcion.Text;
@@ -47,6 +55,21 @@ namespace tpc_equipo_7A
         {
             try
             {
+               ///aca validacion
+                if (string.IsNullOrWhiteSpace(txtId.Text))
+                {
+                    lblMensaje.Text = "Seleccionar una categoria para modificar.";
+                    lblMensaje.CssClass = "text-danger";
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(TxtDescripcion.Text))
+                {
+                    lblMensaje.Text = "Completar los campos nombre y descripción.";
+                    lblMensaje.CssClass = "text-danger";
+                    return;
+                }
+
                 dominio.Categoria modificar = new dominio.Categoria();
                 modificar.Nombre = txtNombre.Text;
                 modificar.Descripcion = TxtDescripcion.Text;
@@ -68,8 +91,13 @@ namespace tpc_equipo_7A
         {
             try
             {
-                //dominio.Categoria baja = new dominio.Categoria();
-                //baja.Id = int.Parse(txtId.Text);
+                ///aca validacion
+                if (string.IsNullOrWhiteSpace(txtId.Text))
+                {
+                    lblMensaje.Text = "Seleccionar una categoria para eliminar.";
+                    lblMensaje.CssClass = "text-danger";
+                    return;
+                }
 
                 CategoriaNegocio negocio = new CategoriaNegocio();
                 negocio.Eliminar(int.Parse(txtId.Text));
