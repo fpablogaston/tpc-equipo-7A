@@ -79,7 +79,6 @@
     <Content Include="Envios.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Pagos.aspx" />
-    <Content Include="Productos.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -141,13 +140,6 @@
     </Compile>
     <Compile Include="Pagos.aspx.designer.cs">
       <DependentUpon>Pagos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Productos.aspx.cs">
-      <DependentUpon>Productos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Productos.aspx.designer.cs">
-      <DependentUpon>Productos.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">

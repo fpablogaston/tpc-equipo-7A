@@ -144,6 +144,35 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+        public List<Producto> GetByIdCategoria(int idCategoria)
+        {
+            List<Producto> list = new List<Producto>();
+            AccesoDatos Datos = new AccesoDatos();
+            try
+            {
+                Datos.SetQuery("Select Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria From Productos Where IdCategoria = @idCategoria");
+                Datos.SetearParametro("@idCategoria", idCategoria);
+                Datos.EjecutarLectura();
+                while (Datos.Reader.Read())
+                {
+                    Producto aux = new Producto();
+                    aux.Id = (int)Datos.Reader["Id"];
+                    aux.Nombre = (string)Datos.Reader["Nombre"];
+                    aux.Descripcion = (string)Datos.Reader["Descripcion"];
+                    aux.Precio = (decimal)Datos.Reader["Precio"];
+                    aux.Stock = (int)Datos.Reader["Stock"];
+                    aux.ImagenUrl = (string)Datos.Reader["ImagenUrl"];
+                    aux.Categoria = new CategoriaNegocio().GetById((int)Datos.Reader["IdCategoria"]);
+                    list.Add(aux);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
     }
 
 }

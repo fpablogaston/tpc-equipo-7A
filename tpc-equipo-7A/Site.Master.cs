@@ -33,26 +33,31 @@ namespace tpc_equipo_7A
                 UpdateTotals();
                 if (!IsPostBack)
                 {
-                    /*
-                    ddlCategoria.DataSource = categorias.Listar().Append(new Categoria());
-                    ddlCategoria.DataTextField = "descripcion";
-                    ddlCategoria.DataValueField = "id";
-                    ddlCategoria.DataBind();
-                    */
+                    // Cargar categorías dinámicamente
+                    List<Categoria> listaCategorias = categorias.Listar();
+                    ddlCategorias.DataSource = listaCategorias;
+                    ddlCategorias.DataTextField = "Nombre"; // Ajustado a propiedad de Categoria
+                    ddlCategorias.DataValueField = "Id";
+                    ddlCategorias.DataBind();
+
+                    // Agregar opción por defecto
+                    ddlCategorias.Items.Insert(0, new ListItem("Categorías", "0"));
                 }
+
                 if (Session.Count > 0) LoadCarrito();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                throw ex;
+                // throw ex; // Comentado para no romper ejecución en desarrollo si falla algo no critico
             }
         }
+
         public void UpdateTotals()
         {
             if (Session["carrito"] != null)
             {
-                lblTotalPrice.Text = ((Carrito)Session["carrito"]).ListaCarrito.Sum(item => item.Cantidad * item.Producto.Precio).ToString(); ;
+                lblTotalPrice.Text = ((Carrito)Session["carrito"]).ListaCarrito.Sum(item => item.Cantidad * item.Producto.Precio).ToString("N2");
                 lblTotalPrice.DataBind();
 
                 lblTotalItems.Text = ((Carrito)Session["carrito"]).ListaCarrito.Sum(item => item.Cantidad).ToString();
@@ -61,12 +66,23 @@ namespace tpc_equipo_7A
             else
             {
                 lblTotalItems.Text = "0";
-                lblTotalPrice.Text = "0.00 $";
+                lblTotalPrice.Text = "0.00";
             }
         }
+
         protected void btnVerCarrito_Click(object sender, EventArgs e)
         {
             Response.Redirect("CarritoPage.aspx");
+        }
+
+        protected void ddlCategorias_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Redireccionar a productos filtrados por categoría
+            string id = ddlCategorias.SelectedValue;
+            if (id != "0")
+            {
+                Response.Redirect("Categorias.aspx?id=" + id);
+            }
         }
     }
 }

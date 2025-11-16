@@ -13,45 +13,43 @@
 <body style="background-color: #f0f2f5; display: flex; flex-direction: column; min-height: 100vh;">
     <form id="form1" runat="server" style="flex: 1; display: flex; flex-direction: column;">
         <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-        <header style="background-color: #000C8E; height: auto; padding: 0.25rem 0.5rem; font-size: 1rem; line-height: 1.5; vertical-align: middle; margin-top: -3px;" class="text-white p-3">
-            <nav class="navbar navbar-expand-lg">
-                <div class="navbar-brand text-white p-3">
-                    <h1>Tienda online</h1>
-                </div>
+        <header style="background-color: #000C8E; height: auto; padding: 0.5rem 1rem;" class="text-white">
+            <nav class="navbar navbar-expand-lg navbar-dark">
                 <div class="container-fluid">
+                    <a class="navbar-brand fw-bold fs-3 me-4" href="Default.aspx">Tienda Online</a>
+                    
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link active text-white" aria-current="page" href="Default.aspx">Inicio</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="Productos.aspx">Productos</a>
-                            </li>
-                            <li class="nav-item d-flex flex-column align-items-center">
-                                <a class="nav-link text-white" href="Categorias.aspx">Categoria</a>
-                            </li>
-
-
-                            <li class="nav-item">
-                                <a class="btn btn-outline-dark text-white mx-1" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-                                    <svg xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2px" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                                    </svg>
-                                    Carrito
-                                </a>
-                            </li>
-                        </ul>
+                    
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <div class="navbar-nav mx-auto align-items-center gap-2">
+                            <a class="btn btn-outline-light" href="Default.aspx">Inicio</a>
+                            <asp:DropDownList ID="ddlCategorias" runat="server" 
+                                CssClass="btn btn-outline-light position-relative" 
+                                style="width: auto;"
+                                AutoPostBack="true" OnSelectedIndexChanged="ddlCategorias_SelectedIndexChanged">
+                            </asp:DropDownList>
+                            <a class="btn btn-outline-light" href="#">Iniciar Sesión</a>
+                            <a class="btn btn-light text-primary fw-bold" href="#">Registrate</a>
+                            <a class="btn btn-outline-light position-relative" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-fill me-1" viewBox="0 0 16 16" style="vertical-align: -3px;">
+                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                </svg>
+                                Carrito
+                            </a>
+                        </div>
                     </div>
                 </div>
             </nav>
         </header>
+        
         <div style="flex: 1;">
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
         </div>
+
+        <%-- OffCanvas Cart --%>
         <asp:UpdatePanel runat="server" ID="UPMaster" UpdateMode="Always">
             <ContentTemplate>
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
@@ -64,37 +62,36 @@
                             <div style="max-height: 670px; overflow-y: auto;">
                                 <asp:Repeater ID="repCarrito" runat="server">
                                     <ItemTemplate>
-                                        <div class="card mb-3" style="max-width: 540px;">
-                                            <div class="row g-0">
-                                                <div class="col-md-4 d-flex align-items-center p-1">
-                                                    <img src="<%# Eval("Producto.ImagenUrl") %>" class="img-fluid rounded-start" alt="..." onerror="this.src='https://placehold.co/100?text=No+Image'">
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <div class="card-body p-2">
-                                                        <h6 class="card-title"><%# Eval("Producto.Nombre") %></h6>
-                                                        <p class="card-text mb-1"><small class="text-body-secondary">Cant: <%# Eval("Cantidad") %></small></p>
-                                                        <p class="card-text fw-bold text-end">$<%# Eval("PrecioTotal", "{0:N2}") %></p>
-                                                    </div>
-                                                </div>
+                                        <div class="card mb-3 shadow-sm" style="max-width: 540px;">
+                                          <div class="row g-0 align-items-center">
+                                            <div class="col-md-4 p-2">
+                                              <img src="<%# Eval("Producto.ImagenUrl") %>" class="img-fluid rounded" alt="Producto" onerror="this.src='https://placehold.co/100?text=No+Image'" style="object-fit: contain; height: 80px; width: 100%;">
                                             </div>
+                                            <div class="col-md-8">
+                                              <div class="card-body p-2">
+                                                <h6 class="card-title text-truncate" title="<%# Eval("Producto.Nombre") %>"><%# Eval("Producto.Nombre") %></h6>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">Cant: <%# Eval("Cantidad") %></small>
+                                                    <span class="fw-bold text-primary">$<%# Eval("PrecioTotal", "{0:N2}") %></span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
                                         </div>
                                     </ItemTemplate>
                                 </asp:Repeater>
                             </div>
-                            <div class="container text-end mt-3">
-                                <div class="row">
-                                    <div>
-                                        <p class="fw-bold">
-                                            Total de productos:
-                                            <asp:Label ID="lblTotalItems" runat="server" Text="0"></asp:Label>
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p class="h5">Total a pagar: $<asp:Label ID="lblTotalPrice" runat="server" Text="0.00"></asp:Label></p>
-                                    </div>
-                                    <div class="d-grid gap-2 mt-2">
-                                        <asp:Button ID="btnVerCarrito" Text="Ver Carrito Completo" runat="server" CssClass="btn btn-success" OnClick="btnVerCarrito_Click" />
-                                    </div>
+                            <div class="container border-top pt-3 mt-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Total Productos:</span>
+                                    <asp:Label ID="lblTotalItems" runat="server" Text="0" CssClass="fw-bold"></asp:Label>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="h5 mb-0">Total:</span>
+                                    <span class="h5 mb-0 text-primary">$<asp:Label ID="lblTotalPrice" runat="server" Text="0.00"></asp:Label></span>
+                                </div>
+                                <div class="d-grid">
+                                    <asp:Button ID="btnVerCarrito" Text="Ver Carrito Completo" runat="server" CssClass="btn btn-primary btn-lg" OnClick="btnVerCarrito_Click" />
                                 </div>
                             </div>
                         </div>
@@ -102,8 +99,10 @@
                 </div>
             </ContentTemplate>
         </asp:UpdatePanel>
+
+        <%-- Footer --%>
         <footer>
-            <h6 class="text-center" style="padding: 70px">Equipo 7A Programacion III 2025</h6>
+            <h6 class="text-center" style="padding: 50px">Equipo 7A Programacion III 2025</h6>
         </footer>
     </form>
 </body>
