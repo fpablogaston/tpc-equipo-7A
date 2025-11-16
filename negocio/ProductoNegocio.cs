@@ -118,7 +118,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select P.Id, P.Nombre, P.Descripcion, P.Precio, P.Stock, P.ImagenUrl, C.Id as IdCategoria, C.Nombre as CategoriaNombre, C.Descripcion as CategoriaDescripcion From Productos as P, Categorias as C Where P.IdCategoria = C.Id AND Id = @Id");
+                Datos.SetQuery("Select Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria From Productos Where Id = @Id");
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarLectura();
 
@@ -130,10 +130,7 @@ namespace negocio
                     aux.Precio = (decimal)Datos.Reader["Precio"];
                     aux.Stock = (int)Datos.Reader["Stock"];
                     aux.ImagenUrl = (string)Datos.Reader["ImagenUrl"];
-                    aux.Categoria = new Categoria();
-                    aux.Categoria.Id = (int)Datos.Reader["IdCategoria"];
-                    aux.Categoria.Nombre = (string)Datos.Reader["CategoriaNombre"];
-                    aux.Categoria.Descripcion = (string)Datos.Reader["CategoriaDescripcion"];
+                    aux.Categoria = new CategoriaNegocio().GetById((int)Datos.Reader["IdCategoria"]);
                 }
                 return aux;
             }

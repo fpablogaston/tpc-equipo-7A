@@ -23,9 +23,7 @@ namespace tpc_equipo_7A
 
         private void LoadProductos()
         {
-            ProductoNegocio negocio = new ProductoNegocio();
-            ListaProductos = negocio.Listar();
-            repRepetidor.DataSource = ListaProductos;
+            repRepetidor.DataSource = new ProductoNegocio().Listar();
             repRepetidor.DataBind();
         }
 
@@ -39,34 +37,31 @@ namespace tpc_equipo_7A
         {
             try
             {
-                ProductoNegocio negocio = new ProductoNegocio();
-                Producto producto = negocio.GetById(idProducto);
+                Producto producto = new ProductoNegocio().GetById(idProducto);
 
-                Carrito carrito;
+                Carrito carrito = new Carrito();
                 if (Session["carrito"] != null)
                 {
                     carrito = (Carrito)Session["carrito"];
+
+                    carrito.AgregarProducto(producto, 1);
                 }
                 else
                 {
-                    carrito = new Carrito();
+                    carrito.ListaCarrito = carrito.AgregarProducto(producto, 1);
+                    Session.Add("carrito", carrito);
                 }
-
-                carrito.AgregarProducto(producto, 1);
-                Session["carrito"] = carrito;
-
-                // Update Master Page cart totals if needed (assuming Master page has methods for this)
-                // if (this.Master is Site masterPage)
-                // {
-                //     masterPage.UpdateCartUI(); 
-                // }
-
-                // Optional: Show success message or update UI
+                if (this.Master is Site master)
+                {
+                    master.LoadCarrito();
+                    master.UpdateTotals();
+                }
+                LoadProductos();
             }
             catch (Exception ex)
             {
                 Session.Add("error", ex.ToString());
-                // Response.Redirect("Error.aspx", false); 
+                // Redirigir a error si necesario
             }
         }
     }
