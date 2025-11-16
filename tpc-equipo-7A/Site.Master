@@ -25,11 +25,14 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <div class="navbar-nav mx-auto align-items-center gap-2">
                             <a class="btn btn-outline-light" href="Default.aspx">Inicio</a>
+                            <a class="btn btn-outline-light" href="Productos.aspx">Productos</a>
                             <asp:DropDownList ID="ddlCategorias" runat="server" 
                                 CssClass="btn btn-outline-light position-relative" 
                                 style="width: auto;"
                                 AutoPostBack="true" OnSelectedIndexChanged="ddlCategorias_SelectedIndexChanged">
                             </asp:DropDownList>
+                            <a class="btn btn-outline-warning fw-bold" href="PanelAdmin.aspx">Admin Panel</a>
+
                             <a class="btn btn-outline-light" href="#">Iniciar Sesión</a>
                             <a class="btn btn-light text-primary fw-bold" href="#">Registrate</a>
                             <a class="btn btn-outline-light position-relative" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
@@ -48,8 +51,6 @@
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
         </div>
-
-        <%-- OffCanvas Cart --%>
         <asp:UpdatePanel runat="server" ID="UPMaster" UpdateMode="Always">
             <ContentTemplate>
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
