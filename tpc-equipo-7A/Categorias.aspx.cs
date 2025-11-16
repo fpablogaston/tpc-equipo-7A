@@ -55,5 +55,44 @@ namespace tpc_equipo_7A
                 }
             }
         }
+        protected void btnAgregarCarrito_Click(object sender, EventArgs e)
+        {
+            string idProducto = ((Button)sender).CommandArgument;
+            AgregarAlCarrito(int.Parse(idProducto));
+        }
+        private void AgregarAlCarrito(int idProducto)
+        {
+            try
+            {
+                ProductoNegocio negocio = new ProductoNegocio();
+                Producto producto = negocio.GetById(idProducto);
+
+                Carrito carrito;
+                if (Session["carrito"] != null)
+                {
+                    carrito = (Carrito)Session["carrito"];
+                }
+                else
+                {
+                    carrito = new Carrito();
+                }
+
+                carrito.AgregarProducto(producto, 1);
+                Session["carrito"] = carrito;
+
+                if (this.Master is Site master)
+                {
+                    master.LoadCarrito();
+                    master.UpdateTotals();
+                }
+
+                // Reload products to keep the current view/filter
+                LoadProducts();
+            }
+            catch (Exception ex)
+            {
+                Session.Add("error", ex.ToString());
+            }
+        }
     }
 }
