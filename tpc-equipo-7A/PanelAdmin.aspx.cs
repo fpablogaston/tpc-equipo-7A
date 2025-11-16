@@ -87,8 +87,7 @@ namespace tpc_equipo_7A
 
         protected void btnNuevaCategoria_Click(object sender, EventArgs e)
         {
-            lblMensajeCategoria.Text = "Redirigiendo a formulario de nueva categoría...";
-            lblMensajeCategoria.CssClass = "text-info";
+            Response.Redirect("Formulario.aspx?entity=Categoria");
         }
 
         protected void gvCategorias_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -97,8 +96,7 @@ namespace tpc_equipo_7A
 
             if (e.CommandName == "Editar")
             {
-                lblMensajeCategoria.Text = $"Redirigiendo a formulario para editar categoría ID: {id}...";
-                lblMensajeCategoria.CssClass = "text-info";
+                Response.Redirect($"Formulario.aspx?entity=Categoria&id={id}");
             }
             else if (e.CommandName == "Eliminar")
             {
@@ -138,8 +136,7 @@ namespace tpc_equipo_7A
 
         protected void btnNuevoProducto_Click(object sender, EventArgs e)
         {
-            lblMensajeProducto.Text = "Redirigiendo a formulario de nuevo producto...";
-            lblMensajeProducto.CssClass = "text-info";
+            Response.Redirect("Formulario.aspx?entity=Producto");
         }
 
         protected void gvProductos_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -148,8 +145,7 @@ namespace tpc_equipo_7A
 
             if (e.CommandName == "Editar")
             {
-                lblMensajeProducto.Text = $"Redirigiendo a formulario para editar producto ID: {id}...";
-                lblMensajeProducto.CssClass = "text-info";
+                Response.Redirect($"Formulario.aspx?entity=Producto&id={id}");
             }
             else if (e.CommandName == "Eliminar")
             {
@@ -188,8 +184,7 @@ namespace tpc_equipo_7A
 
         protected void btnNuevoCliente_Click(object sender, EventArgs e)
         {
-            lblMensajeCliente.Text = "Redirigiendo a formulario de nuevo cliente...";
-            lblMensajeCliente.CssClass = "text-info";
+            Response.Redirect("Formulario.aspx?entity=Cliente");
         }
 
         protected void gvClientes_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -198,8 +193,7 @@ namespace tpc_equipo_7A
 
             if (e.CommandName == "Editar")
             {
-                lblMensajeCliente.Text = $"Redirigiendo a formulario para editar cliente ID: {id}...";
-                lblMensajeCliente.CssClass = "text-info";
+                Response.Redirect($"Formulario.aspx?entity=Cliente&id={id}");
             }
             else if (e.CommandName == "Eliminar")
             {
@@ -241,8 +235,7 @@ namespace tpc_equipo_7A
             int id = Convert.ToInt32(e.CommandArgument);
             if (e.CommandName == "Editar")
             {
-                lblMensajePedido.Text = $"Redirigiendo a detalles del pedido ID: {id}...";
-                lblMensajePedido.CssClass = "text-info";
+                Response.Redirect($"Formulario.aspx?entity=Pedido&id={id}");
             }
         }
 
@@ -289,8 +282,7 @@ namespace tpc_equipo_7A
             int id = Convert.ToInt32(e.CommandArgument);
             if (e.CommandName == "Editar")
             {
-                lblMensajeEnvio.Text = $"Redirigiendo a formulario para editar envío ID: {id}...";
-                lblMensajeEnvio.CssClass = "text-info";
+                Response.Redirect($"Formulario.aspx?entity=Envio&id={id}");
             }
         }
     }
