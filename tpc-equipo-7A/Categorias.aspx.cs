@@ -20,13 +20,11 @@ namespace tpc_equipo_7A
                 LoadProducts();
             }
         }
-
         protected void btnDetalle_Click(object sender, EventArgs e)
         {
             string valor = ((Button)sender).CommandArgument;
             Response.Redirect("DetalleProducto.aspx");
         }
-
         private void LoadProducts()
         {
             if(Request.QueryString["id"] == null)
@@ -85,8 +83,6 @@ namespace tpc_equipo_7A
                     master.LoadCarrito();
                     master.UpdateTotals();
                 }
-
-                // Reload products to keep the current view/filter
                 LoadProducts();
             }
             catch (Exception ex)

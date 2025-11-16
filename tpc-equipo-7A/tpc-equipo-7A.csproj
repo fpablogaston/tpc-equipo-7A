@@ -70,7 +70,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="adminCategoria.aspx" />
+    <Content Include="PanelAdmin.aspx" />
     <Content Include="CarritoPage.aspx" />
     <Content Include="Categorias.aspx" />
     <Content Include="ConfirmarCompra.aspx" />
@@ -82,12 +82,12 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="adminCategoria.aspx.cs">
-      <DependentUpon>adminCategoria.aspx</DependentUpon>
+    <Compile Include="PanelAdmin.aspx.cs">
+      <DependentUpon>PanelAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="adminCategoria.aspx.designer.cs">
-      <DependentUpon>adminCategoria.aspx</DependentUpon>
+    <Compile Include="PanelAdmin.aspx.designer.cs">
+      <DependentUpon>PanelAdmin.aspx</DependentUpon>
     </Compile>
     <Compile Include="CarritoPage.aspx.cs">
       <DependentUpon>CarritoPage.aspx</DependentUpon>
