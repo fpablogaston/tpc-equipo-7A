@@ -214,7 +214,7 @@ SELECT * FROM Categorias;
 SELECT * FROM Productos;
 SELECT * FROM Clientes;
 SELECT * FROM Pedidos;
-SELECT * FROM DetallePedidos;
+SELECT * FROM DetallesPedido;
 SELECT * FROM Pagos;
 SELECT * FROM Envios;
 GO
