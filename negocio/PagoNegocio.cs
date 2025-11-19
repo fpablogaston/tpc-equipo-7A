@@ -82,5 +82,26 @@ namespace negocio
         {
             return Pagos;
         }
+
+        ///agrego esto a pagonegocio
+            public void Agregar(Pago pago)
+            {
+                AccesoDatos datos = new AccesoDatos();
+                try
+                {
+                    datos.SetQuery("INSERT INTO Pagos (MetodoPago, Estado, Monto, FechaPago, IdPedido) " +
+                                   "VALUES (@Metodo, @Estado, @Monto, @Fecha, @Pedido)");
+
+                    datos.SetearParametro("@Metodo", pago.MetodoPago.Nombre);
+                    datos.SetearParametro("@Estado", pago.Estado.Nombre);
+                    datos.SetearParametro("@Monto", pago.Monto);
+                    datos.SetearParametro("@Fecha", pago.FechaPago);
+                    datos.SetearParametro("@Pedido", pago.IdPedido);
+
+                    datos.EjecutarAccion();
+                }
+                finally { datos.CerrarConexion(); }
+            }
+        }
+
     }
-}

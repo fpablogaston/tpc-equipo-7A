@@ -41,5 +41,17 @@ namespace dominio
             if (ElementoCarrito != null)
                 ElementoCarrito.Cantidad = cantidad;
         }
+
+        ///agrego esto a carrito
+        public decimal Total()
+        {
+            return ListaCarrito.Sum(x => x.Subtotal);
+        }
+
+        public void Vaciar()
+        {
+            ListaCarrito.Clear();
+        }
     }
+
 }

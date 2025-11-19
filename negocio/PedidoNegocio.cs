@@ -72,5 +72,28 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
+
+
+        ///agrego esto a pedidonegocio
+        public int Agregar(Pedido pedido)
+        {
+            AccesoDatos data = new AccesoDatos();
+            try
+            {
+                data.SetQuery("INSERT INTO Pedidos (FechaPedido, Estado, Total, IdCliente) " +
+                              "OUTPUT INSERTED.Id VALUES (@Fecha, @Estado, @Total, @Cliente)");
+
+                data.SetearParametro("@Fecha", pedido.FechaPedido);
+                data.SetearParametro("@Estado", pedido.Estado);
+                data.SetearParametro("@Total", pedido.Total);
+                data.SetearParametro("@Cliente", pedido.Cliente.Id);
+
+                return data.EjecutarScalar();
+            }
+            finally
+            {
+                data.CerrarConexion();
+            }
+        }
     }
 }

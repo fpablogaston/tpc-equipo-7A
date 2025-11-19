@@ -32,5 +32,9 @@ namespace dominio
             else 
                 return 0;
         }
+
+        ///agrego esto a elementocarrito
+        public decimal Subtotal => Producto != null ? Producto.Precio * Cantidad : 0;
+
     }
 }
