@@ -20,18 +20,5 @@ namespace dominio
         {
             return $"{Nombre} - {Descripcion} - ${Precio} - Stock: {Stock}";
         }
-        public void AgregarProducto()
-        {
-            // Falta crear logica para agregar producto
-        }
-        public void ActualizarProducto()
-        {
-            // Falta crear logica para actualizar producto
-        }
-        public void EliminarProducto()
-        {
-            // Falta crear logica para eliminar producto
-        }
-
     }
 }

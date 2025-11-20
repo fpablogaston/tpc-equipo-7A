@@ -3,70 +3,83 @@ using negocio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace tpc_equipo_7A
 {
-    public partial class Site : System.Web.UI.MasterPage
+    public partial class Site : MasterPage
     {
-        public void LoadCarrito()
-        {
-            Carrito carrito = new Carrito();
-            if (Session["carrito"] != null)
-            {
-                carrito = (Carrito)Session["carrito"];
-            }
-            repCarrito.DataSource = carrito.ListaCarrito;
-            repCarrito.DataBind();
-        }
+        private readonly CarritoNegocio carritoNegocio = new CarritoNegocio();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             CategoriaNegocio categorias = new CategoriaNegocio();
-            PedidoNegocio pedidos = new PedidoNegocio();
-            ClienteNegocio clientes = new ClienteNegocio();
 
             try
             {
-                UpdateTotals();
                 if (!IsPostBack)
                 {
-                    // Cargar categorías dinámicamente
-                    List<Categoria> listaCategorias = categorias.Listar();
-                    ddlCategorias.DataSource = listaCategorias;
-                    ddlCategorias.DataTextField = "Nombre"; // Ajustado a propiedad de Categoria
+
+                    // cargar categorías
+                    ddlCategorias.DataSource = categorias.Listar();
+                    ddlCategorias.DataTextField = "Nombre";
                     ddlCategorias.DataValueField = "Id";
                     ddlCategorias.DataBind();
-
-                    // Agregar opción por defecto
                     ddlCategorias.Items.Insert(0, new ListItem("Categorías", "0"));
                 }
 
-                if (Session.Count > 0) LoadCarrito();
+                LoadCarrito();
+                UpdateTotals();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                // throw ex; // Comentado para no romper ejecución en desarrollo si falla algo no critico
+                Console.WriteLine(ex);
             }
+        }
+
+        public void LoadCarrito()
+        {
+            var carrito = carritoNegocio.ObtenerItems();
+
+            repCarrito.DataSource = carrito;
+            repCarrito.DataBind();
         }
 
         public void UpdateTotals()
         {
-            if (Session["carrito"] != null)
-            {
-                lblTotalPrice.Text = ((Carrito)Session["carrito"]).ListaCarrito.Sum(item => item.Cantidad * item.Producto.Precio).ToString("N2");
-                lblTotalPrice.DataBind();
+            lblTotalItems.Text = carritoNegocio.ObtenerItems().Sum(x => x.Cantidad).ToString();
+            lblTotalPrice.Text = carritoNegocio.Total().ToString("N2");
+            badgeCarrito.InnerText = carritoNegocio.ObtenerItems().Sum(x => x.Cantidad).ToString();
 
-                lblTotalItems.Text = ((Carrito)Session["carrito"]).ListaCarrito.Sum(item => item.Cantidad).ToString();
-                lblTotalItems.DataBind();
-            }
-            else
+        }
+
+        protected void repCarrito_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            var cn = new negocio.CarritoNegocio();
+            int id = int.Parse(e.CommandArgument.ToString());
+
+            switch (e.CommandName)
             {
-                lblTotalItems.Text = "0";
-                lblTotalPrice.Text = "0.00";
+                case "CambiarCantidad":
+                    TextBox txt = (TextBox)e.Item.FindControl("txtCantidad");
+                    int nuevaCant = int.Parse(txt.Text);
+                    cn.ModificarCantidad(id, nuevaCant);
+                    break;
+                case "EliminarItem":
+                    cn.Eliminar(id);
+                    break;
+            }
+
+            LoadCarrito();
+            UpdateTotals();
+        }
+
+        protected void ddlCategorias_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlCategorias.SelectedValue != "0")
+            {
+                Response.Redirect("Categorias.aspx?id=" + ddlCategorias.SelectedValue);
             }
         }
 
@@ -75,14 +88,23 @@ namespace tpc_equipo_7A
             Response.Redirect("CarritoPage.aspx");
         }
 
-        protected void ddlCategorias_SelectedIndexChanged(object sender, EventArgs e)
+        protected void txtCantidad_TextChanged(object sender, EventArgs e)
         {
-            // Redireccionar a productos filtrados por categoría
-            string id = ddlCategorias.SelectedValue;
-            if (id != "0")
-            {
-                Response.Redirect("Categorias.aspx?id=" + id);
-            }
+            TextBox txt = (TextBox)sender;
+            RepeaterItem item = (RepeaterItem)txt.NamingContainer;
+
+            int id = int.Parse(((Button)item.FindControl("btnCambiarCantidad")).CommandArgument);
+
+            int cantidad;
+            if (!int.TryParse(txt.Text, out cantidad) || cantidad <= 0)
+                cantidad = 1;
+
+            carritoNegocio.ModificarCantidad(id, cantidad);
+
+            LoadCarrito();
+            UpdateTotals();
+            UPMaster.Update(); // refresca solo el carrito
         }
+
     }
 }

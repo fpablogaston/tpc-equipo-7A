@@ -47,13 +47,19 @@
                                     <h4 class="card-text mt-auto text-primary">$<%# Eval("Precio", "{0:N2}") %></h4>
                                 </div>
                             </a>
-                            <div class="card-footer bg-transparent border-top-0">
-                                <div class="d-grid gap-2">
-                                    <asp:Button ID="btnAgregarCarrito" runat="server" Text="Agregar al carrito" 
-                                        CssClass="btn btn-outline-primary" CommandArgument='<%# Eval("Id") %>' 
-                                        OnClick="btnAgregarCarrito_Click" />
-                                </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                           <div class="d-flex align-items-center gap-2">
+                                    <asp:TextBox ID="txtCantidad" runat="server" Text="1"
+                                    CssClass="form-control form-control-sm"
+                                    Width="50px"></asp:TextBox>
+
+                                    <asp:Button ID="btnAgregarCarrito" runat="server" Text="Agregar"
+                                    CssClass="btn btn-primary btn-sm"
+                                    CommandArgument='<%# Eval("Id") %>'
+                                    OnClick="btnAgregarCarrito_Click" />
                             </div>
+                        </div>
+
                         </div>
                     </div>
                 </ItemTemplate>

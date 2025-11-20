@@ -40,6 +40,10 @@
                                     <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                                 </svg>
                                 Carrito
+                                <span id="badgeCarrito" runat="server"
+                                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                     0
+                                </span> 
                             </a>
                         </div>
                     </div>
@@ -61,26 +65,46 @@
                     <div class="offcanvas-body">
                         <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
                             <div style="max-height: 670px; overflow-y: auto;">
-                                <asp:Repeater ID="repCarrito" runat="server">
-                                    <ItemTemplate>
-                                        <div class="card mb-3 shadow-sm" style="max-width: 540px;">
-                                          <div class="row g-0 align-items-center">
-                                            <div class="col-md-4 p-2">
-                                              <img src="<%# Eval("Producto.ImagenUrl") %>" class="img-fluid rounded" alt="Producto" onerror="this.src='https://placehold.co/100?text=No+Image'" style="object-fit: contain; height: 80px; width: 100%;">
-                                            </div>
-                                            <div class="col-md-8">
-                                              <div class="card-body p-2">
-                                                <h6 class="card-title text-truncate" title="<%# Eval("Producto.Nombre") %>"><%# Eval("Producto.Nombre") %></h6>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <small class="text-muted">Cant: <%# Eval("Cantidad") %></small>
-                                                    <span class="fw-bold text-primary">$<%# Eval("PrecioTotal", "{0:N2}") %></span>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                    </ItemTemplate>
-                                </asp:Repeater>
+<asp:Repeater ID="repCarrito" runat="server" OnItemCommand="repCarrito_ItemCommand">
+<ItemTemplate>
+    <div class="card mb-3 shadow-sm" style="max-width: 540px;">
+        <div class="row g-0 align-items-center">
+            <div class="col-md-4 p-2">
+                <img src="<%# Eval("Producto.ImagenUrl") %>" class="img-fluid rounded" alt="Producto"
+                     onerror="this.src='https://placehold.co/100?text=No+Image'"
+                     style="object-fit: contain; height: 80px; width: 100%;">
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body p-2">
+                    <h6 class="card-title text-truncate"><%# Eval("Producto.Nombre") %></h6>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <asp:TextBox ID="txtCantidad" runat="server"
+                                     CssClass="form-control form-control-sm"
+                                     AutoPostBack="true"
+                                     OnTextChanged="txtCantidad_TextChanged"
+                                     Text='<%# Eval("Cantidad") %>' Width="50px"></asp:TextBox>
+                        <asp:Button ID="btnCambiarCantidad" runat="server"
+                                    Text="OK" CssClass="btn btn-sm btn-secondary"
+                                    CommandName="CambiarCantidad"
+                                    CommandArgument='<%# Eval("Producto.Id") %>' />
+                        <asp:Button ID="btnEliminar" runat="server"
+                                    Text="X" CssClass="btn btn-sm btn-danger"
+                                    CommandName="EliminarItem"
+                                    CommandArgument='<%# Eval("Producto.Id") %>' />
+                        <span class="fw-bold text-primary ms-2">
+                            $<%# Eval("PrecioTotal", "{0:N2}") %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ItemTemplate>
+</asp:Repeater>
+
+
                             </div>
                             <div class="container border-top pt-3 mt-3">
                                 <div class="d-flex justify-content-between mb-2">
@@ -101,10 +125,34 @@
             </ContentTemplate>
         </asp:UpdatePanel>
 
+        <script>
+    function mostrarOffcanvas() {
+        var off = document.getElementById('offcanvasExample');
+        if (!off) return;
+
+        
+        var instance = bootstrap.Offcanvas.getOrCreateInstance(off);
+        instance.show();
+    }
+
+    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+        mostrarOffcanvas();
+    });
+        </script>
+
+
         <%-- Footer --%>
         <footer>
             <h6 class="text-center" style="padding: 50px">Equipo 7A Programacion III 2025</h6>
         </footer>
+        <script>
+            document.addEventListener('keydown', function (e) {
+                if (e.key === "Enter" && e.target.tagName === "INPUT") {
+                    e.preventDefault(); // evita submit general
+                    e.target.blur(); // si tiene AutoPostBack ejecuta su propio evento
+                }
+            });
+        </script>
     </form>
 </body>
 </html>
