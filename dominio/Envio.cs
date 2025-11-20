@@ -17,5 +17,6 @@ namespace dominio
         public DateTime? FechaEntrega { get; set; } 
         public string Estado { get; set; }
         public int IdPedido { get; set; }
+        public string InfoAdicional { get; set; }
     }
 }
