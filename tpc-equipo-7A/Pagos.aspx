@@ -17,27 +17,12 @@
                 </ItemTemplate>
             </asp:Repeater>
 
-            <%--<div>
-            <input type="radio" name="metodoPago" value="tarjeta">
-            Tarjeta
+            <asp:Label ID="lblError" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
+
+            <div>
+                <asp:Button ID="btnContinuarPago" runat="server" CssClass="btn btn-primary" OnClick="btnContinuarPago_Click" Text="Continuar" />
+                <a href="CarritoPage.aspx" class="btn btn-secondary">Volver al carrito</a>
+            </div>
         </div>
-        <div>
-            <input type="radio" name="metodoPago" value="efectivo">
-            Efectivo
-        </div>
-        <div>
-            <input type="radio" name="metodoPago" value="transferencia">
-            Transferencia
-        </div>--%>
-        <div>
-            <a href="Envios.aspx" class="btn btn-primary">Continuar al envio</a>
-            <button type="button" class="btn btn-secondary"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasExample"
-                aria-controls="offcanvasExample">
-                Volver al carrito
-            </button>
-        </div>
-    </div>
     </div>
 </asp:Content>
