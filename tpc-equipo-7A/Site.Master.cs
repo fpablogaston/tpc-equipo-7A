@@ -27,9 +27,9 @@ namespace tpc_equipo_7A
                     ddlCategorias.DataValueField = "Id";
                     ddlCategorias.DataBind();
                     ddlCategorias.Items.Insert(0, new ListItem("Categorías", "0"));
+                    LoadCarrito();
                 }
 
-                LoadCarrito();
                 UpdateTotals();
             }
             catch (Exception ex)
@@ -54,6 +54,24 @@ namespace tpc_equipo_7A
 
         }
 
+        protected void txtCantidad_TextChanged(object sender, EventArgs e)
+        {
+            TextBox txt = (TextBox)sender;
+            RepeaterItem item = (RepeaterItem)txt.NamingContainer;
+
+            HiddenField hf = (HiddenField)item.FindControl("hfIdProducto");
+            int idProducto = int.Parse(hf.Value);
+
+            int nuevaCantidad = 1;
+            int.TryParse(txt.Text, out nuevaCantidad);
+
+            var carrito = new negocio.CarritoNegocio();
+            carrito.ModificarCantidad(idProducto, nuevaCantidad);
+
+            LoadCarrito();
+            UpdateTotals();
+        }
+
         protected void repCarrito_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             var cn = new negocio.CarritoNegocio();
@@ -61,11 +79,12 @@ namespace tpc_equipo_7A
 
             switch (e.CommandName)
             {
-                case "CambiarCantidad":
+                /*case "CambiarCantidad":
                     TextBox txt = (TextBox)e.Item.FindControl("txtCantidad");
                     int nuevaCant = int.Parse(txt.Text);
-                    cn.ModificarCantidad(id, nuevaCant);
-                    break;
+                    cn.ModificarCantidad(id, nuevaCant);  
+                break;
+                */
                 case "EliminarItem":
                     cn.Eliminar(id);
                     break;
@@ -88,23 +107,7 @@ namespace tpc_equipo_7A
             Response.Redirect("CarritoPage.aspx");
         }
 
-        protected void txtCantidad_TextChanged(object sender, EventArgs e)
-        {
-            TextBox txt = (TextBox)sender;
-            RepeaterItem item = (RepeaterItem)txt.NamingContainer;
 
-            int id = int.Parse(((Button)item.FindControl("btnCambiarCantidad")).CommandArgument);
-
-            int cantidad;
-            if (!int.TryParse(txt.Text, out cantidad) || cantidad <= 0)
-                cantidad = 1;
-
-            carritoNegocio.ModificarCantidad(id, cantidad);
-
-            LoadCarrito();
-            UpdateTotals();
-            UPMaster.Update(); // refresca solo el carrito
-        }
 
     }
 }

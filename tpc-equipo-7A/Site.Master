@@ -67,6 +67,8 @@
                             <div style="max-height: 670px; overflow-y: auto;">
 <asp:Repeater ID="repCarrito" runat="server" OnItemCommand="repCarrito_ItemCommand">
 <ItemTemplate>
+
+
     <div class="card mb-3 shadow-sm" style="max-width: 540px;">
         <div class="row g-0 align-items-center">
             <div class="col-md-4 p-2">
@@ -80,16 +82,16 @@
                     <h6 class="card-title text-truncate"><%# Eval("Producto.Nombre") %></h6>
 
                     <div class="d-flex justify-content-between align-items-center">
+
+                        <asp:HiddenField ID="hfIdProducto" runat="server" Value='<%# Eval("Producto.Id") %>' />
                         <asp:TextBox ID="txtCantidad" runat="server"
                                      CssClass="form-control form-control-sm"
                                      AutoPostBack="true"
                                      OnTextChanged="txtCantidad_TextChanged"
                                      Text='<%# Eval("Cantidad") %>' Width="50px"></asp:TextBox>
-                        <asp:Button ID="btnCambiarCantidad" runat="server"
-                                    Text="OK" CssClass="btn btn-sm btn-secondary"
-                                    CommandName="CambiarCantidad"
-                                    CommandArgument='<%# Eval("Producto.Id") %>' />
-                        <asp:Button ID="btnEliminar" runat="server"
+
+                        
+                        <asp:LinkButton ID="btnEliminar" runat="server"
                                     Text="X" CssClass="btn btn-sm btn-danger"
                                     CommandName="EliminarItem"
                                     CommandArgument='<%# Eval("Producto.Id") %>' />
