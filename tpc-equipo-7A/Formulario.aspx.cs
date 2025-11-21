@@ -35,6 +35,13 @@ namespace tpc_equipo_7A
             if (!IsPostBack)
             {
                 MostrarFormulario();
+
+                if (Entidad == "Producto")
+                    txtProductoId.Enabled = false;
+
+                if (Entidad == "Categoria")
+                    txtCategoriaId.Enabled = false;
+
                 if (IdEntidad != 0)
                 {
                     CargarDatos();
