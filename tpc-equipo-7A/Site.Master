@@ -137,9 +137,9 @@
         instance.show();
     }
 
-    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-        mostrarOffcanvas();
-    });
+    //Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+    //    mostrarOffcanvas();
+    //});
         </script>
 
 
