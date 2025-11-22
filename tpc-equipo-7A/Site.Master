@@ -25,7 +25,7 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <div class="navbar-nav mx-auto align-items-center gap-2">
                             <a class="btn btn-outline-light" href="Default.aspx">Inicio</a>
-                            <a class="btn btn-outline-light" href="Productos.aspx">Productos</a>
+                            <!--a class="btn btn-outline-light" href="Productos.aspx">Productos</a-->
                             <asp:DropDownList ID="ddlCategorias" runat="server"
                                 CssClass="btn btn-outline-light position-relative"
                                 Style="width: auto;"
