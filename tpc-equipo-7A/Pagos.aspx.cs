@@ -13,6 +13,7 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+           
             if (!IsPostBack)
             {
                 PagoNegocio negocio = new PagoNegocio();

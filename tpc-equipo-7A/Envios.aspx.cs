@@ -13,7 +13,10 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (Session["Usuario"] == null)
+            {
+                Response.Redirect("Login.aspx?msg=login_required");
+            }
         }
 
         protected void btnContinuar_Click(object sender, EventArgs e)

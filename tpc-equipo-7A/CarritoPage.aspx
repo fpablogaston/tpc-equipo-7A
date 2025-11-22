@@ -12,22 +12,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <%--codigo nuevo--%>
+
                     <asp:Repeater ID="repCarrito" runat="server">
                         <ItemTemplate>
                             <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
 
                                 <div>
                                     <strong><%# Eval("Producto.Nombre") %></strong><br />
-                                    <span>Precio: <%# Eval("Producto.Precio", "{0:C}") %></span><br />
-                                    <span>Subtotal: <%# Eval("Subtotal", "{0:C}") %></span>
+                                    <span>Precio: <%# "$" + Eval("Producto.Precio", "{0:N2}") %></span><br />
+                                    <span>Subtotal: <%# "$" + Eval("Subtotal", "{0:N2}") %></span>
                                 </div>
 
-                                <div class="d-flex align-items-center gap-2">
-                                    <button type="button" class="btn btn-outline-secondary">−</button>
-                                    <span><%# Eval("Cantidad") %></span>
-                                    <button type="button" class="btn btn-outline-secondary">+</button>
-                                </div>
 
                             </div>
                         </ItemTemplate>

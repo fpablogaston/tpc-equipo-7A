@@ -70,29 +70,24 @@ namespace tpc_equipo_7A
 
             LoadCarrito();
             UpdateTotals();
+            UpdateBurbujaCarrito();
         }
 
         protected void repCarrito_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var cn = new negocio.CarritoNegocio();
-            int id = int.Parse(e.CommandArgument.ToString());
-
-            switch (e.CommandName)
+            if (e.CommandName == "EliminarItem")
             {
-                /*case "CambiarCantidad":
-                    TextBox txt = (TextBox)e.Item.FindControl("txtCantidad");
-                    int nuevaCant = int.Parse(txt.Text);
-                    cn.ModificarCantidad(id, nuevaCant);  
-                break;
-                */
-                case "EliminarItem":
-                    cn.Eliminar(id);
-                    break;
-            }
+                int idProducto = int.Parse(e.CommandArgument.ToString());
 
-            LoadCarrito();
-            UpdateTotals();
+                var carrito = new negocio.CarritoNegocio();
+                carrito.Eliminar(idProducto);  
+
+                LoadCarrito();          
+                UpdateTotals();         
+                UpdateBurbujaCarrito(); 
+            }
         }
+
 
         protected void ddlCategorias_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -107,7 +102,23 @@ namespace tpc_equipo_7A
             Response.Redirect("CarritoPage.aspx");
         }
 
+        public void UpdateBurbujaCarrito()
+        {
+            int total = carritoNegocio.ObtenerItems().Sum(x => x.Cantidad);
+
+            badgeCarrito.InnerText = total.ToString();
+
+            var up = (UpdatePanel)FindControl("UPBadge");
+            if (up != null)
+                up.Update();
+        }
+
+
 
 
     }
+
+
+
 }
+
