@@ -280,9 +280,26 @@ namespace tpc_equipo_7A
         protected void gvEnvios_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
+
             if (e.CommandName == "Editar")
             {
                 Response.Redirect($"Formulario.aspx?entity=Envio&id={id}");
+            }
+            else if (e.CommandName == "Eliminar")
+            {
+                try
+                {
+                    EnvioNegocio negocio = new EnvioNegocio();
+                    negocio.Eliminar(id);
+                    lblMensajeCliente.Text = "Envio eliminado.";
+                    lblMensajeCliente.CssClass = "text-success";
+                    BindClientesGrid();
+                }
+                catch (Exception ex)
+                {
+                    lblMensajeCliente.Text = "Error al eliminar cliente: " + ex.Message;
+                    lblMensajeCliente.CssClass = "text-danger";
+                }
             }
         }
     }

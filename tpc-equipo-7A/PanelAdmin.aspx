@@ -1,14 +1,15 @@
 ﻿<%@ Page Title="Admin Panel" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="PanelAdmin.aspx.cs" Inherits="tpc_equipo_7A.PanelAdmin" UnobtrusiveValidationMode="None" %>
+
 <%@ MasterType VirtualPath="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    
+
     <div class="container mt-5">
         <h1 class="display-4">Panel de Administración</h1>
         <p class="lead">Seleccione la entidad que desea administrar.</p>
-        
+
         <hr />
 
         <div class="row">
@@ -30,7 +31,7 @@
 
         <asp:UpdatePanel ID="upAdminContent" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
-                
+
                 <asp:PlaceHolder ID="phInicio" runat="server" Visible="true">
                     <div class="alert alert-info mt-3">
                         Por favor, seleccione una entidad del menú desplegable para comenzar a administrar.
@@ -44,10 +45,10 @@
                             <asp:Button ID="btnNuevaCategoria" runat="server" Text="Nueva Categoría" CssClass="btn btn-success" OnClick="btnNuevaCategoria_Click" />
                         </div>
                         <asp:Label ID="lblMensajeCategoria" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
-                        
-                        <asp:GridView ID="gvCategorias" runat="server" 
-                            CssClass="table table-striped table-bordered table-hover" 
-                            AutoGenerateColumns="false" 
+
+                        <asp:GridView ID="gvCategorias" runat="server"
+                            CssClass="table table-striped table-bordered table-hover"
+                            AutoGenerateColumns="false"
                             DataKeyNames="Id"
                             OnRowCommand="gvCategorias_RowCommand">
                             <Columns>
@@ -72,10 +73,10 @@
                             <asp:Button ID="btnNuevoProducto" runat="server" Text="Nuevo Producto" CssClass="btn btn-success" OnClick="btnNuevoProducto_Click" />
                         </div>
                         <asp:Label ID="lblMensajeProducto" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
-                        
-                        <asp:GridView ID="gvProductos" runat="server" 
+
+                        <asp:GridView ID="gvProductos" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
-                            AutoGenerateColumns="false" 
+                            AutoGenerateColumns="false"
                             DataKeyNames="Id"
                             OnRowCommand="gvProductos_RowCommand">
                             <Columns>
@@ -96,16 +97,16 @@
                 </asp:PlaceHolder>
 
                 <asp:PlaceHolder ID="phClientes" runat="server" Visible="false">
-                     <div class="mt-4">
+                    <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0">Gestión de Clientes</h3>
                             <asp:Button ID="btnNuevoCliente" runat="server" Text="Nuevo Cliente" CssClass="btn btn-success" OnClick="btnNuevoCliente_Click" />
                         </div>
                         <asp:Label ID="lblMensajeCliente" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
-                        
-                        <asp:GridView ID="gvClientes" runat="server" 
+
+                        <asp:GridView ID="gvClientes" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
-                            AutoGenerateColumns="false" 
+                            AutoGenerateColumns="false"
                             DataKeyNames="Id"
                             OnRowCommand="gvClientes_RowCommand">
                             <Columns>
@@ -126,15 +127,15 @@
                 </asp:PlaceHolder>
 
                 <asp:PlaceHolder ID="phPedidos" runat="server" Visible="false">
-                     <div class="mt-4">
+                    <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0">Gestión de Pedidos</h3>
                         </div>
                         <asp:Label ID="lblMensajePedido" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
-                        
-                        <asp:GridView ID="gvPedidos" runat="server" 
+
+                        <asp:GridView ID="gvPedidos" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
-                            AutoGenerateColumns="false" 
+                            AutoGenerateColumns="false"
                             DataKeyNames="Id"
                             OnRowCommand="gvPedidos_RowCommand">
                             <Columns>
@@ -154,15 +155,15 @@
                 </asp:PlaceHolder>
 
                 <asp:PlaceHolder ID="phPagos" runat="server" Visible="false">
-                     <div class="mt-4">
+                    <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0">Gestión de Pagos</h3>
                         </div>
                         <asp:Label ID="lblMensajePago" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
-                        
-                        <asp:GridView ID="gvPagos" runat="server" 
+
+                        <asp:GridView ID="gvPagos" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
-                            AutoGenerateColumns="false" 
+                            AutoGenerateColumns="false"
                             DataKeyNames="Id"
                             OnRowCommand="gvPagos_RowCommand">
                             <Columns>
@@ -176,17 +177,17 @@
                         </asp:GridView>
                     </div>
                 </asp:PlaceHolder>
-                
+
                 <asp:PlaceHolder ID="phEnvios" runat="server" Visible="false">
-                     <div class="mt-4">
+                    <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0">Gestión de Envíos</h3>
                         </div>
                         <asp:Label ID="lblMensajeEnvio" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
-                        
-                        <asp:GridView ID="gvEnvios" runat="server" 
+
+                        <asp:GridView ID="gvEnvios" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
-                            AutoGenerateColumns="false" 
+                            AutoGenerateColumns="false"
                             DataKeyNames="Id"
                             OnRowCommand="gvEnvios_RowCommand">
                             <Columns>
@@ -198,7 +199,8 @@
                                 <asp:BoundField DataField="FechaEnvio" HeaderText="Fecha Envío" DataFormatString="{0:d}" />
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
-                                        <asp:Button ID="btnEditarEnvio" runat="server" Text="Editar Estado" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
+                                        <asp:Button ID="btnEditarEnvio" runat="server" Text="Editar" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
+                                        <asp:Button ID="btnEliminarEnvio" runat="server" Text="Eliminar" CssClass="btn btn-sm btn-danger" CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea eliminar este cliente?');" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
@@ -209,7 +211,7 @@
             </ContentTemplate>
             <Triggers>
                 <asp:AsyncPostBackTrigger ControlID="ddlSelectEntity" EventName="SelectedIndexChanged" />
-                
+
                 <asp:AsyncPostBackTrigger ControlID="btnNuevaCategoria" EventName="Click" />
                 <asp:AsyncPostBackTrigger ControlID="gvCategorias" EventName="RowCommand" />
 
@@ -218,7 +220,7 @@
 
                 <asp:AsyncPostBackTrigger ControlID="btnNuevoCliente" EventName="Click" />
                 <asp:AsyncPostBackTrigger ControlID="gvClientes" EventName="RowCommand" />
-                
+
                 <asp:AsyncPostBackTrigger ControlID="gvPedidos" EventName="RowCommand" />
                 <asp:AsyncPostBackTrigger ControlID="gvPagos" EventName="RowCommand" />
                 <asp:AsyncPostBackTrigger ControlID="gvEnvios" EventName="RowCommand" />

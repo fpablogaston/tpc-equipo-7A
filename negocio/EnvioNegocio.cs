@@ -10,6 +10,47 @@ namespace negocio
     public class EnvioNegocio
     {
         private List<Envio> Envios = new List<Envio>();
+
+        /*
+         * 
+        Id	    DireccionEnvio	        Ciudad	        Provincia	    CodigoPostal	FechaEnvio	                FechaEntrega	Estado	    IdPedido
+        1	    Av. Siempre Viva 742	Buenos Aires	Buenos Aires	1000	        2025-10-26  18:44:43.820	NULL	        Preparando	1
+        2	    Calle Falsa 123	        Córdoba	        Córdoba	        5000	        2025-10-26  18:44:43.820	NULL	        Preparando	2
+        */
+        public List<Envio> Listar()
+        {
+            List<Envio> list = new List<Envio>();
+            AccesoDatos data = new AccesoDatos();
+            try
+            {
+                data.SetQuery("Select Id, DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, FechaEntrega, Estado, IdPedido From Envios");
+                data.EjecutarLectura();
+                while (data.Reader.Read())
+                {
+                    Envio aux = new Envio();
+                    aux.Id = (int)data.Reader["Id"];
+                    aux.DireccionEnvio = (string)data.Reader["DireccionEnvio"];
+                    aux.Ciudad = (string)data.Reader["Estado"];
+                    aux.Provincia = (string)data.Reader["Provincia"];
+                    aux.CodigoPostal = (string)data.Reader["CodigoPostal"];
+                    aux.FechaEnvio = (DateTime)data.Reader["FechaEnvio"];
+                    aux.FechaEntrega = data.Reader["FechaEntrega"] == DBNull.Value ? (DateTime?)null : (DateTime)data.Reader["FechaEntrega"];
+                    aux.Estado = (string)data.Reader["Estado"];
+                    aux.IdPedido = (int)data.Reader["IdPedido"];
+                    list.Add(aux);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.ToString());
+                throw ex;
+            }
+            finally
+            {
+                data.CerrarConexion();
+            }
+        }
         public Envio GetById(int id)
         {
             Envio aux = new Envio();
@@ -45,23 +86,20 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
-        public void CrearEnvio(Envio envio)
+        public void Eliminar(int Id)
         {
-            // Falta crear logica para programar el envio
-        }
-        public void ActualizarEstado(int id, string nuevoEstado)
-        {
-            // Falta crear logica para actualizar el estado del envio
-        }
-        public List<Envio> Listar()
-        {
-            return Envios;
-        }
-
-        public Envio Buscar(int id)
-        {
-            return null;
-            // Falta crear logica para buscar un envio por su ID
+            AccesoDatos Datos = new AccesoDatos();
+            try
+            {
+                Datos.SetQuery("Delete From Envios Where Id = @Id");
+                Datos.SetearParametro("@Id", Id);
+                Datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
         }
     }
 }
