@@ -39,7 +39,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Update Clientes set Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono, Direccion = @Direccion, Contraseña = @Contraseña, FechaRegistro = @FechaRegistro Where Id = @Id) Values (@Nombre, @Descripcion, @Email, @Telefono, @Direccion, @Contraseña, @FechaRegistro); SELECT SCOPE_IDENTITY();");
+                Datos.SetQuery("UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono, Direccion = @Direccion, Contraseña = @Contraseña, FechaRegistro = @FechaRegistro WHERE Id = @Id");
                 Datos.SetearParametro("@Id", cliente.Id);
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);

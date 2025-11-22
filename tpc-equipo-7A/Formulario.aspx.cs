@@ -42,6 +42,9 @@ namespace tpc_equipo_7A
                 if (Entidad == "Categoria")
                     txtCategoriaId.Enabled = false;
 
+                if (Entidad == "Cliente")
+                    txtClienteId.Enabled = false;
+
                 if (IdEntidad != 0)
                 {
                     CargarDatos();
@@ -117,6 +120,18 @@ namespace tpc_equipo_7A
                             txtCategoriaDescripcion.Text = categoria.Descripcion;
                         }
                         break;
+                    case "Cliente":
+                        ClienteNegocio clNegocio = new ClienteNegocio();
+                        Cliente cliente = clNegocio.GetById(IdEntidad);
+                        if (cliente != null)
+                        {
+                            txtClienteId.Text = cliente.Id.ToString();
+                            txtClienteNombre.Text = cliente.Nombre;
+                            txtClienteApellido.Text = cliente.Apellido;
+                            txtClienteEmail.Text = cliente.Email;
+                            txtClienteTelefono.Text = cliente.Telefono;
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -138,6 +153,9 @@ namespace tpc_equipo_7A
                         break;
                     case "Categoria":
                         GuardarCategoria();
+                        break;
+                    case "Cliente":
+                        GuardarCliente();
                         break;
                 }
                 Response.Redirect("PanelAdmin.aspx");
@@ -182,6 +200,28 @@ namespace tpc_equipo_7A
                 negocio.Actualizar(categoria);
             else
                 negocio.Agregar(categoria);
+        }
+
+        private void GuardarCliente()
+        {
+            ClienteNegocio negocio = new ClienteNegocio();
+
+            Cliente cliente = new Cliente
+            {
+                Id = IdEntidad,
+                Nombre = txtClienteNombre.Text,
+                Apellido = txtClienteApellido.Text,
+                Email = txtClienteEmail.Text,
+                Telefono = txtClienteTelefono.Text,
+                Direccion = "",
+                Contraseña = "",
+                FechaRegistro = (IdEntidad == 0) ? DateTime.Now : new ClienteNegocio().GetById(IdEntidad).FechaRegistro,
+            };
+
+            if (IdEntidad != 0)
+                negocio.Actualizar(cliente);
+            else
+                negocio.Agregar(cliente);
         }
 
         protected void btnCancelar_Click(object sender, EventArgs e)
