@@ -253,3 +253,12 @@ VALUES
 (1, 3, 2, 7000, 14000),
 (2, 2, 3, 3500, 10500);
 GO
+
+use Ecommerce
+go
+
+alter table Productos
+alter column Descripcion nvarchar(500) null
+
+alter table Productos
+alter column ImagenUrl nvarchar(500) null

@@ -143,7 +143,6 @@ namespace tpc_equipo_7A
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid) return;
-
             try
             {
                 switch (Entidad)
@@ -177,7 +176,7 @@ namespace tpc_equipo_7A
                 Precio = decimal.Parse(txtProductoPrecio.Text),
                 Stock = int.Parse(txtProductoStock.Text),
                 ImagenUrl = txtProductoImagenUrl.Text,
-                Categoria = new Categoria { Id = int.Parse(ddlProductoCategoria.SelectedValue) }
+                Categoria = new CategoriaNegocio().GetById(int.Parse(ddlProductoCategoria.SelectedValue))
             };
 
             if (IdEntidad != 0)
