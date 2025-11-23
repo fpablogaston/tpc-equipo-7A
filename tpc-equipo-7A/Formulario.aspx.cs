@@ -145,6 +145,7 @@ namespace tpc_equipo_7A
                             txtCodigoPostal.Text = envio.CodigoPostal;
                             txtFechaEnvio.Text = envio.FechaEnvio.ToString("yyyy-MM-dd");
                             txtEstadoEnvio.Text = envio.Estado;
+                            if (envio.FechaEntrega != null) txtFechaEntrega.Text = envio.FechaEntrega.Value.ToString("yyyy-MM-dd");
                             ddlEnvioPedido.SelectedValue = envio.IdPedido.ToString();
                         }
                         break;
@@ -245,18 +246,22 @@ namespace tpc_equipo_7A
         private void GuardarEnvio()
         {
             EnvioNegocio negocio = new EnvioNegocio();
-            Envio envio = new Envio
-            {
-                Id = IdEntidad,
-                DireccionEnvio = txtDireccionEnvio.Text,
-                Ciudad = txtCiudad.Text,
-                Provincia = txtProvincia.Text,
-                CodigoPostal = txtCodigoPostal.Text,
-                FechaEnvio = DateTime.Parse(txtFechaEnvio.Text),
-                FechaEntrega = null,
-                Estado = txtEstadoEnvio.Text,
-                IdPedido = new PedidoNegocio().GetById(int.Parse(ddlProductoCategoria.SelectedValue)).Id,
-            };
+            Envio envio = new Envio();
+
+            envio.Id = IdEntidad;
+            envio.DireccionEnvio = txtDireccionEnvio.Text;
+            envio.Ciudad = txtCiudad.Text;
+            envio.Provincia = txtProvincia.Text;
+            envio.CodigoPostal = txtCodigoPostal.Text;
+            envio.Estado = txtEstadoEnvio.Text;
+            envio.IdPedido = int.Parse(ddlEnvioPedido.SelectedValue);
+            envio.FechaEnvio = DateTime.Parse(txtFechaEnvio.Text);
+            DateTime fechaEntrega;
+            if (DateTime.TryParse(txtFechaEntrega.Text, out fechaEntrega))
+                envio.FechaEntrega = fechaEntrega;
+            else
+                envio.FechaEntrega = null;
+
             if (IdEntidad != 0)
                 negocio.Actualizar(envio);
             else

@@ -182,9 +182,9 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0">Gestión de Envíos</h3>
+                            <asp:Button runat="server" Text="Nuevo Envio" CssClass="btn btn-success" OnClick="btnNuevoEnvio_Click" />
                         </div>
                         <asp:Label ID="lblMensajeEnvio" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
-
                         <asp:GridView ID="gvEnvios" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
                             AutoGenerateColumns="false"
@@ -192,15 +192,17 @@
                             OnRowCommand="gvEnvios_RowCommand">
                             <Columns>
                                 <asp:BoundField DataField="Id" HeaderText="ID" />
-                                <asp:BoundField DataField="IdPedido" HeaderText="ID Pedido" />
                                 <asp:BoundField DataField="DireccionEnvio" HeaderText="Dirección" />
                                 <asp:BoundField DataField="Ciudad" HeaderText="Ciudad" />
+                                <asp:BoundField DataField="Provincia" HeaderText="Provincia" />
                                 <asp:BoundField DataField="Estado" HeaderText="Estado" />
                                 <asp:BoundField DataField="FechaEnvio" HeaderText="Fecha Envío" DataFormatString="{0:d}" />
+                                <asp:BoundField DataField="FechaEntrega" HeaderText="Fecha Entrega" DataFormatString="{0:d}" />
+                                <asp:BoundField DataField="IdPedido" HeaderText="ID Pedido" />                                
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
                                         <asp:Button ID="btnEditarEnvio" runat="server" Text="Editar" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:Button ID="btnEliminarEnvio" runat="server" Text="Eliminar" CssClass="btn btn-sm btn-danger" CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea eliminar este cliente?');" />
+                                        <asp:Button ID="btnEliminarEnvio" runat="server" Text="Eliminar" CssClass="btn btn-sm btn-danger" CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea eliminar este envio?');" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>

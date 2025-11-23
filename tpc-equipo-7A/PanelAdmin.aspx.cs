@@ -18,13 +18,11 @@ namespace tpc_equipo_7A
                 MostrarVista("Inicio");
             }
         }
-
         protected void ddlSelectEntity_SelectedIndexChanged(object sender, EventArgs e)
         {
             string seleccion = ddlSelectEntity.SelectedValue;
             MostrarVista(seleccion);
         }
-
         private void MostrarVista(string vista)
         {
             phInicio.Visible = false;
@@ -67,9 +65,7 @@ namespace tpc_equipo_7A
                     break;
             }
         }
-
         // --- CATEGORÍAS ---
-
         private void BindCategoriasGrid()
         {
             try
@@ -84,12 +80,10 @@ namespace tpc_equipo_7A
                 lblMensajeCategoria.CssClass = "text-danger";
             }
         }
-
         protected void btnNuevaCategoria_Click(object sender, EventArgs e)
         {
             Response.Redirect("Formulario.aspx?entity=Categoria");
         }
-
         protected void gvCategorias_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
@@ -115,10 +109,7 @@ namespace tpc_equipo_7A
                 }
             }
         }
-
-
         // --- PRODUCTOS ---
-
         private void BindProductosGrid()
         {
             try
@@ -133,12 +124,10 @@ namespace tpc_equipo_7A
                 lblMensajeProducto.CssClass = "text-danger";
             }
         }
-
         protected void btnNuevoProducto_Click(object sender, EventArgs e)
         {
             Response.Redirect("Formulario.aspx?entity=Producto");
         }
-
         protected void gvProductos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
@@ -164,9 +153,7 @@ namespace tpc_equipo_7A
                 }
             }
         }
-
         // --- CLIENTES ---
-
         private void BindClientesGrid()
         {
             try
@@ -181,12 +168,10 @@ namespace tpc_equipo_7A
                 lblMensajeCliente.CssClass = "text-danger";
             }
         }
-
         protected void btnNuevoCliente_Click(object sender, EventArgs e)
         {
             Response.Redirect("Formulario.aspx?entity=Cliente");
         }
-
         protected void gvClientes_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
@@ -212,9 +197,7 @@ namespace tpc_equipo_7A
                 }
             }
         }
-
         // --- PEDIDOS ---
-
         private void BindPedidosGrid()
         {
             try
@@ -229,7 +212,6 @@ namespace tpc_equipo_7A
                 lblMensajePedido.CssClass = "text-danger";
             }
         }
-
         protected void gvPedidos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
@@ -238,9 +220,7 @@ namespace tpc_equipo_7A
                 Response.Redirect($"Formulario.aspx?entity=Pedido&id={id}");
             }
         }
-
         // --- PAGOS ---
-
         private void BindPagosGrid()
         {
             try
@@ -255,13 +235,10 @@ namespace tpc_equipo_7A
                 lblMensajePago.CssClass = "text-danger";
             }
         }
-
         protected void gvPagos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
         }
-
         // --- ENVIOS ---
-
         private void BindEnviosGrid()
         {
             try
@@ -276,7 +253,10 @@ namespace tpc_equipo_7A
                 lblMensajeEnvio.CssClass = "text-danger";
             }
         }
-
+        protected void btnNuevoEnvio_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Formulario.aspx?entity=Envio");
+        }
         protected void gvEnvios_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
@@ -291,14 +271,14 @@ namespace tpc_equipo_7A
                 {
                     EnvioNegocio negocio = new EnvioNegocio();
                     negocio.Eliminar(id);
-                    lblMensajeCliente.Text = "Envio eliminado.";
-                    lblMensajeCliente.CssClass = "text-success";
-                    BindClientesGrid();
+                    lblMensajeEnvio.Text = "Envio eliminado.";
+                    lblMensajeEnvio.CssClass = "text-success";
+                    BindEnviosGrid();
                 }
                 catch (Exception ex)
                 {
-                    lblMensajeCliente.Text = "Error al eliminar cliente: " + ex.Message;
-                    lblMensajeCliente.CssClass = "text-danger";
+                    lblMensajeEnvio.Text = "Error al eliminar envio: " + ex.Message;
+                    lblMensajeEnvio.CssClass = "text-danger";
                 }
             }
         }
