@@ -267,7 +267,7 @@ namespace tpc_equipo_7A
                 Email = txtClienteEmail.Text,
                 Telefono = txtClienteTelefono.Text,
                 Direccion = "",
-                Password = "",
+                //Password = "",
                 FechaRegistro = (IdEntidad == 0) ? DateTime.Now : new ClienteNegocio().GetById(IdEntidad).FechaRegistro,
             };
 

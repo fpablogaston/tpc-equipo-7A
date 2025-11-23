@@ -33,8 +33,7 @@ namespace tpc_equipo_7A
                 nuevo.Telefono = txtTelefono.Text;
                 nuevo.Direccion = txtDireccion.Text;
                 nuevo.Usuario = txtUsuario.Text;
-                nuevo.Password = txtPassword.Text;
-
+                //nuevo.Password = txtPassword.Text;
                 ClienteNegocio negocio = new ClienteNegocio();
                 negocio.Agregar(nuevo);
 

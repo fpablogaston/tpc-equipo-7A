@@ -58,7 +58,7 @@
                                 </asp:PlaceHolder>
 
                                 <asp:PlaceHolder ID="phLogout" runat="server">
-                                    <asp:LinkButton ID="btnLogout" runat="server" CssClass="btn btn-danger btn-sm ms-2"
+                                    <asp:LinkButton ID="btnLogout" runat="server" CssClass="btn btn-danger"
                                                     OnClick="btnLogout_Click">Cerrar sesión</asp:LinkButton>
                                 </asp:PlaceHolder>
 
@@ -76,7 +76,7 @@
                             </a>
 
                                  <asp:PlaceHolder ID="phUser" runat="server" Visible="false">
-                                    <div class="user-badge">
+                                    <div class="badge badge-pill badge-dark">
                                         Hola, <asp:Label ID="lblUser" runat="server" />
                                     </div>
                                 </asp:PlaceHolder>

@@ -16,10 +16,8 @@ namespace negocio
             try
             {
                 Datos.SetearProcedimiento("CrearUsuarioYCliente");
-
                 Datos.SetearParametro("@Username", cliente.Usuario);
-                Datos.SetearParametro("@PasswordHash", cliente.Password);
-
+                //Datos.SetearParametro("@PasswordHash", cliente.Password);
                 Datos.SetearParametro("@Email", cliente.Email);
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);
@@ -44,14 +42,14 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono, Direccion = @Direccion, Contraseña = @Contraseña, FechaRegistro = @FechaRegistro WHERE Id = @Id");
+                Datos.SetQuery("UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono, Direccion = @Direccion, FechaRegistro = @FechaRegistro WHERE Id = @Id");
                 Datos.SetearParametro("@Id", cliente.Id);
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);
                 Datos.SetearParametro("@Email", cliente.Email);
                 Datos.SetearParametro("@Telefono", cliente.Telefono);
                 Datos.SetearParametro("@Direccion", cliente.Direccion);
-                Datos.SetearParametro("@Contraseña", cliente.Password);
+                //Datos.SetearParametro("@Contraseña", cliente.Password);
                 Datos.SetearParametro("@FechaRegistro", cliente.FechaRegistro);
                 Datos.EjecutarAccion();
             }
@@ -87,7 +85,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Apellido, Email, Telefono, Direccion, Contraseña, FechaRegistro from Clientes");
+                Datos.SetQuery("Select Id, Nombre, Apellido, Email, Telefono, Direccion, FechaRegistro from Clientes");
                 Datos.EjecutarLectura();
 
                 while (Datos.Reader.Read())
@@ -99,7 +97,7 @@ namespace negocio
                     aux.Email = (string)Datos.Reader["Email"];
                     aux.Telefono = (string)Datos.Reader["Telefono"];
                     aux.Direccion = (string)Datos.Reader["Direccion"];
-                    aux.Password = (string)Datos.Reader["Contraseña"];
+                    //aux.Password = (string)Datos.Reader["Contraseña"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
                     Lista.Add(aux);
                 }
@@ -122,7 +120,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Apellido, Email, Telefono, Direccion, Contraseña, FechaRegistro from Clientes where Id = @Id");
+                Datos.SetQuery("Select Id, Nombre, Apellido, Email, Telefono, Direccion, FechaRegistro from Clientes where Id = @Id");
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarLectura();
 
@@ -134,7 +132,7 @@ namespace negocio
                     aux.Email = (string)Datos.Reader["Email"];
                     aux.Telefono = (string)Datos.Reader["Telefono"];
                     aux.Direccion = (string)Datos.Reader["Direccion"];
-                    aux.Password = (string)Datos.Reader["Contraseña"];
+                    //aux.Password = (string)Datos.Reader["Contraseña"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
                 }
                 return aux;
@@ -176,7 +174,6 @@ namespace negocio
                     cliente.Id = (int)datos.Reader["Id"];
                     cliente.IdUsuario = (int)datos.Reader["IdUsuario"];
                     cliente.Usuario = (string)datos.Reader["Username"];
-
                     cliente.Nombre = (string)datos.Reader["Nombre"];
                     cliente.Apellido = (string)datos.Reader["Apellido"];
                     cliente.Email = (string)datos.Reader["Email"];
@@ -193,8 +190,5 @@ namespace negocio
                 datos.CerrarConexion();
             }
         }
-
-
-
     }
 }

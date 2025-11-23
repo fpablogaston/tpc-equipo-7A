@@ -144,10 +144,11 @@ VALUES
 ('Hogar', 'Artículos para el hogar y decoración');
 GO
 
-INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, Direccion, FechaRegistro)
+INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, Direccion, FechaRegistro, IdUsuario)
 VALUES
-('Juan', 'Pérez', 'juanperez@email.com', '1111111111', 'Av. Siempre Viva 742', GETDATE()),
-('María', 'Gómez', 'maria@email.com', '2222222222', 'Calle Falsa 123', GETDATE());
+('Juan', 'Pérez', 'juanperez@email.com', '1111111111', 'Av. Siempre Viva 742', GETDATE(),4),
+('María', 'Gómez', 'maria@email.com', '2222222222', 'Calle Falsa 123', GETDATE(), 2),
+('admin', 'istrador', 'admin@admin.com', '1111-2222', 'admin 123', '01/01/1990',1)
 GO
 
 INSERT INTO Usuarios (Username, PasswordHash, IdRol)
@@ -252,3 +253,8 @@ BEGIN
 END;
 GO
 
+alter table Productos
+alter column Descripcion nvarchar(500) null
+
+alter table Productos
+alter column ImagenUrl nvarchar(500) null
