@@ -13,50 +13,67 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+            // Validaciones de seguridad de flujo
+            if (Session["carrito"] == null) Response.Redirect("Default.aspx");
+            if (Session["cliente"] == null) Response.Redirect("Login.aspx");
+            if (Session["envio"] == null) Response.Redirect("Envios.aspx");
+
             if (!IsPostBack)
             {
-                PagoNegocio negocio = new PagoNegocio();
-                repMetodos.DataSource = negocio.ListarMetodos();
-                repMetodos.DataBind();
+                CargarMetodosPago();
+                MostrarTotal();
             }
         }
-
+        private void CargarMetodosPago()
+        {
+            PagoNegocio negocio = new PagoNegocio();
+            repMetodos.DataSource = negocio.ListarMetodos();
+            repMetodos.DataBind();
+        }
+        private void MostrarTotal()
+        {
+            Carrito carrito = (Carrito)Session["carrito"];
+            if (carrito != null)
+            {
+                lblTotalPagar.Text = carrito.Total().ToString("C");
+            }
+        }
         protected void btnContinuarPago_Click(object sender, EventArgs e)
         {
-            string metodoElegido = Request.Form["metodoPago"];
-
-            if (string.IsNullOrEmpty(metodoElegido))
+            string metodoElegidoId = Request.Form["metodoPago"];
+            if (string.IsNullOrEmpty(metodoElegidoId))
             {
-                lblError.Text = "Debe elegir metodo de pago";
+                lblError.Text = "⚠️ Por favor, seleccione un método de pago para continuar.";
                 lblError.Visible = true;
                 return;
             }
-
-            MetodoPago metodo = new MetodoPago
+            try
             {
-                Id = int.Parse(metodoElegido),
-                Nombre = ObtenerElegido(int.Parse(metodoElegido))
-            };
+                int idMetodo = int.Parse(metodoElegidoId);
+                Carrito carrito = (Carrito)Session["carrito"];
 
-            Pago pago = new Pago
+                Pago pago = new Pago
+                {
+                    MetodoPago = new MetodoPago { Id = idMetodo, Nombre = ObtenerNombreMetodo(idMetodo) },
+                    Estado = new EstadoPago { Nombre = "Pendiente" }, // Estado inicial por defecto
+                    Monto = carrito.Total(),
+                    FechaPago = DateTime.Now
+                };
+                Session["pago"] = pago;
+                Response.Redirect("ConfirmarCompra.aspx");
+            }
+            catch (Exception ex)
             {
-                MetodoPago = metodo,
-                Estado = new EstadoPago { Nombre = "Pendiente" },
-                FechaPago = DateTime.Now
-            };
-
-            Session["pago"] = pago;
-
-            Response.Redirect("ConfirmarCompra.aspx");
+                lblError.Text = "Error al procesar el pago: " + ex.Message;
+                lblError.Visible = true;
+            }
         }
-
-        private string ObtenerElegido(int idMetodo)
+        private string ObtenerNombreMetodo(int idMetodo)
         {
             PagoNegocio negocio = new PagoNegocio();
             var metodos = negocio.ListarMetodos();
-            return metodos.Find(x => x.Id == idMetodo)?.Nombre;
+            var metodo = metodos.Find(x => x.Id == idMetodo);
+            return metodo != null ? metodo.Nombre : "Desconocido";
         }
-
     }
 }

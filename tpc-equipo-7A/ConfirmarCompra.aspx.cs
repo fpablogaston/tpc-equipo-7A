@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using dominio;
+using negocio;
 
 namespace tpc_equipo_7A
 {
@@ -11,7 +13,71 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Validaciones de Seguridad
+            if (Session["cliente"] == null) Response.Redirect("Login.aspx");
+            if (Session["carrito"] == null) Response.Redirect("Default.aspx");
+            if (Session["envio"] == null) Response.Redirect("Envios.aspx");
+            if (Session["pago"] == null) Response.Redirect("Pagos.aspx");
 
+            if (!IsPostBack)
+            {
+                CargarResumen();
+            }
+        }
+
+        private void CargarResumen()
+        {
+            Carrito carrito = (Carrito)Session["carrito"];
+            Envio envio = (Envio)Session["envio"];
+            Pago pago = (Pago)Session["pago"];
+
+            // Cargar Grilla
+            gvProductos.DataSource = carrito.ListaCarrito;
+            gvProductos.DataBind();
+            lblTotal.Text = carrito.Total().ToString("C");
+
+            // Cargar Datos Envio
+            lblDireccion.Text = envio.DireccionEnvio;
+            lblCiudad.Text = envio.Ciudad;
+
+            // Cargar Datos Pago
+            lblMetodoPago.Text = pago.MetodoPago.Nombre;
+        }
+
+        protected void btnConfirmar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Cliente cliente = (Cliente)Session["cliente"];
+                Carrito carrito = (Carrito)Session["carrito"];
+                Envio envio = (Envio)Session["envio"];
+                Pago pago = (Pago)Session["pago"];
+
+                PedidoNegocio negocio = new PedidoNegocio();
+                negocio.GuardarPedidoCompleto(cliente, carrito, envio, pago);
+
+                // Limpiar Sesión de Compra (excepto Login)
+                Session["carrito"] = null;
+                Session["envio"] = null;
+                Session["pago"] = null;
+
+                // Actualizar master
+                if (this.Master is Site master)
+                {
+                    master.UpdateTotals();
+                }
+
+                // Redirigir a pantalla final (Exito)
+                // Podrías crear una pagina "CompraExitosa.aspx" o reusar Default con un mensaje
+                Response.Write("<script>alert('¡Compra realizada con éxito!');window.location.href='Default.aspx';</script>");
+            }
+            catch (Exception ex)
+            {
+                Session.Add("error", ex.ToString());
+                // Response.Redirect("Error.aspx"); 
+                // O mostrar un label de error
+                Response.Write("<script>alert('Hubo un error al procesar el pedido.');</script>");
+            }
         }
     }
 }

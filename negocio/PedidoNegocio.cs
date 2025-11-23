@@ -1,9 +1,10 @@
-﻿using System;
+﻿using dominio;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using dominio;
 
 namespace negocio
 {
@@ -72,8 +73,6 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
-
-
         ///agrego esto a pedidonegocio
         public int Agregar(Pedido pedido)
         {
@@ -93,6 +92,78 @@ namespace negocio
             finally
             {
                 data.CerrarConexion();
+            }
+        }
+        public void GuardarPedidoCompleto(Cliente cliente, Carrito carrito, Envio envio, Pago pago)
+        {
+            SqlConnection conexion = new SqlConnection("server=.\\SQLEXPRESS; database=Ecommerce; integrated security=true");
+            conexion.Open();
+            SqlTransaction transaccion = conexion.BeginTransaction();
+
+            try
+            {
+                // 1. INSERTAR PEDIDO (Inicialmente sin Pago ni Envio)
+                SqlCommand cmdPedido = new SqlCommand("INSERT INTO Pedidos (FechaPedido, Estado, Total, IdCliente) OUTPUT INSERTED.Id VALUES (@Fecha, @Estado, @Total, @IdCliente)", conexion, transaccion);
+                cmdPedido.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                cmdPedido.Parameters.AddWithValue("@Estado", "Pendiente");
+                cmdPedido.Parameters.AddWithValue("@Total", carrito.Total());
+                cmdPedido.Parameters.AddWithValue("@IdCliente", cliente.Id);
+
+                int idPedido = (int)cmdPedido.ExecuteScalar();
+
+                // 2. INSERTAR DETALLES
+                foreach (var item in carrito.ListaCarrito)
+                {
+                    SqlCommand cmdDetalle = new SqlCommand("INSERT INTO DetallesPedido (IdPedido, IdProducto, Cantidad, PrecioUnitario, Subtotal) VALUES (@IdPedido, @IdProducto, @Cantidad, @Precio, @Subtotal)", conexion, transaccion);
+                    cmdDetalle.Parameters.AddWithValue("@IdPedido", idPedido);
+                    cmdDetalle.Parameters.AddWithValue("@IdProducto", item.Producto.Id);
+                    cmdDetalle.Parameters.AddWithValue("@Cantidad", item.Cantidad);
+                    cmdDetalle.Parameters.AddWithValue("@Precio", item.Producto.Precio);
+                    cmdDetalle.Parameters.AddWithValue("@Subtotal", item.Subtotal);
+                    cmdDetalle.ExecuteNonQuery();
+
+                    // Opcional: Restar Stock
+                    SqlCommand cmdStock = new SqlCommand("UPDATE Productos SET Stock = Stock - @Cant WHERE Id = @IdProd", conexion, transaccion);
+                    cmdStock.Parameters.AddWithValue("@Cant", item.Cantidad);
+                    cmdStock.Parameters.AddWithValue("@IdProd", item.Producto.Id);
+                    cmdStock.ExecuteNonQuery();
+                }
+
+                // 3. INSERTAR ENVIO
+                SqlCommand cmdEnvio = new SqlCommand("INSERT INTO Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, Estado, IdPedido) OUTPUT INSERTED.Id VALUES (@Dir, @Ciudad, 'Provincia', '0000', @Fecha, 'Pendiente', @IdPedido)", conexion, transaccion);
+                cmdEnvio.Parameters.AddWithValue("@Dir", envio.DireccionEnvio);
+                cmdEnvio.Parameters.AddWithValue("@Ciudad", envio.Ciudad); // Usando Ciudad como localidad
+                cmdEnvio.Parameters.AddWithValue("@Fecha", DateTime.Now.AddDays(1)); // Fecha estimada mañana
+                cmdEnvio.Parameters.AddWithValue("@IdPedido", idPedido);
+
+                int idEnvio = (int)cmdEnvio.ExecuteScalar();
+
+                // 4. INSERTAR PAGO
+                SqlCommand cmdPago = new SqlCommand("INSERT INTO Pagos (MetodoPago, Estado, Monto, FechaPago, IdPedido) OUTPUT INSERTED.Id VALUES (@Metodo, 'Aprobado', @Monto, @Fecha, @IdPedido)", conexion, transaccion);
+                cmdPago.Parameters.AddWithValue("@Metodo", pago.MetodoPago.Nombre); // Asumiendo que viene el nombre o ID
+                cmdPago.Parameters.AddWithValue("@Monto", carrito.Total());
+                cmdPago.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                cmdPago.Parameters.AddWithValue("@IdPedido", idPedido);
+
+                int idPago = (int)cmdPago.ExecuteScalar();
+
+                // 5. ACTUALIZAR PEDIDO (Cerrar el círculo)
+                SqlCommand cmdUpdate = new SqlCommand("UPDATE Pedidos SET IdEnvio = @IdEnvio, IdPago = @IdPago WHERE Id = @IdPedido", conexion, transaccion);
+                cmdUpdate.Parameters.AddWithValue("@IdEnvio", idEnvio);
+                cmdUpdate.Parameters.AddWithValue("@IdPago", idPago);
+                cmdUpdate.Parameters.AddWithValue("@IdPedido", idPedido);
+                cmdUpdate.ExecuteNonQuery();
+
+                transaccion.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaccion.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                conexion.Close();
             }
         }
     }

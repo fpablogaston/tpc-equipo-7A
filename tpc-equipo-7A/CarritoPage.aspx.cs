@@ -17,7 +17,6 @@ namespace tpc_equipo_7A
             if (!IsPostBack)
                 CargarCarrito();
         }
-
         private void CargarCarrito()
         {
             Carrito carrito = Session["carrito"] as Carrito;
@@ -31,7 +30,6 @@ namespace tpc_equipo_7A
                 lblTotal.Text = "$" + carrito.Total().ToString("N2");
             }
         }
-
         ///agrego esto tambien a carritopage.aspx.cs
         protected void btnContinuar_Click(object sender, EventArgs e)
         {

@@ -1,11 +1,6 @@
 ﻿using dominio;
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace tpc_equipo_7A
 {
@@ -13,34 +8,57 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Usuario"] == null)
+            if (Session["carrito"] == null)
             {
-                Response.Redirect("Login.aspx?msg=login_required");
+                Response.Redirect("Default.aspx");
+            }
+            if (Session["cliente"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
+            if (!IsPostBack)
+            {
+                if (Session["envio"] != null)
+                {
+                    Envio envioGuardado = (Envio)Session["envio"];
+                    txtDireccion.Text = envioGuardado.DireccionEnvio;
+                    txtCiudad.Text = envioGuardado.Ciudad;
+                    txtProvincia.Text = envioGuardado.Provincia;
+                    txtCodigoPostal.Text = envioGuardado.CodigoPostal;
+                }
+                else
+                {
+                    Cliente cliente = (Cliente)Session["cliente"];
+                    if (!string.IsNullOrEmpty(cliente.Direccion))
+                    {
+                        txtDireccion.Text = cliente.Direccion;
+                    }
+                }
             }
         }
-
         protected void btnContinuar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtDireccion.Text) ||
-                string.IsNullOrWhiteSpace(txtLocalidad.Text))
+            if (!Page.IsValid) return;
+
+            try
             {
-                lblError.Text = "Debe completar dirección y localidad.";
-                lblError.Visible = true;
-                return;
+                Envio envio = new Envio
+                {
+                    DireccionEnvio = txtDireccion.Text,
+                    Ciudad = txtCiudad.Text,
+                    Provincia = txtProvincia.Text,
+                    CodigoPostal = txtCodigoPostal.Text,
+                    Estado = "Pendiente", // Estado inicial por defecto
+                    FechaEnvio = DateTime.Now // Fecha de creación del registro
+                };
+                Session["envio"] = envio;
+                Response.Redirect("Pagos.aspx");
             }
-
-            Envio envio = new Envio
+            catch (Exception ex)
             {
-                DireccionEnvio = txtDireccion.Text,
-                Ciudad = txtLocalidad.Text,
-                Estado = "Pendiente",
-                FechaEnvio = DateTime.Now,
-                //InfoAdicional = txtInfoAdicional.Text
-            };
-
-            Session["envio"] = envio;
-
-            Response.Redirect("Pagos.aspx");
+                Session["error"] = "Error al procesar envío: " + ex.Message;
+            }
         }
     }
 }

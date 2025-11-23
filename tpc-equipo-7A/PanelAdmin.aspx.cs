@@ -13,6 +13,11 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["cliente"] == null || ((Cliente)Session["cliente"]).IdUsuario != 1)
+            {
+                Response.Redirect("Default.aspx");
+            }
+
             if (!IsPostBack)
             {
                 MostrarVista("Inicio");

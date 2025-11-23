@@ -3,7 +3,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-
     <div class="modal fade show" tabindex="-1" style="display: block;">
         <div class="modal-dialog" style="margin-top: 150px !important;">
             <div class="modal-content">
@@ -12,29 +11,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
                     <asp:Repeater ID="repCarrito" runat="server">
                         <ItemTemplate>
                             <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-
                                 <div>
                                     <strong><%# Eval("Producto.Nombre") %></strong><br />
                                     <span>Precio: <%# "$" + Eval("Producto.Precio", "{0:N2}") %></span><br />
                                     <span>Subtotal: <%# "$" + Eval("Subtotal", "{0:N2}") %></span>
                                 </div>
-
-
                             </div>
                         </ItemTemplate>
                     </asp:Repeater>
-
                     <hr />
-
                     <h5>Total:
                         <asp:Label ID="lblTotal" runat="server" Text="$0"></asp:Label></h5>
-
-
-<%--                    <p>Producto</p>
+                    <%--                    <p>Producto</p>
                     <img src="https://www.bigbuy.com.py/imagenes/sin_imagen.jpg" class="card-img-top" style="max-height: 200px; object-fit: contain;">
                     <div class="d-flex align-items-center gap-2">
                         <button type="button" class="btn btn-outline-secondary">−</button>
