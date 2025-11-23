@@ -65,4 +65,26 @@
             </asp:Repeater>
         </div>
     </div>
+
+    <%-- Toast --%>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toastLogin" class="toast align-items-center text-bg-success border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                Sesión iniciada
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function mostrarToastLogin() {
+        const element = document.getElementById('toastLogin');
+        const toast = new bootstrap.Toast(element);
+        toast.show();
+    }
+</script>
+
 </asp:Content>

@@ -1,6 +1,8 @@
 ﻿using dominio;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace negocio
 {
@@ -13,14 +15,17 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Insert Into Clientes (Nombre, Apellido, Email, Telefono, Direccion, Contraseña, FechaRegistro) Values (@Nombre, @Apellido, @Email, @Telefono, @Direccion, @Contraseña, @FechaRegistro); SELECT SCOPE_IDENTITY();");
+                Datos.SetearProcedimiento("CrearUsuarioYCliente");
+
+                Datos.SetearParametro("@Username", cliente.Usuario);
+                Datos.SetearParametro("@PasswordHash", cliente.Password);
+
+                Datos.SetearParametro("@Email", cliente.Email);
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);
-                Datos.SetearParametro("@Email", cliente.Email);
                 Datos.SetearParametro("@Telefono", cliente.Telefono);
                 Datos.SetearParametro("@Direccion", cliente.Direccion);
-                Datos.SetearParametro("@Contraseña", cliente.Contraseña);
-                Datos.SetearParametro("@FechaRegistro", cliente.FechaRegistro);
+
                 return idCliente = Datos.EjecutarScalar();
             }
             catch (Exception ex)
@@ -46,7 +51,7 @@ namespace negocio
                 Datos.SetearParametro("@Email", cliente.Email);
                 Datos.SetearParametro("@Telefono", cliente.Telefono);
                 Datos.SetearParametro("@Direccion", cliente.Direccion);
-                Datos.SetearParametro("@Contraseña", cliente.Contraseña);
+                Datos.SetearParametro("@Contraseña", cliente.Password);
                 Datos.SetearParametro("@FechaRegistro", cliente.FechaRegistro);
                 Datos.EjecutarAccion();
             }
@@ -94,7 +99,7 @@ namespace negocio
                     aux.Email = (string)Datos.Reader["Email"];
                     aux.Telefono = (string)Datos.Reader["Telefono"];
                     aux.Direccion = (string)Datos.Reader["Direccion"];
-                    aux.Contraseña = (string)Datos.Reader["Contraseña"];
+                    aux.Password = (string)Datos.Reader["Contraseña"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
                     Lista.Add(aux);
                 }
@@ -129,7 +134,7 @@ namespace negocio
                     aux.Email = (string)Datos.Reader["Email"];
                     aux.Telefono = (string)Datos.Reader["Telefono"];
                     aux.Direccion = (string)Datos.Reader["Direccion"];
-                    aux.Contraseña = (string)Datos.Reader["Contraseña"];
+                    aux.Password = (string)Datos.Reader["Contraseña"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
                 }
                 return aux;
@@ -144,5 +149,52 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+
+        public Cliente Login(string usuario, string password)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetQuery(
+                    "SELECT c.Id, c.Nombre, c.Apellido, c.Email, c.Telefono, c.Direccion, " +
+                    "u.Id AS IdUsuario, u.Username " +
+                    "FROM Clientes c " +
+                    "INNER JOIN Usuarios u ON u.Id = c.IdUsuario " +
+                    "WHERE u.Username = @Usuario AND u.PasswordHash = @Password"
+                );
+
+                datos.SetearParametro("@Usuario", usuario);
+                datos.SetearParametro("@Password", password);
+
+                datos.EjecutarLectura();
+
+                if (datos.Reader.Read())
+                {
+                    Cliente cliente = new Cliente();
+
+                    cliente.Id = (int)datos.Reader["Id"];
+                    cliente.IdUsuario = (int)datos.Reader["IdUsuario"];
+                    cliente.Usuario = (string)datos.Reader["Username"];
+
+                    cliente.Nombre = (string)datos.Reader["Nombre"];
+                    cliente.Apellido = (string)datos.Reader["Apellido"];
+                    cliente.Email = (string)datos.Reader["Email"];
+                    cliente.Telefono = (string)datos.Reader["Telefono"];
+                    cliente.Direccion = (string)datos.Reader["Direccion"];
+
+                    return cliente;
+                }
+
+                return null;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+
+
     }
 }

@@ -15,6 +15,19 @@ namespace tpc_equipo_7A
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            if (Session["loginOK"] != null)
+            {
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    this.GetType(),
+                    "toastLogin",
+                    "setTimeout(mostrarToastLogin, 300);",
+                    true);
+
+                Session.Remove("loginOK");
+            }
+
             if (!IsPostBack)
             {
                 ProductoNegocio negocio = new ProductoNegocio();

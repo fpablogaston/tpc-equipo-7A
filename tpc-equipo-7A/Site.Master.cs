@@ -18,9 +18,40 @@ namespace tpc_equipo_7A
 
             try
             {
+                Cliente cliente = Session["cliente"] as Cliente;
+
+                if (cliente == null)
+                {
+                    phLogin.Visible = true;
+                    phUser.Visible = false;
+                    phAdmin.Visible = false;
+                    phLogout.Visible = false;
+                }
+                else
+                {
+                    phUser.Visible = true;
+                    phLogout.Visible = true;
+                    phLogin.Visible = false;
+                    phAdmin.Visible = false;
+
+                    if (cliente.IdUsuario == 1) // Admin
+                    {
+                        phAdmin.Visible = true;
+                        phLogout.Visible = true;
+                        phLogin.Visible = false;
+                        lblUser.Text = "Administrador";
+                    }
+                    else
+                    {
+                        phAdmin.Visible = false;
+                        lblUser.Text = cliente.Nombre;
+                    }
+                }
+
+
                 if (!IsPostBack)
                 {
-
+                    
                     // cargar categorías
                     ddlCategorias.DataSource = categorias.Listar();
                     ddlCategorias.DataTextField = "Nombre";
@@ -37,6 +68,13 @@ namespace tpc_equipo_7A
                 Console.WriteLine(ex);
             }
         }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session["cliente"] = null;
+            Response.Redirect("Default.aspx"); 
+        }
+
 
         public void LoadCarrito()
         {
