@@ -9,7 +9,71 @@ namespace negocio
 {
     public class PagoNegocio
     {
-        private List<Pago> Pagos = new List<Pago>();
+        public List<Pago> Listar()
+        {
+            List<Pago> lista = new List<Pago>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetQuery("Select Id, MetodoPago, Estado, Monto, FechaPago, IdPedido From Pagos");
+                datos.EjecutarLectura();
+                while (datos.Reader.Read())
+                {
+                    Pago pago = new Pago
+                    {
+                        Id = (int)datos.Reader["Id"],
+                        MetodoPago = new MetodoPago
+                        {
+                            Id = 0,
+                            Nombre = datos.Reader["MetodoPago"].ToString()
+                        },
+                        Estado = new EstadoPago
+                        {
+                            Id = 0,
+                            Nombre = datos.Reader["Estado"].ToString()
+                        },
+                        Monto = (decimal)datos.Reader["Monto"],
+                        FechaPago = (DateTime)datos.Reader["FechaPago"],
+                        IdPedido = (int)datos.Reader["IdPedido"]
+                    };
+                    lista.Add(pago);
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+        public void Actualizar(Pago pago)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetQuery("Update Pagos set MetodoPago = @Metodo, Estado = @Estado, Monto = @Monto, FechaPago = @Fecha, IdPedido = @Pedido Where Id = @Id");
+                datos.SetearParametro("@Id", pago.Id);
+                datos.SetearParametro("@Metodo", pago.MetodoPago.Nombre);
+                datos.SetearParametro("@Estado", pago.Estado.Nombre);
+                datos.SetearParametro("@Monto", pago.Monto);
+                datos.SetearParametro("@Fecha", pago.FechaPago);
+                datos.SetearParametro("@Pedido", pago.IdPedido);
+                datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
         public Pago GetById(int id)
         {
             Pago pago = new Pago();
@@ -57,8 +121,6 @@ namespace negocio
                 datos.CerrarConexion();
             }
         }
-
-        ///cree listar metodo de pago
         public List<MetodoPago> ListarMetodos()
         {
             return new List<MetodoPago>
@@ -68,40 +130,23 @@ namespace negocio
                 new MetodoPago { Id = 3, Nombre = "Transferencia" }
             };
         }
-
-        public void ProcesarPago(Pago pago)
+        public void Agregar(Pago pago)
         {
-            // Falta crear logica para procesar el pago
-        }
-
-        public void CambiarEstado(int id, string nuevoEstado)
-        {
-            // Falta crear logica para cambiar el estado del pago
-        }
-        public List<Pago> Listar()
-        {
-            return Pagos;
-        }
-
-        ///agrego esto a pagonegocio
-            public void Agregar(Pago pago)
+            AccesoDatos datos = new AccesoDatos();
+            try
             {
-                AccesoDatos datos = new AccesoDatos();
-                try
-                {
-                    datos.SetQuery("INSERT INTO Pagos (MetodoPago, Estado, Monto, FechaPago, IdPedido) " +
-                                   "VALUES (@Metodo, @Estado, @Monto, @Fecha, @Pedido)");
+                datos.SetQuery("INSERT INTO Pagos (MetodoPago, Estado, Monto, FechaPago, IdPedido) " +
+                                "VALUES (@Metodo, @Estado, @Monto, @Fecha, @Pedido)");
 
-                    datos.SetearParametro("@Metodo", pago.MetodoPago.Nombre);
-                    datos.SetearParametro("@Estado", pago.Estado.Nombre);
-                    datos.SetearParametro("@Monto", pago.Monto);
-                    datos.SetearParametro("@Fecha", pago.FechaPago);
-                    datos.SetearParametro("@Pedido", pago.IdPedido);
+                datos.SetearParametro("@Metodo", pago.MetodoPago.Nombre);
+                datos.SetearParametro("@Estado", pago.Estado.Nombre);
+                datos.SetearParametro("@Monto", pago.Monto);
+                datos.SetearParametro("@Fecha", pago.FechaPago);
+                datos.SetearParametro("@Pedido", pago.IdPedido);
 
-                    datos.EjecutarAccion();
-                }
-                finally { datos.CerrarConexion(); }
+                datos.EjecutarAccion();
             }
+            finally { datos.CerrarConexion(); }
         }
-
     }
+}

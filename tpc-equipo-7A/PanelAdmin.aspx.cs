@@ -235,8 +235,34 @@ namespace tpc_equipo_7A
                 lblMensajePago.CssClass = "text-danger";
             }
         }
+        protected void btnNuevoPago_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Formulario.aspx?entity=Pago");
+        }
         protected void gvPagos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            int id = Convert.ToInt32(e.CommandArgument);
+
+            if (e.CommandName == "Editar")
+            {
+                Response.Redirect($"Formulario.aspx?entity=Pago&id={id}");
+            }
+            else if (e.CommandName == "Eliminar")
+            {
+                try
+                {
+                    EnvioNegocio negocio = new EnvioNegocio();
+                    negocio.Eliminar(id);
+                    lblMensajePago.Text = "Pago eliminado.";
+                    lblMensajePago.CssClass = "text-success";
+                    BindPagosGrid();
+                }
+                catch (Exception ex)
+                {
+                    lblMensajeEnvio.Text = "Error al eliminar pago: " + ex.Message;
+                    lblMensajeEnvio.CssClass = "text-danger";
+                }
+            }
         }
         // --- ENVIOS ---
         private void BindEnviosGrid()

@@ -45,6 +45,9 @@ namespace tpc_equipo_7A
                 if (Entidad == "Cliente")
                     txtClienteId.Enabled = false;
 
+                if (Entidad == "Pago")
+                    txtPagoId.Enabled = false;
+
                 if (IdEntidad != 0)
                 {
                     CargarDatos();
@@ -57,7 +60,7 @@ namespace tpc_equipo_7A
             phProducto.Visible = false;
             phCategoria.Visible = false;
             phCliente.Visible = false;
-            phPedido.Visible = false;
+            phPago.Visible = false;
             phEnvio.Visible = false;
 
             switch (Entidad)
@@ -75,9 +78,10 @@ namespace tpc_equipo_7A
                     phCliente.Visible = true;
                     lblFormTitulo.Text = IdEntidad != 0 ? "Modificar Cliente" : "Nuevo Cliente";
                     break;
-                case "Pedido":
-                    phPedido.Visible = true;
-                    lblFormTitulo.Text = "Detalle de Pedido";
+                case "Pago":
+                    phPago.Visible = true;
+                    lblFormTitulo.Text = IdEntidad != 0 ? "Modificar Pago" : "Nuevo Pago";
+                    BindPedidosDropdown();
                     break;
                 case "Envio":
                     phEnvio.Visible = true;
@@ -149,6 +153,20 @@ namespace tpc_equipo_7A
                             ddlEnvioPedido.SelectedValue = envio.IdPedido.ToString();
                         }
                         break;
+
+                    case "Pago":
+                        PagoNegocio negocio = new PagoNegocio();
+                        Pago pago = negocio.GetById(IdEntidad);
+                        if (pago != null)
+                        {
+                            txtPagoId.Text = pago.Id.ToString();
+                            txtMetodoPago.Text = pago.MetodoPago.Nombre;
+                            txtEstadoPago.Text = pago.Estado.Nombre;
+                            txtMonto.Text = pago.Monto.ToString();
+                            txtFechaPago.Text = pago.FechaPago.ToString("yyyy-MM-dd");
+                            ddlPagoPedido.SelectedValue = pago.IdPedido.ToString();
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -156,7 +174,6 @@ namespace tpc_equipo_7A
                 Session.Add("error", ex.ToString());
             }
         }
-
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid) return;
@@ -176,6 +193,9 @@ namespace tpc_equipo_7A
                     case "Envio":
                         GuardarEnvio();
                         break;
+                    case "Pago":
+                        GuardarPago();
+                        break;
                 }
                 Response.Redirect("PanelAdmin.aspx");
             }
@@ -184,7 +204,6 @@ namespace tpc_equipo_7A
                 Session.Add("error", ex.ToString());
             }
         }
-
         private void GuardarProducto()
         {
             ProductoNegocio negocio = new ProductoNegocio();
@@ -204,7 +223,23 @@ namespace tpc_equipo_7A
             else
                 negocio.Agregar(producto);
         }
-
+        private void GuardarPago()
+        {
+            PagoNegocio negocio = new PagoNegocio();
+            Pago pago = new Pago
+            {
+                Id = IdEntidad,
+                MetodoPago = new MetodoPago { Id = 1, Nombre = txtMetodoPago.Text },
+                Estado = new EstadoPago { Id = 1, Nombre = txtEstadoPago.Text },
+                Monto = decimal.Parse(txtMonto.Text),
+                FechaPago = DateTime.Parse(txtFechaPago.Text),
+                IdPedido = int.Parse(ddlPagoPedido.SelectedValue)
+            };
+            if (IdEntidad != 0)
+                negocio.Actualizar(pago);
+            else
+                negocio.Agregar(pago);
+        }
         private void GuardarCategoria()
         {
             CategoriaNegocio negocio = new CategoriaNegocio();
@@ -220,7 +255,6 @@ namespace tpc_equipo_7A
             else
                 negocio.Agregar(categoria);
         }
-
         private void GuardarCliente()
         {
             ClienteNegocio negocio = new ClienteNegocio();
@@ -242,7 +276,6 @@ namespace tpc_equipo_7A
             else
                 negocio.Agregar(cliente);
         }
-
         private void GuardarEnvio()
         {
             EnvioNegocio negocio = new EnvioNegocio();
@@ -267,12 +300,10 @@ namespace tpc_equipo_7A
             else
                 negocio.Agregar(envio);
         }
-
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("PanelAdmin.aspx");
         }
-
         // --- Helpers Producto ---
         private void BindCategoriasDropdown()
         {
@@ -286,11 +317,18 @@ namespace tpc_equipo_7A
         private void BindPedidosDropdown()
         {
             PedidoNegocio negocio = new PedidoNegocio();
+
             ddlEnvioPedido.DataSource = negocio.Listar();
             ddlEnvioPedido.DataTextField = "Id";
             ddlEnvioPedido.DataValueField = "Id";
             ddlEnvioPedido.DataBind();
             ddlEnvioPedido.Items.Insert(0, new ListItem("Seleccionar Pedido", "0"));
+
+            ddlPagoPedido.DataSource = negocio.Listar();
+            ddlPagoPedido.DataTextField = "Id";
+            ddlPagoPedido.DataValueField = "Id";
+            ddlPagoPedido.DataBind();
+            ddlPagoPedido.Items.Insert(0, new ListItem("Seleccionar Pedido", "0"));
         }
         protected void txtProductoImagenUrl_TextChanged(object sender, EventArgs e)
         {

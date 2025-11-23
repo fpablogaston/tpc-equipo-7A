@@ -129,12 +129,60 @@
                     </div>
                 </asp:PlaceHolder>
 
-                <%-- FORMULARIO DE PEDIDO (Placeholder) --%>
-                <asp:PlaceHolder ID="phPedido" runat="server" Visible="false">
-                    <div class="alert alert-info">Formulario para Pedidos aquí.</div>
+                <%-- FORMULARIO DE PAGO --%>
+                <asp:PlaceHolder ID="phPago" runat="server" Visible="false">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="txtPagoId" class="form-label">ID:</label>
+                                <asp:TextBox ID="txtPagoId" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ddlPagoPedido" class="form-label">Pedido Asociado:</label>
+                                <asp:DropDownList runat="server" ID="ddlPagoPedido" CssClass="form-select" />
+                                <asp:RequiredFieldValidator ErrorMessage="El pedido es requerido." ControlToValidate="ddlPagoPedido" ID="rfvPagoPedido" ForeColor="DarkRed" runat="server" InitialValue="0" Display="Dynamic" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtMetodoPago" class="form-label">Método de Pago:</label>
+                                        <asp:TextBox ID="txtMetodoPago" runat="server" CssClass="form-control"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ErrorMessage="El método de pago es requerido." ControlToValidate="txtMetodoPago" ID="rfvMetodoPago" ForeColor="DarkRed" runat="server" InitialValue="0" Display="Dynamic" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtEstadoPago" class="form-label">Estado:</label>
+                                        <asp:TextBox ID="txtEstadoPago" runat="server" CssClass="form-control"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ErrorMessage="El estado es requerido." ControlToValidate="txtEstadoPago" ID="rfvEstadoPago" ForeColor="DarkRed" runat="server" InitialValue="0" Display="Dynamic" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtMonto" class="form-label">Monto:</label>
+                                        <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control" TextMode="Number" step="0.01"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ControlToValidate="txtMonto" ID="rfvMonto" runat="server" ErrorMessage="El monto es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtFechaPago" class="form-label">Fecha de Pago:</label>
+                                        <asp:TextBox ID="txtFechaPago" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </asp:PlaceHolder>
+
+                <%-- FORMULARIO DE PEDIDO --%>
+                <asp:PlaceHolder ID="phPedido" runat="server" Visible="false">
+                    <div class="alert alert-info">Formulario para Pagos aquí.</div>
+                 </asp:PlaceHolder>
                 
-                <%-- FORMULARIO DE ENVIO (Placeholder) --%>
+                <%-- FORMULARIO DE ENVIO --%>
                 <asp:PlaceHolder ID="phEnvio" runat="server" Visible="false">
                     <div class="row justify-content-center">
                         <div class="col-md-8">
