@@ -20,23 +20,23 @@
                                 <asp:TextBox runat="server" ID="txtProductoId" CssClass="form-control" ReadOnly="true" />
                             </div>
                             <div class="mb-3">
-                                <label for="txtProductoNombre" class="form-label">* Nombre:</label>
+                                <label for="txtProductoNombre" class="form-label">Nombre:</label>
                                 <asp:TextBox runat="server" ID="txtProductoNombre" CssClass="form-control" MaxLength="50" />
                                 <asp:RequiredFieldValidator ErrorMessage="El nombre es requerido." ControlToValidate="txtProductoNombre" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                                 <asp:RegularExpressionValidator ErrorMessage="Máximo 50 caracteres permitidos." ControlToValidate="txtProductoNombre" ValidationExpression="^[\s\S]{0,50}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                             </div>
                             <div class="mb-3">
-                                <label for="txtProductoPrecio" class="form-label">* Precio:</label>
+                                <label for="txtProductoPrecio" class="form-label">Precio:</label>
                                 <asp:TextBox runat="server" ID="txtProductoPrecio" CssClass="form-control" TextMode="Number" step="0.01" />
                                 <asp:RequiredFieldValidator ErrorMessage="El precio es requerido." ControlToValidate="txtProductoPrecio" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                             </div>
                             <div class="mb-3">
-                                <label for="txtProductoStock" class="form-label">* Stock:</label>
+                                <label for="txtProductoStock" class="form-label">Stock:</label>
                                 <asp:TextBox runat="server" ID="txtProductoStock" CssClass="form-control" TextMode="Number" />
                                 <asp:RequiredFieldValidator ErrorMessage="El stock es requerido." ControlToValidate="txtProductoStock" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                             </div>
                             <div class="mb-3">
-                                <label for="ddlProductoCategoria" class="form-label">* Categoría:</label>
+                                <label for="ddlProductoCategoria" class="form-label">Categoría:</label>
                                 <asp:DropDownList runat="server" ID="ddlProductoCategoria" CssClass="form-select" />
                                 <asp:RequiredFieldValidator ErrorMessage="La categoría es requerida." ControlToValidate="ddlProductoCategoria" ForeColor="DarkRed" runat="server" InitialValue="0" Display="Dynamic" />
                             </div>
@@ -76,7 +76,7 @@
                                 <asp:TextBox runat="server" ID="txtCategoriaId" CssClass="form-control" ReadOnly="true" />
                             </div>
                             <div class="mb-3">
-                                <label for="txtCategoriaNombre" class="form-label">* Nombre:</label>
+                                <label for="txtCategoriaNombre" class="form-label">Nombre:</label>
                                 <asp:TextBox runat="server" ID="txtCategoriaNombre" CssClass="form-control" MaxLength="50" />
                                 <asp:RequiredFieldValidator ErrorMessage="El nombre es requerido." ControlToValidate="txtCategoriaNombre" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                                 <asp:RegularExpressionValidator ErrorMessage="Máximo 50 caracteres permitidos." ControlToValidate="txtCategoriaNombre" ValidationExpression="^[\s\S]{0,50}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
@@ -136,7 +136,69 @@
                 
                 <%-- FORMULARIO DE ENVIO (Placeholder) --%>
                 <asp:PlaceHolder ID="phEnvio" runat="server" Visible="false">
-                    <div class="alert alert-info">Formulario para Envíos aquí.</div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="txtEnvioId" class="form-label">ID:</label>
+                                <asp:TextBox ID="txtEnvioId" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ddlEnvioPedido" class="form-label">Pedido Asociado:</label>
+                                <asp:DropDownList runat="server" ID="ddlEnvioPedido" CssClass="form-select" />
+                                <asp:RequiredFieldValidator ErrorMessage="El pedido es requerido." ControlToValidate="ddlEnvioPedido" ID="rfvEnvioPedido" ForeColor="DarkRed" runat="server" InitialValue="0" Display="Dynamic" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="txtDireccionEnvio" class="form-label">Dirección de Envío:</label>
+                                <asp:TextBox ID="txtDireccionEnvio" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
+                                <asp:RequiredFieldValidator ControlToValidate="txtDireccionEnvio" ID="rfvDireccionEnvio" runat="server" ErrorMessage="La dirección es requerida" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ErrorMessage="Máximo 100 caracteres permitidos." ControlToValidate="txtDireccionEnvio" ValidationExpression="^[\s\S]{0,100}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtCiudad" class="form-label">Ciudad:</label>
+                                        <asp:TextBox ID="txtCiudad" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ControlToValidate="txtCiudad" ID="rfvCiudad" runat="server" ErrorMessage="La ciudad es requerida" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                        <asp:RegularExpressionValidator ErrorMessage="Máximo 50 caracteres permitidos." ControlToValidate="txtCiudad" ValidationExpression="^[\s\S]{0,50}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtProvincia" class="form-label">Provincia:</label>
+                                        <asp:TextBox ID="txtProvincia" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ControlToValidate="txtProvincia" ID="rfvProvincia" runat="server" ErrorMessage="La provincia es requerida" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                        <asp:RegularExpressionValidator ErrorMessage="Máximo 50 caracteres permitidos." ControlToValidate="txtProvincia" ValidationExpression="^[\s\S]{0,50}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="txtCodigoPostal" class="form-label">Código Postal:</label>
+                                <asp:TextBox ID="txtCodigoPostal" runat="server" CssClass="form-control" MaxLength="10"></asp:TextBox>
+                                <asp:RequiredFieldValidator ControlToValidate="txtCodigoPostal" ID="rfvCodigoPostal" runat="server" ErrorMessage="El código postal es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ErrorMessage="Máximo 10 caracteres permitidos." ControlToValidate="txtCodigoPostal" ValidationExpression="^[\s\S]{0,10}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtFechaEnvio" class="form-label">Fecha de Envío:</label>
+                                        <asp:TextBox ID="txtFechaEnvio" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="txtFechaEntrega" class="form-label">Fecha de Entrega (Estimada/Real):</label>
+                                        <asp:TextBox ID="txtFechaEntrega" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="txtEstadoEnvio" class="form-label">Estado:</label>
+                                <asp:TextBox ID="txtEstadoEnvio" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                                <asp:RequiredFieldValidator ControlToValidate="txtEstadoEnvio" ID="rfvEstadoEnvio" runat="server" ErrorMessage="El estado es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ErrorMessage="Máximo 20 caracteres permitidos." ControlToValidate="txtEstadoEnvio" ValidationExpression="^[\s\S]{0,20}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                            </div>
+                        </div>
+                    </div>
                 </asp:PlaceHolder>
 
                 <%-- Botones de Acción --%>

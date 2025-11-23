@@ -9,14 +9,60 @@ namespace negocio
 {
     public class EnvioNegocio
     {
-        private List<Envio> Envios = new List<Envio>();
-
-        /*
-         * 
-        Id	    DireccionEnvio	        Ciudad	        Provincia	    CodigoPostal	FechaEnvio	                FechaEntrega	Estado	    IdPedido
-        1	    Av. Siempre Viva 742	Buenos Aires	Buenos Aires	1000	        2025-10-26  18:44:43.820	NULL	        Preparando	1
-        2	    Calle Falsa 123	        Córdoba	        Córdoba	        5000	        2025-10-26  18:44:43.820	NULL	        Preparando	2
-        */
+        public int Agregar(Envio envio)
+        {
+            AccesoDatos Datos = new AccesoDatos();
+            int idEnvio;
+            try
+            {
+                Datos.SetQuery("Insert Into Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, FechaEntrega, Estado, IdPedido) Values (@DireccionEnvio, @Ciudad, @Provincia, @CodigoPostal, @FechaEnvio, @FechaEntrega, @Estado, @IdPedido); SELECT SCOPE_IDENTITY();");
+                Datos.SetearParametro("@DireccionEnvio", envio.DireccionEnvio);
+                Datos.SetearParametro("@Ciudad", envio.Ciudad);
+                Datos.SetearParametro("@Provincia", envio.Provincia);
+                Datos.SetearParametro("@CodigoPostal", envio.CodigoPostal);
+                Datos.SetearParametro("@FechaEnvio", envio.FechaEnvio);
+                Datos.SetearParametro("@FechaEntrega", (object)envio.FechaEntrega ?? DBNull.Value);
+                Datos.SetearParametro("@Estado", envio.Estado);
+                Datos.SetearParametro("@IdPedido", envio.IdPedido);
+                return idEnvio = Datos.EjecutarScalar();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            finally
+            {
+                Datos.CerrarConexion();
+            }
+        }
+        public void Actualizar(Envio envio)
+        {
+            AccesoDatos Datos = new AccesoDatos();
+            try
+            {
+                Datos.SetQuery("UPDATE Envios SET DireccionEnvio = @DireccionEnvio, Ciudad = @Ciudad, Provincia = @Provincia, CodigoPostal = @CodigoPostal, FechaEnvio = @FechaEnvio, FechaEntrega = @FechaEntrega, Estado = @Estado, IdPedido = @IdPedido WHERE Id = @Id");
+                Datos.SetearParametro("@Id", envio.Id);
+                Datos.SetearParametro("@DireccionEnvio", envio.DireccionEnvio);
+                Datos.SetearParametro("@Ciudad", envio.Ciudad);
+                Datos.SetearParametro("@Provincia", envio.Provincia);
+                Datos.SetearParametro("@CodigoPostal", envio.CodigoPostal);
+                Datos.SetearParametro("@FechaEnvio", envio.FechaEnvio);
+                Datos.SetearParametro("@FechaEntrega", (object)envio.FechaEntrega ?? DBNull.Value);
+                Datos.SetearParametro("@Estado", envio.Estado);
+                Datos.SetearParametro("@IdPedido", envio.IdPedido);
+                Datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            finally
+            {
+                Datos.CerrarConexion();
+            }
+        }
         public List<Envio> Listar()
         {
             List<Envio> list = new List<Envio>();
@@ -103,3 +149,4 @@ namespace negocio
         }
     }
 }
+    

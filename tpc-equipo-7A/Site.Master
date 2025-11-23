@@ -32,13 +32,9 @@
                                 AutoPostBack="true" OnSelectedIndexChanged="ddlCategorias_SelectedIndexChanged">
                             </asp:DropDownList>
                             <a class="btn btn-outline-warning fw-bold" href="PanelAdmin.aspx">Admin Panel</a>
-
-<<<<<<< HEAD
                             <a class="btn btn-success" href="Login.aspx">Ingresar</a>
-=======
                             <a class="btn btn-outline-light" href="Login.aspx">Iniciar Sesión</a>
                             <a class="btn btn-light text-primary fw-bold" href="#">Registrate</a>
->>>>>>> 302098097386e0faf8a9c688c0f9648dbd1f9ab1
                             <a class="btn btn-outline-light position-relative" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-fill me-1" viewBox="0 0 16 16" style="vertical-align: -3px;">
                                     <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
@@ -56,7 +52,6 @@
                 </div>
             </nav>
         </header>
-
         <div style="flex: 1;">
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
@@ -73,8 +68,6 @@
                             <div style="max-height: 670px; overflow-y: auto;">
                                 <asp:Repeater ID="repCarrito" runat="server" OnItemCommand="repCarrito_ItemCommand">
                                     <ItemTemplate>
-
-
                                         <div class="card mb-3 shadow-sm" style="max-width: 540px;">
                                             <div class="row g-0 align-items-center">
                                                 <div class="col-md-4 p-2">
@@ -82,21 +75,16 @@
                                                         onerror="this.src='https://placehold.co/100?text=No+Image'"
                                                         style="object-fit: contain; height: 80px; width: 100%;">
                                                 </div>
-
                                                 <div class="col-md-8">
                                                     <div class="card-body p-2">
                                                         <h6 class="card-title text-truncate"><%# Eval("Producto.Nombre") %></h6>
-
                                                         <div class="d-flex justify-content-between align-items-center">
-
                                                             <asp:HiddenField ID="hfIdProducto" runat="server" Value='<%# Eval("Producto.Id") %>' />
                                                             <asp:TextBox ID="txtCantidad" runat="server"
                                                                 CssClass="form-control form-control-sm"
                                                                 AutoPostBack="true"
                                                                 OnTextChanged="txtCantidad_TextChanged"
                                                                 Text='<%# Eval("Cantidad") %>' Width="50px"></asp:TextBox>
-
-
                                                             <asp:LinkButton ID="btnEliminar" runat="server"
                                                                 Text="X" CssClass="btn btn-sm btn-danger"
                                                                 CommandName="EliminarItem"
@@ -111,8 +99,6 @@
                                         </div>
                                     </ItemTemplate>
                                 </asp:Repeater>
-
-
                             </div>
                             <div class="container border-top pt-3 mt-3">
                                 <div class="d-flex justify-content-between mb-2">

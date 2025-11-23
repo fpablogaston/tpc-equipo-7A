@@ -81,7 +81,8 @@ namespace tpc_equipo_7A
                     break;
                 case "Envio":
                     phEnvio.Visible = true;
-                    lblFormTitulo.Text = "Modificar Envío";
+                    lblFormTitulo.Text = IdEntidad != 0 ? "Modificar Envio" : "Nuevo Envio";
+                    BindPedidosDropdown();
                     break;
                 default:
                     Response.Redirect("PanelAdmin.aspx");
@@ -132,6 +133,21 @@ namespace tpc_equipo_7A
                             txtClienteTelefono.Text = cliente.Telefono;
                         }
                         break;
+                    case "Envio":
+                        EnvioNegocio eNegocio = new EnvioNegocio();
+                        Envio envio = eNegocio.GetById(IdEntidad);
+                        if (envio != null)
+                        {
+                            txtEnvioId.Text = envio.Id.ToString();
+                            txtDireccionEnvio.Text = envio.DireccionEnvio;
+                            txtCiudad.Text = envio.Ciudad;
+                            txtProvincia.Text = envio.Provincia;
+                            txtCodigoPostal.Text = envio.CodigoPostal;
+                            txtFechaEnvio.Text = envio.FechaEnvio.ToString("yyyy-MM-dd");
+                            txtEstadoEnvio.Text = envio.Estado;
+                            ddlEnvioPedido.SelectedValue = envio.IdPedido.ToString();
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -155,6 +171,9 @@ namespace tpc_equipo_7A
                         break;
                     case "Cliente":
                         GuardarCliente();
+                        break;
+                    case "Envio":
+                        GuardarEnvio();
                         break;
                 }
                 Response.Redirect("PanelAdmin.aspx");
@@ -223,6 +242,27 @@ namespace tpc_equipo_7A
                 negocio.Agregar(cliente);
         }
 
+        private void GuardarEnvio()
+        {
+            EnvioNegocio negocio = new EnvioNegocio();
+            Envio envio = new Envio
+            {
+                Id = IdEntidad,
+                DireccionEnvio = txtDireccionEnvio.Text,
+                Ciudad = txtCiudad.Text,
+                Provincia = txtProvincia.Text,
+                CodigoPostal = txtCodigoPostal.Text,
+                FechaEnvio = DateTime.Parse(txtFechaEnvio.Text),
+                FechaEntrega = null,
+                Estado = txtEstadoEnvio.Text,
+                IdPedido = new PedidoNegocio().GetById(int.Parse(ddlProductoCategoria.SelectedValue)).Id,
+            };
+            if (IdEntidad != 0)
+                negocio.Actualizar(envio);
+            else
+                negocio.Agregar(envio);
+        }
+
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("PanelAdmin.aspx");
@@ -238,7 +278,15 @@ namespace tpc_equipo_7A
             ddlProductoCategoria.DataBind();
             ddlProductoCategoria.Items.Insert(0, new ListItem("Seleccionar Categoría", "0"));
         }
-
+        private void BindPedidosDropdown()
+        {
+            PedidoNegocio negocio = new PedidoNegocio();
+            ddlEnvioPedido.DataSource = negocio.Listar();
+            ddlEnvioPedido.DataTextField = "Id";
+            ddlEnvioPedido.DataValueField = "Id";
+            ddlEnvioPedido.DataBind();
+            ddlEnvioPedido.Items.Insert(0, new ListItem("Seleccionar Pedido", "0"));
+        }
         protected void txtProductoImagenUrl_TextChanged(object sender, EventArgs e)
         {
             imgProducto.ImageUrl = !string.IsNullOrEmpty(txtProductoImagenUrl.Text) ? txtProductoImagenUrl.Text : "https://placehold.co/600x400?text=No+Image";

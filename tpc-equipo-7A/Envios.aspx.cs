@@ -35,7 +35,7 @@ namespace tpc_equipo_7A
                 Ciudad = txtLocalidad.Text,
                 Estado = "Pendiente",
                 FechaEnvio = DateTime.Now,
-                InfoAdicional = txtInfoAdicional.Text
+                //InfoAdicional = txtInfoAdicional.Text
             };
 
             Session["envio"] = envio;
