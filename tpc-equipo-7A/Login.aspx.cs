@@ -54,7 +54,6 @@ namespace tpc_equipo_7A
             if (cliente != null)
             {
                 Session["cliente"] = cliente;
-                Session["loginOK"] = "1";
                 Response.Redirect("Default.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
             }

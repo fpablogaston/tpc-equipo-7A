@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head runat="server">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .user-badge {
             position: fixed;
@@ -53,7 +54,8 @@
                             </asp:PlaceHolder>
                             <asp:PlaceHolder ID="phLogout" runat="server">
                                 <asp:LinkButton ID="btnLogout" runat="server" CssClass="btn btn-danger"
-                                    OnClick="btnLogout_Click">Cerrar sesión</asp:LinkButton>
+                                    OnClick="btnLogout_Click" OnClientClick="confirmarLogout(); return false">Cerrar Sesión
+                                </asp:LinkButton>
                             </asp:PlaceHolder>
                             <a class="btn btn-outline-light position-relative" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-fill me-1" viewBox="0 0 16 16" style="vertical-align: -3px;">
@@ -144,6 +146,8 @@
                 </div>
             </ContentTemplate>
         </asp:UpdatePanel>
+               
+
         <!--script>
             function mostrarOffcanvas() {
                 var off = document.getElementById('offcanvasExample');
@@ -164,11 +168,28 @@
         <script>
             document.addEventListener('keydown', function (e) {
                 if (e.key === "Enter" && e.target.tagName === "INPUT") {
-                    e.preventDefault(); // evita submit general
-                    e.target.blur(); // si tiene AutoPostBack ejecuta su propio evento
+                    e.preventDefault(); 
+                    e.target.blur();
                 }
             });
         </script>
+         <script>
+             function confirmarLogout() {
+                 Swal.fire(
+                     {
+                         title: 'Volvé pronto!',
+                         text: '¿Seguro que deseas cerrar sesión?',
+                         icon: 'warning',
+                         showCancelButton: true,
+                         confirmButtonText: 'Sí, salir',
+                         cancelButtonText: 'Cancelar'
+                     }).then((result) => {
+                         if (result.isConfirmed) {
+                             __doPostBack('<%= btnLogout.UniqueID %>', '');
+                 }
+             });
+             }
+         </script>
     </form>
 </body>
 </html>

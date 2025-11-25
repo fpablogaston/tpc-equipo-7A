@@ -34,7 +34,7 @@ namespace tpc_equipo_7A
                     phLogin.Visible = false;
                     phAdmin.Visible = false;
 
-                    if (cliente.IdUsuario == 1) // Admin
+                    if (cliente.Rol == 2) // Admin
                     {
                         phAdmin.Visible = true;
                         phLogout.Visible = true;

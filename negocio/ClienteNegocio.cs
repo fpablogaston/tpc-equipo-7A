@@ -156,9 +156,9 @@ namespace negocio
             {
                 datos.SetQuery(
                     "SELECT c.Id, c.Nombre, c.Apellido, c.Email, c.Telefono, c.Direccion, " +
-                    "u.Id AS IdUsuario, u.Username " +
+                    "u.Id AS IdUsuario, u.Username, u.IdRol " +
                     "FROM Clientes c " +
-                    "INNER JOIN Usuarios u ON u.Id = c.IdUsuario " +
+                    "RIGHT JOIN Usuarios u ON u.Id = c.IdUsuario " +
                     "WHERE u.Username = @Usuario AND u.PasswordHash = @Password"
                 );
 
@@ -171,14 +171,18 @@ namespace negocio
                 {
                     Cliente cliente = new Cliente();
 
+                    cliente.Rol = (int)datos.Reader["IdRol"];
+                    if (cliente.Rol == 1)
+                    {
                     cliente.Id = (int)datos.Reader["Id"];
-                    cliente.IdUsuario = (int)datos.Reader["IdUsuario"];
-                    cliente.Usuario = (string)datos.Reader["Username"];
                     cliente.Nombre = (string)datos.Reader["Nombre"];
                     cliente.Apellido = (string)datos.Reader["Apellido"];
                     cliente.Email = (string)datos.Reader["Email"];
                     cliente.Telefono = (string)datos.Reader["Telefono"];
                     cliente.Direccion = (string)datos.Reader["Direccion"];
+                    }
+                    cliente.Usuario = (string)datos.Reader["Username"];
+                    cliente.IdUsuario = (int)datos.Reader["IdUsuario"];
 
                     return cliente;
                 }
