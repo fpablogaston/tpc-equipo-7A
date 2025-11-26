@@ -16,16 +16,16 @@ namespace tpc_equipo_7A
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            if (Session["loginOK"] != null)
+            if (Session["Login"] != null)
             {
                 ScriptManager.RegisterStartupScript(
                     this,
                     this.GetType(),
                     "toastLogin",
-                    "setTimeout(mostrarToastLogin, 300);",
+                    "setTimeout(mostrarToastLogin, 500);",
                     true);
 
-                Session.Remove("loginOK");
+                Session.Remove("Login");
             }
 
             if (!IsPostBack)

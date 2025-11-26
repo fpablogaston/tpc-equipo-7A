@@ -32,7 +32,6 @@ namespace negocio
                 Comando.Connection = Conexion;
                 Conexion.Open();
                 Lector = Comando.ExecuteReader();
-
             }
             catch (Exception ex)
             {

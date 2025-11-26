@@ -30,9 +30,13 @@ namespace tpc_equipo_7A
                 else
                 {
                     Cliente cliente = (Cliente)Session["cliente"];
-                    if (!string.IsNullOrEmpty(cliente.Direccion))
+                    if (!string.IsNullOrEmpty(cliente.Direccion.Calle))
                     {
-                        txtDireccion.Text = cliente.Direccion;
+                        txtDireccion.Text = cliente.Direccion.Calle;
+                        txtCiudad.Text = cliente.Direccion.Ciudad;
+                        txtProvincia.Text = cliente.Direccion.Provincia;
+                        txtCodigoPostal.Text = cliente.Direccion.CodigoPostal;
+
                     }
                 }
             }

@@ -15,29 +15,51 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["loginOK"] != null)
-            {
-                ScriptManager.RegisterStartupScript(this, GetType(), "toastLoginOk", "mostrarToastLogin();", true);
-                Session.Remove("loginOK");
-            }
         }
 
         protected void btnRegistrar_Click(object sender, EventArgs e)
         {
+            ClienteNegocio negocioVerificacion = new ClienteNegocio();
+
+            if(negocioVerificacion.ExisteUsuario(txtUsuario.Text))
+            {
+                lblResultado.CssClass = "text-danger";
+                lblResultado.Text = "El nombre de usuario ya existe. Por favor, elija otro.";
+
+                ScriptManager.RegisterStartupScript(this, this.GetType(),
+                "ShowModal", @"
+                    var myModal = new bootstrap.Modal(document.getElementById('registroModal'));
+                    myModal.show();
+                ", true);
+
+                return;
+            }
+
             try
             {
                 Cliente nuevo = new Cliente();
+                nuevo.Direccion = new Direccion();
                 nuevo.Email = txtEmail.Text;
                 nuevo.Nombre = txtNombre.Text;
                 nuevo.Apellido = txtApellido.Text;
                 nuevo.Telefono = txtTelefono.Text;
-                nuevo.Direccion = txtDireccion.Text;
+                nuevo.Direccion.Calle = txtDireccion.Text;
+                nuevo.Direccion.Ciudad = txtCiudad.Text;
+                nuevo.Direccion.CodigoPostal = txtCodigoPostal.Text;   
+                nuevo.Direccion.Provincia = txtProvincia.Text;
                 nuevo.Usuario = txtUsuario.Text;
-                //nuevo.Password = txtPassword.Text;
+                nuevo.Password = txtPassword.Text;
                 ClienteNegocio negocio = new ClienteNegocio();
                 negocio.Agregar(nuevo);
 
-                lblResultado.Text = "Te registraste correctamente.";
+                ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "toastRegistro",
+                "setTimeout(mostrarToastRegistro, 500);",
+                true);
+
+
             }
             catch (Exception ex)
             {
@@ -54,6 +76,7 @@ namespace tpc_equipo_7A
             if (cliente != null)
             {
                 Session["cliente"] = cliente;
+                Session["Login"] = 1; 
                 Response.Redirect("Default.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
             }

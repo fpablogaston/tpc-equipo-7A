@@ -217,7 +217,7 @@ GO
 
 --  STORED PROCEDURE
 
-CREATE PROCEDURE CrearUsuarioYCliente
+ALTER PROCEDURE CrearUsuarioYCliente
 (
     @Username       VARCHAR(50),
     @PasswordHash   VARCHAR(200),
@@ -225,7 +225,10 @@ CREATE PROCEDURE CrearUsuarioYCliente
     @Apellido       VARCHAR(50),
     @Email          VARCHAR(50),
     @Telefono       VARCHAR(50),
-    @Direccion      VARCHAR(100)
+    @Direccion      VARCHAR(100),
+    @Ciudad         VARCHAR(100),
+    @Provincia      VARCHAR(100),
+    @CodigoPostal   VARCHAR(100)
 )
 AS
 BEGIN
@@ -241,8 +244,8 @@ BEGIN
 
         SET @IdUsuario = SCOPE_IDENTITY();
 
-        INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, Direccion, FechaRegistro, IdUsuario)
-        VALUES (@Nombre, @Apellido, @Email, @Telefono, @Direccion, GETDATE(), @IdUsuario);
+        INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, Direccion, Ciudad, Provincia, CodigoPostal, FechaRegistro, IdUsuario)
+        VALUES (@Nombre, @Apellido, @Email, @Telefono, @Direccion, @Ciudad, @Provincia, @CodigoPostal, GETDATE(), @IdUsuario);
 
         COMMIT TRANSACTION;
     END TRY
@@ -258,3 +261,29 @@ alter column Descripcion nvarchar(500) null
 
 alter table Productos
 alter column ImagenUrl nvarchar(500) null
+
+SELECT * FROM Clientes
+SELECT * FROM Pedidos
+SELECT * FROM Usuarios
+
+ALTER TABLE Clientes
+ADD Ciudad VARCHAR(100),
+    Provincia VARCHAR(100),
+    CodigoPostal VARCHAR(20);
+
+UPDATE Clientes
+SET Ciudad = 'Caballito',
+    Provincia = 'Buenos Aires',
+    CodigoPostal = '1405'
+WHERE IdUsuario = 4;
+
+UPDATE Clientes
+SET Ciudad = 'La Matanza',
+    Provincia = 'Buenos Aires',
+    CodigoPostal = '5000'
+WHERE IdUsuario = 5;
+
+
+
+
+

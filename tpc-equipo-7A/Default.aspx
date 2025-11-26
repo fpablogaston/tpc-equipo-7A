@@ -66,18 +66,19 @@
         </div>
     </div>
 
-    <%-- Toast --%>
+<%-- Toast --%>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="toastLogin" class="toast align-items-center text-bg-success border-0" role="alert">
-        <div class="d-flex">
-            <div class="toast-body">
-                Sesión iniciada
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+          <div id="toastLogin" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="d-flex">
+              <div id="toastLoginBody" class="toast-body">Sesión iniciada</div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
         </div>
-    </div>
-</div>
+
+
+
 
 <script>
     function mostrarToastLogin() {
@@ -86,5 +87,7 @@
         toast.show();
     }
 </script>
+
+
 
 </asp:Content>

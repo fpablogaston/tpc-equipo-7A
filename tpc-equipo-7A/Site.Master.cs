@@ -34,12 +34,9 @@ namespace tpc_equipo_7A
                     phLogin.Visible = false;
                     phAdmin.Visible = false;
 
-                    if (cliente.Rol == 2) // Admin
+                    if (cliente.Rol == 2)
                     {
-                        phAdmin.Visible = true;
-                        phLogout.Visible = true;
-                        phLogin.Visible = false;
-                        lblUser.Text = "Administrador";
+                        ModoAdmin();
                     }
                     else
                     {
@@ -149,6 +146,16 @@ namespace tpc_equipo_7A
             var up = (UpdatePanel)FindControl("UPBadge");
             if (up != null)
                 up.Update();
+        }
+
+        protected void ModoAdmin()
+        {
+            UPBadge.Visible = false;
+            UPMaster.Visible = false;
+            phAdmin.Visible = true;
+            phLogout.Visible = true;
+            phLogin.Visible = false;
+            lblUser.Text = "Administrador";
         }
 
 

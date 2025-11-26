@@ -17,7 +17,6 @@
                                 <div>
                                     <strong><%# Eval("Producto.Nombre") %></strong><br />
                                     <span>Precio: <%# "$" + Eval("Producto.Precio", "{0:N2}") %></span><br />
-                                    <span>Subtotal: <%# "$" + Eval("Subtotal", "{0:N2}") %></span>
                                 </div>
                             </div>
                         </ItemTemplate>
