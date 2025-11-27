@@ -226,6 +226,11 @@ namespace tpc_equipo_7A
             try
             {
                 PedidoNegocio negocio = new PedidoNegocio();
+
+                var lista = negocio.Listar();
+
+                Session["listaPedidos"] = lista;
+
                 gvPedidos.DataSource = negocio.Listar();
                 gvPedidos.DataBind();
             }
@@ -366,6 +371,21 @@ namespace tpc_equipo_7A
             gvClientes.DataSource = filtrada;
             gvClientes.DataBind();
 
+        }
+
+        protected void txtFiltroPedido_TextChanged(object sender, EventArgs e)
+        {
+            var lista = (List<Pedido>)Session["listaPedidos"];
+            string filtro = txtFiltroPedido.Text.ToUpper();
+
+            var filtrada = lista.FindAll(x =>
+                x.Id.ToString().Contains(filtro) ||
+                x.Cliente.Nombre.ToUpper().Contains(filtro) ||
+                x.Estado.ToUpper().Contains(filtro)
+            );
+
+            gvPedidos.DataSource = filtrada;
+            gvPedidos.DataBind();
         }
     }
 }

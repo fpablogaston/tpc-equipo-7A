@@ -47,6 +47,7 @@
                         <asp:Label ID="lblMensajeCategoria" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
                         <div class="mb-3">
+                            <asp:Label ID="Label4" runat="server" Text="Filtrar" CssClass="text-dark fw-bold" ></asp:Label>
                             <asp:TextBox ID="txtFiltroCategorias" runat="server" CssClass="form-control"
                                 Placeholder="Buscar categoría..." AutoPostBack="true" OnTextChanged="txtFiltroCategorias_TextChanged"></asp:TextBox>
                         </div>
@@ -80,6 +81,7 @@
                         <asp:Label ID="lblMensajeProducto" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
                         <div class="mb-3">
+                            <asp:Label ID="Label3" runat="server" Text="Filtrar"  CssClass="text-dark fw-bold"></asp:Label>
                             <asp:TextBox ID="txtFiltroProducto" runat="server" CssClass="form-control"
                                 Placeholder="Buscar producto..." AutoPostBack="true" OnTextChanged="txtFiltroProducto_TextChanged"></asp:TextBox>
                         </div>
@@ -115,6 +117,7 @@
                         <asp:Label ID="lblMensajeCliente" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
                         <div class="mb-3">
+                            <asp:Label ID="Label2" runat="server" Text="Filtrar" CssClass="text-dark fw-bold"></asp:Label>
                             <asp:TextBox ID="txtFiltroCliente" runat="server" CssClass="form-control"
                                 Placeholder="Buscar cliente..." AutoPostBack="true"
                                 OnTextChanged="txtFiltroCliente_TextChanged" />
@@ -149,6 +152,14 @@
                             <h3 class="mb-0">Gestión de Pedidos</h3>
                         </div>
                         <asp:Label ID="lblMensajePedido" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
+
+                        <div class="mb-3">
+                            <asp:Label ID="Label1" runat="server" Text="Filtrar" CssClass="text-dark fw-bold"></asp:Label>
+                            <asp:TextBox ID="txtFiltroPedido" runat="server" CssClass="form-control"
+                                Placeholder="Buscar pedido..." AutoPostBack="true"
+                                OnTextChanged="txtFiltroPedido_TextChanged" />
+                        </div>
+
 
                         <asp:GridView ID="gvPedidos" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
