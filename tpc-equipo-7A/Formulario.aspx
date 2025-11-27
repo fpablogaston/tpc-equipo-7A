@@ -111,7 +111,6 @@
                                 <asp:RequiredFieldValidator ControlToValidate="txtClienteApellido" ID="RequiredFieldValidator2" runat="server" ErrorMessage="El apellido es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
                                 <asp:RegularExpressionValidator ErrorMessage="Máximo 50 caracteres permitidos." ControlToValidate="txtClienteApellido" ValidationExpression="^[\s\S]{0,50}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                             </div>
-
                             <div class="mb-3">
                                 <label for="txtClienteEmail" class="form-label">Email:</label>
                                 <asp:TextBox ID="txtClienteEmail" runat="server" CssClass="form-control" TextMode="Email" MaxLength="100"></asp:TextBox>
@@ -177,10 +176,79 @@
                     </div>
                 </asp:PlaceHolder>
 
-                <%-- FORMULARIO DE PEDIDO --%>
-                <asp:PlaceHolder ID="phPedido" runat="server" Visible="false">
-                    <div class="alert alert-info">Formulario para Pagos aquí.</div>
-                 </asp:PlaceHolder>
+                    <%-- FORMULARIO DE PEDIDO --%>
+                    <asp:PlaceHolder ID="phPedido" runat="server" Visible="false">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+
+                                <div class="mb-3">
+                                    <label for="txtPedidoId" class="form-label">ID:</label>
+                                    <asp:TextBox ID="txtPedidoId" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="ddlPedidoCliente" class="form-label">Cliente:</label>
+                                    <asp:DropDownList ID="ddlPedidoCliente" runat="server" CssClass="form-select" />
+                                    <asp:RequiredFieldValidator ID="rfvPedidoCliente" runat="server"
+                                        ControlToValidate="ddlPedidoCliente" InitialValue="0"
+                                        ErrorMessage="El cliente es requerido." ForeColor="DarkRed" Display="Dynamic" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="txtPedidoFecha" class="form-label">Fecha del Pedido:</label>
+                                    <asp:TextBox ID="txtPedidoFecha" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                                    <asp:RequiredFieldValidator ID="rfvPedidoFecha" runat="server"
+                                        ControlToValidate="txtPedidoFecha" ErrorMessage="La fecha es requerida."
+                                        ForeColor="DarkRed" Display="Dynamic" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="txtPedidoTotal" class="form-label">Total:</label>
+                                    <asp:TextBox ID="txtPedidoTotal" runat="server" CssClass="form-control" TextMode="Number"></asp:TextBox>
+                                    <asp:RequiredFieldValidator ID="rfvPedidoTotal" runat="server"
+                                        ControlToValidate="txtPedidoTotal" ErrorMessage="El total es requerido."
+                                        ForeColor="DarkRed" Display="Dynamic" />
+                                    <asp:RegularExpressionValidator ID="revPedidoTotal" runat="server"
+                                        ControlToValidate="txtPedidoTotal"
+                                        ValidationExpression="^\d+(\.\d{1,2})?$"
+                                        ErrorMessage="Formato inválido. Ejemplo: 999.99"
+                                        ForeColor="DarkRed" Display="Dynamic" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="txtPedidoEstado" class="form-label">Estado:</label>
+                                    <asp:TextBox ID="txtPedidoEstado" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                                    <asp:RequiredFieldValidator ID="rfvPedidoEstado" runat="server"
+                                        ControlToValidate="txtPedidoEstado" ErrorMessage="El estado es requerido"
+                                        ForeColor="DarkRed" Display="Dynamic" />
+                                    <asp:RegularExpressionValidator ID="revPedidoEstado" runat="server"
+                                        ControlToValidate="txtPedidoEstado"
+                                        ValidationExpression="^[\s\S]{0,20}$"
+                                        ErrorMessage="Máximo 20 caracteres."
+                                        ForeColor="DarkRed" Display="Dynamic" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="ddlPedidoPago" class="form-label">Método de Pago:</label>
+                                    <asp:DropDownList ID="ddlPedidoPago" runat="server" CssClass="form-select" />
+                                    <asp:RequiredFieldValidator ID="rfvPedidoPago" runat="server"
+                                        ControlToValidate="ddlPedidoPago" InitialValue="0"
+                                        ErrorMessage="El pago es requerido."
+                                        ForeColor="DarkRed" Display="Dynamic" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="ddlPedidoEnvio" class="form-label">Envío Asociado:</label>
+                                    <asp:DropDownList ID="ddlPedidoEnvio" runat="server" CssClass="form-select" />
+                                    <asp:RequiredFieldValidator ID="rfvPedidoEnvio" runat="server"
+                                        ControlToValidate="ddlPedidoEnvio" InitialValue="0"
+                                        ErrorMessage="El envío es requerido."
+                                        ForeColor="DarkRed" Display="Dynamic" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </asp:PlaceHolder>
                 
                 <%-- FORMULARIO DE ENVIO --%>
                 <asp:PlaceHolder ID="phEnvio" runat="server" Visible="false">

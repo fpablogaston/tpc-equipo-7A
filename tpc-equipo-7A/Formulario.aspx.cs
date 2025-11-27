@@ -48,6 +48,9 @@ namespace tpc_equipo_7A
                 if (Entidad == "Pago")
                     txtPagoId.Enabled = false;
 
+                if (Entidad == "Pedido")
+                    txtPedidoId.Enabled = false; 
+
                 if (IdEntidad != 0)
                 {
                     CargarDatos();
@@ -62,6 +65,7 @@ namespace tpc_equipo_7A
             phCliente.Visible = false;
             phPago.Visible = false;
             phEnvio.Visible = false;
+            phPedido.Visible = false;
 
             switch (Entidad)
             {
@@ -87,6 +91,11 @@ namespace tpc_equipo_7A
                     phEnvio.Visible = true;
                     lblFormTitulo.Text = IdEntidad != 0 ? "Modificar Envio" : "Nuevo Envio";
                     BindPedidosDropdown();
+                    break;
+                case "Pedido":
+                    phPedido.Visible = true;
+                    lblFormTitulo.Text = IdEntidad != 0 ? "Modificar Pedido" : "Nuevo Pedido";
+                    BindPedidos();
                     break;
                 default:
                     Response.Redirect("PanelAdmin.aspx");
@@ -147,7 +156,7 @@ namespace tpc_equipo_7A
                             txtCiudad.Text = envio.Ciudad;
                             txtProvincia.Text = envio.Provincia;
                             txtCodigoPostal.Text = envio.CodigoPostal;
-                            txtFechaEnvio.Text = envio.FechaEnvio.ToString("yyyy-MM-dd");
+                            if (envio.FechaEnvio != null) txtFechaEnvio.Text = envio.FechaEnvio.Value.ToString("yyyy-MM-dd");
                             txtEstadoEnvio.Text = envio.Estado;
                             if (envio.FechaEntrega != null) txtFechaEntrega.Text = envio.FechaEntrega.Value.ToString("yyyy-MM-dd");
                             ddlEnvioPedido.SelectedValue = envio.IdPedido.ToString();
@@ -165,6 +174,22 @@ namespace tpc_equipo_7A
                             txtMonto.Text = pago.Monto.ToString();
                             txtFechaPago.Text = pago.FechaPago.ToString("yyyy-MM-dd");
                             ddlPagoPedido.SelectedValue = pago.IdPedido.ToString();
+                        }
+                        break;
+
+                    case "Pedido":
+                        PedidoNegocio pdoNegocio = new PedidoNegocio();
+                        Pedido pedido = pdoNegocio.GetById(IdEntidad);
+                        if (pedido != null)
+                        {
+                            txtPedidoId.Text = pedido.Id.ToString();
+                            txtPedidoFecha.Text = pedido.FechaPedido.ToString("yyyy-MM-dd");
+                            txtPedidoTotal.Text = pedido.Total.ToString();
+                            txtPedidoEstado.Text = pedido.Estado.ToString();
+
+                            ddlPedidoCliente.SelectedValue = pedido.Cliente.Id.ToString();
+                            ddlPedidoPago.SelectedValue = pedido.Pago.Id.ToString();
+                            ddlPedidoEnvio.SelectedValue = pedido.Envio.Id.ToString();
                         }
                         break;
                 }
@@ -195,6 +220,9 @@ namespace tpc_equipo_7A
                         break;
                     case "Pago":
                         GuardarPago();
+                        break;
+                    case "Pedido":
+                        GuardarPedido();
                         break;
                 }
                 Response.Redirect("PanelAdmin.aspx");
@@ -300,6 +328,28 @@ namespace tpc_equipo_7A
             else
                 negocio.Agregar(envio);
         }
+
+        private void GuardarPedido()
+        {
+            PedidoNegocio negocio = new PedidoNegocio();
+
+            Pedido pedido = new Pedido
+            {
+                Id = IdEntidad,
+                Cliente = new ClienteNegocio().GetById(int.Parse(ddlPedidoCliente.SelectedValue)),
+                FechaPedido = DateTime.Parse(txtPedidoFecha.Text),
+                Total = decimal.Parse(txtPedidoTotal.Text),
+                Estado = txtPedidoEstado.Text,
+                Pago = new PagoNegocio().GetById(int.Parse(ddlPedidoPago.SelectedValue)),
+                Envio = new EnvioNegocio().GetById(int.Parse(ddlPedidoEnvio.SelectedValue)),
+            };
+
+            if (IdEntidad != 0)
+                negocio.Actualizar(pedido);
+            else
+                negocio.Agregar(pedido);
+        }
+
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("PanelAdmin.aspx");
@@ -334,5 +384,30 @@ namespace tpc_equipo_7A
         {
             imgProducto.ImageUrl = !string.IsNullOrEmpty(txtProductoImagenUrl.Text) ? txtProductoImagenUrl.Text : "https://placehold.co/600x400?text=No+Image";
         }
+
+        private void BindPedidos()
+        {
+            ClienteNegocio clienteNeg = new ClienteNegocio();
+            ddlPedidoCliente.DataSource = clienteNeg.Listar();
+            ddlPedidoCliente.DataTextField = "Nombre";
+            ddlPedidoCliente.DataValueField = "Id";
+            ddlPedidoCliente.DataBind();
+            ddlPedidoCliente.Items.Insert(0, new ListItem("Seleccionar Cliente", "0"));
+
+            PagoNegocio pagoNeg = new PagoNegocio();
+            ddlPedidoPago.DataSource = pagoNeg.Listar();
+            ddlPedidoPago.DataTextField = "MetodoPago";
+            ddlPedidoPago.DataValueField = "Id";
+            ddlPedidoPago.DataBind();
+            ddlPedidoPago.Items.Insert(0, new ListItem("Seleccionar Pago", "0"));
+
+            EnvioNegocio envioNeg = new EnvioNegocio();
+            ddlPedidoEnvio.DataSource = envioNeg.Listar();
+            ddlPedidoEnvio.DataTextField = "DireccionEnvio";
+            ddlPedidoEnvio.DataValueField = "Id";
+            ddlPedidoEnvio.DataBind();
+            ddlPedidoEnvio.Items.Insert(0, new ListItem("Seleccionar Envío", "0"));
+        }
+
     }
 }

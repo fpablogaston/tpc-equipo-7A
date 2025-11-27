@@ -15,5 +15,15 @@ namespace dominio
         public decimal Monto { get; set; }
         public DateTime FechaPago { get; set; }
         public int IdPedido { get; set; }
+
+        public string MetodoPagoNombre
+        {
+            get { return MetodoPago?.Nombre; }
+        }
+
+        public string EstadoNombre
+        {
+            get { return Estado?.Nombre; }
+        }
     }
 }

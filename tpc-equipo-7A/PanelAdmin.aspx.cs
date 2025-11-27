@@ -220,6 +220,7 @@ namespace tpc_equipo_7A
         protected void gvPedidos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int id = Convert.ToInt32(e.CommandArgument);
+
             if (e.CommandName == "Editar")
             {
                 Response.Redirect($"Formulario.aspx?entity=Pedido&id={id}");

@@ -76,10 +76,10 @@ namespace negocio
                     Envio aux = new Envio();
                     aux.Id = (int)data.Reader["Id"];
                     aux.DireccionEnvio = (string)data.Reader["DireccionEnvio"];
-                    aux.Ciudad = (string)data.Reader["Estado"];
+                    aux.Ciudad = (string)data.Reader["Ciudad"];
                     aux.Provincia = (string)data.Reader["Provincia"];
                     aux.CodigoPostal = (string)data.Reader["CodigoPostal"];
-                    aux.FechaEnvio = (DateTime)data.Reader["FechaEnvio"];
+                    aux.FechaEnvio = data.Reader["FechaEnvio"] == DBNull.Value ? (DateTime?)null : (DateTime)data.Reader["FechaEnvio"];
                     aux.FechaEntrega = data.Reader["FechaEntrega"] == DBNull.Value ? (DateTime?)null : (DateTime)data.Reader["FechaEntrega"];
                     aux.Estado = (string)data.Reader["Estado"];
                     aux.IdPedido = (int)data.Reader["IdPedido"];
@@ -115,7 +115,7 @@ namespace negocio
                     aux.Ciudad = (string)Datos.Reader["Ciudad"];
                     aux.Provincia = (string)Datos.Reader["Provincia"];
                     aux.CodigoPostal = (string)Datos.Reader["CodigoPostal"];
-                    aux.FechaEnvio = (DateTime)Datos.Reader["FechaEnvio"];
+                    aux.FechaEnvio = Datos.Reader["FechaEnvio"] == DBNull.Value ? (DateTime?)null : (DateTime)Datos.Reader["FechaEnvio"];
                     aux.FechaEntrega = Datos.Reader["FechaEntrega"] == DBNull.Value ? (DateTime?)null : (DateTime)Datos.Reader["FechaEntrega"];
                     aux.Estado = (string)Datos.Reader["Estado"];
                     aux.IdPedido = (int)Datos.Reader["IdPedido"];

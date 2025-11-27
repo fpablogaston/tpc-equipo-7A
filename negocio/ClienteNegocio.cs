@@ -110,7 +110,6 @@ namespace negocio
                     aux.Direccion.Ciudad = (string)Datos.Reader["Ciudad"];
                     aux.Direccion.Provincia = (string)Datos.Reader["Provincia"];
                     aux.Direccion.CodigoPostal= (string)Datos.Reader["CodigoPostal"];
-                    aux.Password = (string)Datos.Reader["Contraseña"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
                     Lista.Add(aux);
                 }
@@ -149,7 +148,6 @@ namespace negocio
                     aux.Direccion.Ciudad = (string)Datos.Reader["Ciudad"];
                     aux.Direccion.Provincia = (string)Datos.Reader["Provincia"];
                     aux.Direccion.CodigoPostal = (string)Datos.Reader["CodigoPostal"];
-                    aux.Password = (string)Datos.Reader["Contraseña"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
                 }
                 return aux;

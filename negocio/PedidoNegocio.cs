@@ -34,7 +34,7 @@ namespace negocio
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.ToString());
+                Console.WriteLine("Error: Listar. " + ex.ToString());
                 throw ex;
             }
             finally
@@ -65,7 +65,7 @@ namespace negocio
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.ToString());
+                Console.WriteLine("Error: GetById. " + ex.ToString());
                 throw ex;
             }
             finally
@@ -73,7 +73,7 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
-        ///agrego esto a pedidonegocio
+
         public int Agregar(Pedido pedido)
         {
             AccesoDatos data = new AccesoDatos();
@@ -122,7 +122,7 @@ namespace negocio
                     cmdDetalle.Parameters.AddWithValue("@Subtotal", item.Subtotal);
                     cmdDetalle.ExecuteNonQuery();
 
-                    // Opcional: Restar Stock
+                    // Restar Stock
                     SqlCommand cmdStock = new SqlCommand("UPDATE Productos SET Stock = Stock - @Cant WHERE Id = @IdProd", conexion, transaccion);
                     cmdStock.Parameters.AddWithValue("@Cant", item.Cantidad);
                     cmdStock.Parameters.AddWithValue("@IdProd", item.Producto.Id);
@@ -140,14 +140,14 @@ namespace negocio
 
                 // 4. INSERTAR PAGO
                 SqlCommand cmdPago = new SqlCommand("INSERT INTO Pagos (MetodoPago, Estado, Monto, FechaPago, IdPedido) OUTPUT INSERTED.Id VALUES (@Metodo, 'Aprobado', @Monto, @Fecha, @IdPedido)", conexion, transaccion);
-                cmdPago.Parameters.AddWithValue("@Metodo", pago.MetodoPago.Nombre); // Asumiendo que viene el nombre o ID
+                cmdPago.Parameters.AddWithValue("@Metodo", pago.MetodoPago.Nombre);
                 cmdPago.Parameters.AddWithValue("@Monto", carrito.Total());
                 cmdPago.Parameters.AddWithValue("@Fecha", DateTime.Now);
                 cmdPago.Parameters.AddWithValue("@IdPedido", idPedido);
 
                 int idPago = (int)cmdPago.ExecuteScalar();
 
-                // 5. ACTUALIZAR PEDIDO (Cerrar el círculo)
+                // 5. ACTUALIZAR PEDIDO
                 SqlCommand cmdUpdate = new SqlCommand("UPDATE Pedidos SET IdEnvio = @IdEnvio, IdPago = @IdPago WHERE Id = @IdPedido", conexion, transaccion);
                 cmdUpdate.Parameters.AddWithValue("@IdEnvio", idEnvio);
                 cmdUpdate.Parameters.AddWithValue("@IdPago", idPago);
@@ -166,5 +166,43 @@ namespace negocio
                 conexion.Close();
             }
         }
+
+            public void Actualizar(Pedido pedido)
+            {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetQuery("UPDATE Pedidos SET " +
+                              "FechaPedido = @Fecha, " +
+                              "Estado = @Estado, " +
+                              "Total = @Total, " +
+                              "IdCliente = @Cliente, " +
+                              "IdEnvio = @Envio, " +
+                              "IdPago = @Pago " +
+                              "WHERE Id = @Id");
+
+                datos.SetearParametro("@Fecha", pedido.FechaPedido);
+                datos.SetearParametro("@Estado", pedido.Estado);
+                datos.SetearParametro("@Total", pedido.Total);
+                datos.SetearParametro("@Cliente", pedido.Cliente.Id);
+                datos.SetearParametro("@Envio", pedido.Envio.Id);
+                datos.SetearParametro("@Pago", pedido.Pago.Id);
+                datos.SetearParametro("@Id", pedido.Id);
+
+                datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+
+
+        }
+
     }
 }
+

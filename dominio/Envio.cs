@@ -13,7 +13,7 @@ namespace dominio
         public string Ciudad { get; set; }
         public string Provincia { get; set; }
         public string CodigoPostal { get; set; }
-        public DateTime FechaEnvio { get; set; }
+        public DateTime? FechaEnvio { get; set; }
         public DateTime? FechaEntrega { get; set; }
         public string Estado { get; set; }
         public int IdPedido { get; set; }

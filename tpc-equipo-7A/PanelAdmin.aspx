@@ -146,7 +146,8 @@
                                 <asp:BoundField DataField="Estado" HeaderText="Estado" />
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
-                                        <asp:Button ID="btnVerPedido" runat="server" Text="Ver Detalles" CssClass="btn btn-sm btn-info me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
+                                        <asp:Button ID="btnEditarPedido" runat="server" Text="Editar" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
+
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
