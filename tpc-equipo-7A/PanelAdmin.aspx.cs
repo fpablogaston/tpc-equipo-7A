@@ -76,8 +76,16 @@ namespace tpc_equipo_7A
             try
             {
                 CategoriaNegocio negocio = new CategoriaNegocio();
-                gvCategorias.DataSource = negocio.Listar();
+                //gvCategorias.DataSource = negocio.Listar();
+                //gvCategorias.DataBind();
+                var lista = negocio.Listar();
+
+
+                Session["listaCategorias"] = lista;
+
+                gvCategorias.DataSource = lista;
                 gvCategorias.DataBind();
+
             }
             catch (Exception ex)
             {
@@ -120,6 +128,11 @@ namespace tpc_equipo_7A
             try
             {
                 ProductoNegocio negocio = new ProductoNegocio();
+
+                var lista = negocio.Listar();
+
+                Session["listaProductos"] = lista;
+
                 gvProductos.DataSource = negocio.Listar();
                 gvProductos.DataBind();
             }
@@ -164,6 +177,11 @@ namespace tpc_equipo_7A
             try
             {
                 ClienteNegocio negocio = new ClienteNegocio();
+
+                var lista = negocio.Listar();
+
+                Session["listaClientes"] = lista;
+
                 gvClientes.DataSource = negocio.Listar();
                 gvClientes.DataBind();
             }
@@ -313,6 +331,41 @@ namespace tpc_equipo_7A
                     lblMensajeEnvio.CssClass = "text-danger";
                 }
             }
+        }
+
+        protected void txtFiltroCategorias_TextChanged(object sender, EventArgs e)
+        {
+            List<Categoria> lista = (List<Categoria>)Session["listaCategorias"];
+
+            List<Categoria> listaFiltrada = lista.FindAll(x => x.Nombre.ToUpper().Contains(txtFiltroCategorias.Text.ToUpper()));
+
+            gvCategorias.DataSource = listaFiltrada;
+            gvCategorias.DataBind();
+
+        }
+
+        protected void txtFiltroProducto_TextChanged(object sender, EventArgs e)
+        {
+            List<Producto> lista = (List<Producto>)Session["listaProductos"];
+
+            var filtrada = lista.FindAll(x =>
+              x.Nombre.ToUpper().Contains(txtFiltroProducto.Text.ToUpper()) ||
+                 x.Categoria.Nombre.ToUpper().Contains(txtFiltroProducto.Text.ToUpper()));
+
+            gvProductos.DataSource = filtrada;
+            gvProductos.DataBind();
+        }
+
+        protected void txtFiltroCliente_TextChanged(object sender, EventArgs e)
+        {
+            var lista = (List<Cliente>)Session["listaClientes"];
+            var filtrada = lista.FindAll(x => x.Nombre.ToUpper().Contains(txtFiltroCliente.Text.ToUpper()) ||
+                x.Apellido.ToUpper().Contains(txtFiltroCliente.Text.ToUpper())
+            );
+
+            gvClientes.DataSource = filtrada;
+            gvClientes.DataBind();
+
         }
     }
 }

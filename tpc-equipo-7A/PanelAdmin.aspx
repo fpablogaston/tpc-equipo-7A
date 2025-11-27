@@ -46,6 +46,11 @@
                         </div>
                         <asp:Label ID="lblMensajeCategoria" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
+                        <div class="mb-3">
+                            <asp:TextBox ID="txtFiltroCategorias" runat="server" CssClass="form-control"
+                                Placeholder="Buscar categoría..." AutoPostBack="true" OnTextChanged="txtFiltroCategorias_TextChanged"></asp:TextBox>
+                        </div>
+
                         <asp:GridView ID="gvCategorias" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
                             AutoGenerateColumns="false"
@@ -73,6 +78,11 @@
                             <asp:Button ID="btnNuevoProducto" runat="server" Text="Nuevo Producto" CssClass="btn btn-success" OnClick="btnNuevoProducto_Click" />
                         </div>
                         <asp:Label ID="lblMensajeProducto" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
+
+                        <div class="mb-3">
+                            <asp:TextBox ID="txtFiltroProducto" runat="server" CssClass="form-control"
+                                Placeholder="Buscar producto..." AutoPostBack="true" OnTextChanged="txtFiltroProducto_TextChanged"></asp:TextBox>
+                        </div>
 
                         <asp:GridView ID="gvProductos" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
@@ -103,6 +113,13 @@
                             <asp:Button ID="btnNuevoCliente" runat="server" Text="Nuevo Cliente" CssClass="btn btn-success" OnClick="btnNuevoCliente_Click" />
                         </div>
                         <asp:Label ID="lblMensajeCliente" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
+
+                        <div class="mb-3">
+                            <asp:TextBox ID="txtFiltroCliente" runat="server" CssClass="form-control"
+                                Placeholder="Buscar cliente..." AutoPostBack="true"
+                                OnTextChanged="txtFiltroCliente_TextChanged" />
+                        </div>
+
 
                         <asp:GridView ID="gvClientes" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
@@ -206,7 +223,7 @@
                                 <asp:BoundField DataField="Estado" HeaderText="Estado" />
                                 <asp:BoundField DataField="FechaEnvio" HeaderText="Fecha Envío" DataFormatString="{0:d}" />
                                 <asp:BoundField DataField="FechaEntrega" HeaderText="Fecha Entrega" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="IdPedido" HeaderText="ID Pedido" />                                
+                                <asp:BoundField DataField="IdPedido" HeaderText="ID Pedido" />
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
                                         <asp:Button ID="btnEditarEnvio" runat="server" Text="Editar" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
