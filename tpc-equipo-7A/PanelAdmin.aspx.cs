@@ -255,8 +255,13 @@ namespace tpc_equipo_7A
             try
             {
                 PagoNegocio negocio = new PagoNegocio();
-                gvPagos.DataSource = negocio.Listar();
+
+                var lista = new PagoNegocio().Listar();
+                Session["listaPagos"] = lista;
+
+                gvPagos.DataSource = lista;
                 gvPagos.DataBind();
+
             }
             catch (Exception ex)
             {
@@ -299,7 +304,12 @@ namespace tpc_equipo_7A
             try
             {
                 EnvioNegocio negocio = new EnvioNegocio();
-                gvEnvios.DataSource = negocio.Listar();
+
+                var lista = new EnvioNegocio().Listar();
+
+                Session["listaEnvios"] = lista;
+
+                gvEnvios.DataSource = lista;
                 gvEnvios.DataBind();
             }
             catch (Exception ex)
@@ -386,6 +396,34 @@ namespace tpc_equipo_7A
 
             gvPedidos.DataSource = filtrada;
             gvPedidos.DataBind();
+        }
+
+        protected void txtFiltroPago_TextChanged(object sender, EventArgs e)
+        {
+            var lista = (List<Pago>)Session["listaPagos"];
+            string filtro = txtFiltroPago.Text.ToUpper();
+
+            var filtrada = lista.FindAll(x =>
+                x.IdPedido.ToString().Contains(filtro) ||
+                (x.EstadoNombre ?? "").ToUpper().Contains(filtro)
+            );
+
+            gvPagos.DataSource = filtrada;
+            gvPagos.DataBind();
+        }
+
+        protected void txtFiltroEnvio_TextChanged(object sender, EventArgs e)
+        {
+            var lista = (List<Envio>)Session["listaEnvios"];
+            string filtro = txtFiltroEnvio.Text.ToUpper();
+
+            var filtrada = lista.FindAll(x =>
+                x.IdPedido.ToString().Contains(filtro) ||
+                (x.Estado ?? "").ToUpper().Contains(filtro)
+            );
+
+            gvEnvios.DataSource = filtrada;
+            gvEnvios.DataBind();
         }
     }
 }
