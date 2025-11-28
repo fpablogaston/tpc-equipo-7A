@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Mail;
+using System.Web.Configuration;
 
 public class EmailService
 {
     public void EnviarMail(string destinatario, string asunto, string cuerpo)
     {
         MailMessage mail = new MailMessage();
-        mail.From = new MailAddress("tienda7equipo7@gmail.com");
+        mail.From = new MailAddress(WebConfigurationManager.AppSettings["smtpUser"]);
         mail.To.Add(destinatario);
         mail.Subject = asunto;
         mail.Body = cuerpo;
@@ -20,3 +17,4 @@ public class EmailService
         smtp.Send(mail);
     }
 }
+

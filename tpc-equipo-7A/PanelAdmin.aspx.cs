@@ -285,7 +285,7 @@ namespace tpc_equipo_7A
             {
                 try
                 {
-                    EnvioNegocio negocio = new EnvioNegocio();
+                    PagoNegocio negocio = new PagoNegocio();
                     negocio.Eliminar(id);
                     lblMensajePago.Text = "Pago eliminado.";
                     lblMensajePago.CssClass = "text-success";

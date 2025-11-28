@@ -11,17 +11,17 @@ namespace tpc_equipo_7A
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            if (Session["carrito"] == null || Session["pedido"] == null)
+            {
+                Response.Redirect("Default.aspx", false);
+                return;
+            }
+
             if (!IsPostBack)
             {
                 try
                 {
-
-                    if(Session["carrito"] == null || Session["pedido"] == null)
-                    {
-                        Response.Redirect("Default.aspx", false);
-                        return;
-                    }
-
 
                     Cliente cliente = (Cliente)Session["cliente"];
                     Carrito carrito = (Carrito)Session["carrito"];

@@ -117,7 +117,7 @@ namespace tpc_equipo_7A
                             txtProductoId.Text = producto.Id.ToString();
                             txtProductoNombre.Text = producto.Nombre;
                             txtProductoDescripcion.Text = producto.Descripcion;
-                            txtProductoPrecio.Text = producto.Precio.ToString();
+                            txtProductoPrecio.Text = producto.Precio.ToString("N2", new System.Globalization.CultureInfo("es-AR"));
                             txtProductoStock.Text = producto.Stock.ToString();
                             txtProductoImagenUrl.Text = producto.ImagenUrl;
                             imgProducto.ImageUrl = !string.IsNullOrEmpty(producto.ImagenUrl) ? producto.ImagenUrl : "https://placehold.co/600x400?text=No+Image";
@@ -171,7 +171,7 @@ namespace tpc_equipo_7A
                             txtPagoId.Text = pago.Id.ToString();
                             txtMetodoPago.Text = pago.MetodoPago.Nombre;
                             txtEstadoPago.Text = pago.Estado.Nombre;
-                            txtMonto.Text = pago.Monto.ToString();
+                            txtMonto.Text = pago.Monto.ToString("N2", new System.Globalization.CultureInfo("es-AR"));
                             txtFechaPago.Text = pago.FechaPago.ToString("yyyy-MM-dd");
                             ddlPagoPedido.SelectedValue = pago.IdPedido.ToString();
                         }
@@ -184,7 +184,7 @@ namespace tpc_equipo_7A
                         {
                             txtPedidoId.Text = pedido.Id.ToString();
                             txtPedidoFecha.Text = pedido.FechaPedido.ToString("yyyy-MM-dd");
-                            txtPedidoTotal.Text = pedido.Total.ToString();
+                            txtPedidoTotal.Text = pedido.Total.ToString("N2", new System.Globalization.CultureInfo("es-AR"));
                             txtPedidoEstado.Text = pedido.Estado.ToString();
 
                             ddlPedidoCliente.SelectedValue = pedido.Cliente.Id.ToString();

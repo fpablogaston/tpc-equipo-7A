@@ -27,8 +27,10 @@
                             </div>
                             <div class="mb-3">
                                 <label for="txtProductoPrecio" class="form-label">Precio:</label>
-                                <asp:TextBox runat="server" ID="txtProductoPrecio" CssClass="form-control" TextMode="Number" step="0.01" />
+                                <asp:TextBox runat="server" ID="txtProductoPrecio" CssClass="form-control"/>
                                 <asp:RequiredFieldValidator ErrorMessage="El precio es requerido." ControlToValidate="txtProductoPrecio" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                                <asp:RegularExpressionValidator ControlToValidate="txtProductoPrecio" ValidationExpression="^\d{1,3}(\.\d{3})*(,\d{1,2})?$" ErrorMessage="Ingrese un precio válido (ej: 1234.56)" runat="server" ForeColor="DarkRed" />
+
                             </div>
                             <div class="mb-3">
                                 <label for="txtProductoStock" class="form-label">Stock:</label>
@@ -161,8 +163,10 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="txtMonto" class="form-label">Monto:</label>
-                                        <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control" TextMode="Number" step="0.01"></asp:TextBox>
+                                        <asp:TextBox ID="txtMonto" runat="server" CssClass="form-control" step="0.01"></asp:TextBox>
                                         <asp:RequiredFieldValidator ControlToValidate="txtMonto" ID="rfvMonto" runat="server" ErrorMessage="El monto es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                        <asp:RegularExpressionValidator ControlToValidate="txtMonto" ValidationExpression="^\d{1,3}(\.\d{3})*(,\d{1,2})?$" ErrorMessage="Ingrese un monto válido (ej: 1234.56)" runat="server" ForeColor="DarkRed" />
+
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -204,13 +208,13 @@
 
                                 <div class="mb-3">
                                     <label for="txtPedidoTotal" class="form-label">Total:</label>
-                                    <asp:TextBox ID="txtPedidoTotal" runat="server" CssClass="form-control" TextMode="Number"></asp:TextBox>
+                                    <asp:TextBox ID="txtPedidoTotal" runat="server" CssClass="form-control"></asp:TextBox>
                                     <asp:RequiredFieldValidator ID="rfvPedidoTotal" runat="server"
                                         ControlToValidate="txtPedidoTotal" ErrorMessage="El total es requerido."
                                         ForeColor="DarkRed" Display="Dynamic" />
                                     <asp:RegularExpressionValidator ID="revPedidoTotal" runat="server"
                                         ControlToValidate="txtPedidoTotal"
-                                        ValidationExpression="^\d+(\.\d{1,2})?$"
+                                        ValidationExpression="^\d{1,3}(\.\d{3})*(,\d{1,2})?$"
                                         ErrorMessage="Formato inválido. Ejemplo: 999.99"
                                         ForeColor="DarkRed" Display="Dynamic" />
                                 </div>

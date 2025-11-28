@@ -148,5 +148,21 @@ namespace negocio
             }
             finally { datos.CerrarConexion(); }
         }
+
+        public void Eliminar(int id)
+        {
+            AccesoDatos Datos = new AccesoDatos();
+            try
+            {
+                Datos.SetQuery("Delete From Pagos Where Id = @Id");
+                Datos.SetearParametro("@Id", id);
+                Datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+        }
     }
 }
