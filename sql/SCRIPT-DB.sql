@@ -304,3 +304,9 @@ UNION ALL
 SELECT 'Productos', COUNT(*) FROM Productos
 UNION ALL
 SELECT 'Pedidos', COUNT(*) FROM Pedidos;
+
+SELECT * FROM Pedidos
+SELECT * FROM Envios
+SELECT * FROM Clientes
+
+Select Id, FechaPedido, Estado, Total, IdCliente, IdEnvio, IdPago From Pedidos

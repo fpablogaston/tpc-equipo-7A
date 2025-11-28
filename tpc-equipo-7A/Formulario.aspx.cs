@@ -396,7 +396,7 @@ namespace tpc_equipo_7A
 
             PagoNegocio pagoNeg = new PagoNegocio();
             ddlPedidoPago.DataSource = pagoNeg.Listar();
-            ddlPedidoPago.DataTextField = "MetodoPago";
+            ddlPedidoPago.DataTextField = "MetodoPagoNombre";
             ddlPedidoPago.DataValueField = "Id";
             ddlPedidoPago.DataBind();
             ddlPedidoPago.Items.Insert(0, new ListItem("Seleccionar Pago", "0"));

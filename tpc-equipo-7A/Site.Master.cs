@@ -26,11 +26,13 @@ namespace tpc_equipo_7A
                     phUser.Visible = false;
                     phAdmin.Visible = false;
                     phLogout.Visible = false;
+                    phMisCompras.Visible = false;
                 }
                 else
                 {
                     phUser.Visible = true;
                     phLogout.Visible = true;
+                    phMisCompras.Visible = true;
                     phLogin.Visible = false;
                     phAdmin.Visible = false;
 
@@ -72,6 +74,15 @@ namespace tpc_equipo_7A
             Response.Redirect("Default.aspx"); 
         }
 
+        protected void btnMisCompras_Click(object sender, EventArgs e)
+        {
+            if(Session["cliente"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+            Response.Redirect("MisCompras.aspx");
+        }
 
         public void LoadCarrito()
         {
@@ -155,6 +166,7 @@ namespace tpc_equipo_7A
             phAdmin.Visible = true;
             phLogout.Visible = true;
             phLogin.Visible = false;
+            phMisCompras.Visible = false;
             lblUser.Text = "Administrador";
         }
 

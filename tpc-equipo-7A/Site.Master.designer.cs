@@ -60,6 +60,24 @@ namespace tpc_equipo_7A
         protected global::System.Web.UI.WebControls.PlaceHolder phAdmin;
 
         /// <summary>
+        /// phMisCompras control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder phMisCompras;
+
+        /// <summary>
+        /// btnMisCompras control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnMisCompras;
+
+        /// <summary>
         /// phLogin control.
         /// </summary>
         /// <remarks>

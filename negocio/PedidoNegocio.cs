@@ -201,7 +201,32 @@ namespace negocio
             }
 
 
+            }
+
+        public List<Pedido> ListarPorCliente(int idCliente)
+        {
+            List<Pedido> lista = new List<Pedido>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetQuery("SELECT Id, FechaPedido, Total FROM Pedidos WHERE IdCliente = @IdCliente");
+                datos.SetearParametro("@IdCliente", idCliente);
+                datos.EjecutarLectura();
+
+                while (datos.Reader.Read())
+                {
+                    Pedido p = new Pedido();
+                    p.Id = (int)datos.Reader["Id"];
+                    p.FechaPedido = (DateTime)datos.Reader["FechaPedido"];
+                    p.Total = (decimal)datos.Reader["Total"];
+                    lista.Add(p);
+                }
+                return lista;
+            }
+            finally { datos.CerrarConexion(); }
         }
+
 
     }
 }
