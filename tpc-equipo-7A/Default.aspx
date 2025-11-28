@@ -4,31 +4,44 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <%-- Carousel Banner --%>
+    <h2 class="text-center mb-4 mt-3">Productos destacados</h2>
+
     <div id="carouselBanner" class="carousel slide w-75 mx-auto mb-5 mt-3" data-bs-ride="carousel">
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="d-flex justify-content-center gap-3">
-                    <img src="https://www.bigbuy.com.py/imagenes/sin_imagen.jpg" class="d-block" style="width: 25%; max-height: 300px; object-fit: contain;">
-                    <img src="https://www.bigbuy.com.py/imagenes/sin_imagen.jpg" class="d-block" style="width: 25%; max-height: 300px; object-fit: contain;">
-                    <img src="https://www.bigbuy.com.py/imagenes/sin_imagen.jpg" class="d-block" style="width: 25%; max-height: 300px; object-fit: contain;">
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="d-flex justify-content-center gap-3">
-                    <img src="https://www.bigbuy.com.py/imagenes/sin_imagen.jpg" class="d-block" style="width: 25%; max-height: 300px; object-fit: contain;">
-                    <img src="https://www.bigbuy.com.py/imagenes/sin_imagen.jpg" class="d-block" style="width: 25%; max-height: 300px; object-fit: contain;">
-                    <img src="https://www.bigbuy.com.py/imagenes/sin_imagen.jpg" class="d-block" style="width: 25%; max-height: 300px; object-fit: contain;">
-                </div>
-            </div>
+
+            <asp:Repeater ID="repCarousel" runat="server">
+                <ItemTemplate>
+                    <div class="carousel-item <%# Container.ItemIndex == 0 ? "active" : "" %>">
+                        <div class="d-flex flex-column align-items-center p-3">
+
+                            <img src="<%# Eval("ImagenUrl") %>"
+                                class="d-block mb-3"
+                                style="width: 60%; max-height: 400px; object-fit: contain;"
+                                onerror="this.src='https://placehold.co/600x400?text=No+Image'">
+
+                            <h5 class="text-center"><%# Eval("Nombre") %></h5>
+                            <h4 class="text-primary mb-3">$<%# Eval("Precio", "{0:N2}") %></h4>
+
+                            <a href="DetalleProducto.aspx?id=<%# Eval("Id") %>"
+                                class="btn btn-primary">Ver detalle
+                            </a>
+
+                        </div>
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
+
         </div>
+
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselBanner" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" style="filter: invert(1);"></span>
         </button>
+
         <button class="carousel-control-next" type="button" data-bs-target="#carouselBanner" data-bs-slide="next">
             <span class="carousel-control-next-icon" style="filter: invert(1);"></span>
         </button>
     </div>
+
 
     <%-- Product Grid --%>
     <div class="container">
@@ -66,27 +79,27 @@
         </div>
     </div>
 
-<%-- Toast --%>
+    <%-- Toast --%>
 
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-          <div id="toastLogin" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastLogin" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
             <div class="d-flex">
-              <div id="toastLoginBody" class="toast-body">Sesión iniciada</div>
-              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <div id="toastLoginBody" class="toast-body">Sesión iniciada</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-          </div>
         </div>
+    </div>
 
 
 
 
-<script>
-    function mostrarToastLogin() {
-        const element = document.getElementById('toastLogin');
-        const toast = new bootstrap.Toast(element);
-        toast.show();
-    }
-</script>
+    <script>
+        function mostrarToastLogin() {
+            const element = document.getElementById('toastLogin');
+            const toast = new bootstrap.Toast(element);
+            toast.show();
+        }
+    </script>
 
 
 

@@ -35,6 +35,10 @@ namespace tpc_equipo_7A
 
                 repRepetidor.DataSource = lista;
                 repRepetidor.DataBind();
+
+                repCarousel.DataSource = lista;
+                repCarousel.DataBind();
+
                 Session["ListaProductos"] = lista;
             }
         }

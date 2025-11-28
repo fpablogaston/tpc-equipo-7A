@@ -47,7 +47,7 @@
                         <asp:Label ID="lblMensajeCategoria" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
                         <div class="mb-3">
-                            <asp:Label ID="Label4" runat="server" Text="Filtrar" CssClass="text-dark fw-bold" ></asp:Label>
+                            <asp:Label ID="Label4" runat="server" Text="Filtrar" CssClass="text-dark fw-bold"></asp:Label>
                             <asp:TextBox ID="txtFiltroCategorias" runat="server" CssClass="form-control"
                                 Placeholder="Buscar categoría..." AutoPostBack="true" OnTextChanged="txtFiltroCategorias_TextChanged"></asp:TextBox>
                         </div>
@@ -81,7 +81,7 @@
                         <asp:Label ID="lblMensajeProducto" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
                         <div class="mb-3">
-                            <asp:Label ID="Label3" runat="server" Text="Filtrar"  CssClass="text-dark fw-bold"></asp:Label>
+                            <asp:Label ID="Label3" runat="server" Text="Filtrar" CssClass="text-dark fw-bold"></asp:Label>
                             <asp:TextBox ID="txtFiltroProducto" runat="server" CssClass="form-control"
                                 Placeholder="Buscar producto..." AutoPostBack="true" OnTextChanged="txtFiltroProducto_TextChanged"></asp:TextBox>
                         </div>
@@ -191,6 +191,13 @@
                         </div>
                         <asp:Label ID="lblMensajePago" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
+                        <div class="mb-3">
+                            <asp:Label ID="Label6" runat="server" Text="Filtrar" CssClass="text-dark fw-bold"></asp:Label>
+                            <asp:TextBox ID="txtFiltroPago" runat="server" CssClass="form-control"
+                                Placeholder="Buscar pago..." AutoPostBack="true"
+                                OnTextChanged="txtFiltroPago_TextChanged" />
+                        </div>
+
                         <asp:GridView ID="gvPagos" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
                             AutoGenerateColumns="false"
@@ -221,6 +228,15 @@
                             <asp:Button runat="server" Text="Nuevo Envio" CssClass="btn btn-success" OnClick="btnNuevoEnvio_Click" />
                         </div>
                         <asp:Label ID="lblMensajeEnvio" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
+
+                        <div class="mb-3">
+                            <asp:Label ID="Label5" runat="server" Text="Filtrar" CssClass="text-dark fw-bold"></asp:Label>
+                            <asp:TextBox ID="txtFiltroEnvio" runat="server" CssClass="form-control"
+                                Placeholder="Buscar envio..." AutoPostBack="true"
+                                OnTextChanged="txtFiltroEnvio_TextChanged" />
+                        </div>
+
+
                         <asp:GridView ID="gvEnvios" runat="server"
                             CssClass="table table-striped table-bordered table-hover"
                             AutoGenerateColumns="false"
