@@ -70,6 +70,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CompraExitosa.aspx" />
     <Content Include="Formulario.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="MisCompras.aspx" />
@@ -85,6 +86,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompraExitosa.aspx.cs">
+      <DependentUpon>CompraExitosa.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CompraExitosa.aspx.designer.cs">
+      <DependentUpon>CompraExitosa.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Formulario.aspx.cs">
       <DependentUpon>Formulario.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

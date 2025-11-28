@@ -27,10 +27,10 @@
         <asp:BoundField DataField="Ciudad" HeaderText="Ciudad" />
         <asp:BoundField DataField="Provincia" HeaderText="Provincia" />
 
-        <asp:BoundField DataField="EstadoEnvio" HeaderText="Estado Envío" />
+        <asp:BoundField DataField="EstadoEnvio" HeaderText="Estado del envío" />
 
-        <asp:BoundField DataField="MetodoPago" HeaderText="Método de Pago" />
-        <asp:BoundField DataField="EstadoPago" HeaderText="Estado del Pago" />
+        <asp:BoundField DataField="MetodoPago" HeaderText="Método de pago" />
+        <asp:BoundField DataField="EstadoPago" HeaderText="Estado del pago" />
 
     </Columns>
 

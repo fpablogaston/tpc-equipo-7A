@@ -94,11 +94,15 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
-        public void GuardarPedidoCompleto(Cliente cliente, Carrito carrito, Envio envio, Pago pago)
+        public Pedido GuardarPedidoCompleto(Cliente cliente, Carrito carrito, Envio envio, Pago pago)
         {
             SqlConnection conexion = new SqlConnection("server=.\\SQLEXPRESS; database=Ecommerce; integrated security=true");
             conexion.Open();
             SqlTransaction transaccion = conexion.BeginTransaction();
+            Pedido pedido = new Pedido();
+            pedido.Envio = new Envio();
+            pedido.Pago = new Pago();
+
 
             try
             {
@@ -110,6 +114,11 @@ namespace negocio
                 cmdPedido.Parameters.AddWithValue("@IdCliente", cliente.Id);
 
                 int idPedido = (int)cmdPedido.ExecuteScalar();
+
+                pedido.Id = idPedido;
+                pedido.Total = carrito.Total();
+                pedido.FechaPedido = DateTime.Now;
+
 
                 // 2. INSERTAR DETALLES
                 foreach (var item in carrito.ListaCarrito)
@@ -137,6 +146,7 @@ namespace negocio
                 cmdEnvio.Parameters.AddWithValue("@IdPedido", idPedido);
 
                 int idEnvio = (int)cmdEnvio.ExecuteScalar();
+                pedido.Envio.Id = idEnvio;
 
                 // 4. INSERTAR PAGO
                 SqlCommand cmdPago = new SqlCommand("INSERT INTO Pagos (MetodoPago, Estado, Monto, FechaPago, IdPedido) OUTPUT INSERTED.Id VALUES (@Metodo, 'Aprobado', @Monto, @Fecha, @IdPedido)", conexion, transaccion);
@@ -146,6 +156,7 @@ namespace negocio
                 cmdPago.Parameters.AddWithValue("@IdPedido", idPedido);
 
                 int idPago = (int)cmdPago.ExecuteScalar();
+                pedido.Pago.Id = idPago;
 
                 // 5. ACTUALIZAR PEDIDO
                 SqlCommand cmdUpdate = new SqlCommand("UPDATE Pedidos SET IdEnvio = @IdEnvio, IdPago = @IdPago WHERE Id = @IdPedido", conexion, transaccion);
@@ -155,6 +166,7 @@ namespace negocio
                 cmdUpdate.ExecuteNonQuery();
 
                 transaccion.Commit();
+                return pedido;
             }
             catch (Exception ex)
             {

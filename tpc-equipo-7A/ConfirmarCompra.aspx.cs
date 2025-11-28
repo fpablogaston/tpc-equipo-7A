@@ -54,30 +54,45 @@ namespace tpc_equipo_7A
                 Pago pago = (Pago)Session["pago"];
 
                 PedidoNegocio negocio = new PedidoNegocio();
-                negocio.GuardarPedidoCompleto(cliente, carrito, envio, pago);
 
-                // Limpiar Sesión de Compra (excepto Login)
-                Session["carrito"] = null;
-                Session["envio"] = null;
-                Session["pago"] = null;
+                Pedido pedido = negocio.GuardarPedidoCompleto(cliente, carrito, envio, pago);
 
-                // Actualizar master
+                Session["pedido"] = pedido;
+
+ 
+
                 if (this.Master is Site master)
                 {
                     master.UpdateTotals();
                 }
 
-                // Redirigir a pantalla final (Exito)
-                // Podrías crear una pagina "CompraExitosa.aspx" o reusar Default con un mensaje
-                Response.Write("<script>alert('¡Compra realizada con éxito!');window.location.href='Default.aspx';</script>");
+
+                EmailService email = new EmailService();
+
+                string cuerpo = $@"
+                <h2>¡Gracias por tu compra!</h2>
+                <p>Tu pedido fue procesado correctamente.</p>
+
+                <p><strong>Número de Pedido:</strong> {pedido.Id}</p>
+                <p><strong>Total:</strong> ${pedido.Total}</p>
+                <p><strong>Método de Pago:</strong> {pago.MetodoPagoNombre}</p>
+                <p><strong>Estado del Pago:</strong> {pago.Estado.Nombre}</p>
+                <p><strong>Estado del Envío:</strong> {envio.Estado}</p>
+
+                <hr/>
+                <p>¡Que tengas un excelente día!</p>
+                ";
+
+                email.EnviarMail(cliente.Email, "Confirmación de compra", cuerpo);
+
+                Response.Redirect("CompraExitosa.aspx");
             }
             catch (Exception ex)
             {
                 Session.Add("error", ex.ToString());
-                // Response.Redirect("Error.aspx"); 
-                // O mostrar un label de error
                 Response.Write("<script>alert('Hubo un error al procesar el pedido.');</script>");
             }
         }
+
     }
 }
