@@ -9,20 +9,44 @@ namespace negocio
 {
     public class EnvioNegocio
     {
+        public Dictionary<int, string> ListarEstados()
+        {
+            Dictionary<int, string> estados = new Dictionary<int, string>();
+            AccesoDatos data = new AccesoDatos();
+            try
+            {
+                data.SetQuery("SELECT Id, Descripcion FROM EstadoEnvio");
+                data.EjecutarLectura();
+                while (data.Reader.Read())
+                {
+                    estados.Add((int)data.Reader["Id"], (string)data.Reader["Descripcion"]);
+                }
+                return estados;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                data.CerrarConexion();
+            }
+        }
+
         public int Agregar(Envio envio)
         {
             AccesoDatos Datos = new AccesoDatos();
             int idEnvio;
             try
             {
-                Datos.SetQuery("Insert Into Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, FechaEntrega, Estado, IdPedido) Values (@DireccionEnvio, @Ciudad, @Provincia, @CodigoPostal, @FechaEnvio, @FechaEntrega, @Estado, @IdPedido); SELECT SCOPE_IDENTITY();");
+                Datos.SetQuery("Insert Into Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, FechaEntrega, IdEstadoEnvio, IdPedido) Values (@DireccionEnvio, @Ciudad, @Provincia, @CodigoPostal, @FechaEnvio, @FechaEntrega, @IdEstadoEnvio, @IdPedido); SELECT SCOPE_IDENTITY();");
                 Datos.SetearParametro("@DireccionEnvio", envio.DireccionEnvio);
                 Datos.SetearParametro("@Ciudad", envio.Ciudad);
                 Datos.SetearParametro("@Provincia", envio.Provincia);
                 Datos.SetearParametro("@CodigoPostal", envio.CodigoPostal);
                 Datos.SetearParametro("@FechaEnvio", envio.FechaEnvio);
                 Datos.SetearParametro("@FechaEntrega", (object)envio.FechaEntrega ?? DBNull.Value);
-                Datos.SetearParametro("@Estado", envio.Estado);
+                Datos.SetearParametro("@IdEstadoEnvio", envio.IdEstadoEnvio == 0 ? 1 : envio.IdEstadoEnvio);
                 Datos.SetearParametro("@IdPedido", envio.IdPedido);
                 return idEnvio = Datos.EjecutarScalar();
             }
@@ -36,20 +60,21 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+
         public void Actualizar(Envio envio)
         {
             AccesoDatos Datos = new AccesoDatos();
             try
             {
-                Datos.SetQuery("UPDATE Envios SET DireccionEnvio = @DireccionEnvio, Ciudad = @Ciudad, Provincia = @Provincia, CodigoPostal = @CodigoPostal, FechaEnvio = @FechaEnvio, FechaEntrega = @FechaEntrega, Estado = @Estado, IdPedido = @IdPedido WHERE Id = @Id");
+                Datos.SetQuery("UPDATE Envios SET DireccionEnvio = @DireccionEnvio, Ciudad = @Ciudad, Provincia = @Provincia, CodigoPostal = @CodigoPostal, FechaEnvio = @FechaEnvio, FechaEntrega = @FechaEntrega, IdEstadoEnvio = @IdEstadoEnvio, IdPedido = @IdPedido WHERE Id = @Id");
                 Datos.SetearParametro("@Id", envio.Id);
                 Datos.SetearParametro("@DireccionEnvio", envio.DireccionEnvio);
                 Datos.SetearParametro("@Ciudad", envio.Ciudad);
                 Datos.SetearParametro("@Provincia", envio.Provincia);
                 Datos.SetearParametro("@CodigoPostal", envio.CodigoPostal);
-                Datos.SetearParametro("@FechaEnvio", envio.FechaEnvio);
+                Datos.SetearParametro("@FechaEnvio", (object)envio.FechaEnvio ?? DBNull.Value);
                 Datos.SetearParametro("@FechaEntrega", (object)envio.FechaEntrega ?? DBNull.Value);
-                Datos.SetearParametro("@Estado", envio.Estado);
+                Datos.SetearParametro("@IdEstadoEnvio", envio.IdEstadoEnvio);
                 Datos.SetearParametro("@IdPedido", envio.IdPedido);
                 Datos.EjecutarAccion();
             }
@@ -63,13 +88,14 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+
         public List<Envio> Listar()
         {
             List<Envio> list = new List<Envio>();
             AccesoDatos data = new AccesoDatos();
             try
             {
-                data.SetQuery("Select Id, DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, FechaEntrega, Estado, IdPedido From Envios");
+                data.SetQuery("Select E.Id, E.DireccionEnvio, E.Ciudad, E.Provincia, E.CodigoPostal, E.FechaEnvio, E.FechaEntrega, E.IdEstadoEnvio, ES.Descripcion as EstadoDescripcion, E.IdPedido From Envios E INNER JOIN EstadoEnvio ES ON E.IdEstadoEnvio = ES.Id");
                 data.EjecutarLectura();
                 while (data.Reader.Read())
                 {
@@ -81,7 +107,10 @@ namespace negocio
                     aux.CodigoPostal = (string)data.Reader["CodigoPostal"];
                     aux.FechaEnvio = data.Reader["FechaEnvio"] == DBNull.Value ? (DateTime?)null : (DateTime)data.Reader["FechaEnvio"];
                     aux.FechaEntrega = data.Reader["FechaEntrega"] == DBNull.Value ? (DateTime?)null : (DateTime)data.Reader["FechaEntrega"];
-                    aux.Estado = (string)data.Reader["Estado"];
+
+                    aux.IdEstadoEnvio = (int)data.Reader["IdEstadoEnvio"];
+                    aux.EstadoDescripcion = (string)data.Reader["EstadoDescripcion"];
+
                     aux.IdPedido = (int)data.Reader["IdPedido"];
                     list.Add(aux);
                 }
@@ -97,6 +126,7 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
+
         public Envio GetById(int id)
         {
             Envio aux = new Envio();
@@ -104,7 +134,7 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select Id, DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, FechaEntrega, Estado, IdPedido From Envios Where Id = @Id");
+                Datos.SetQuery("Select E.Id, E.DireccionEnvio, E.Ciudad, E.Provincia, E.CodigoPostal, E.FechaEnvio, E.FechaEntrega, E.IdEstadoEnvio, ES.Descripcion as EstadoDescripcion, E.IdPedido From Envios E INNER JOIN EstadoEnvio ES ON E.IdEstadoEnvio = ES.Id Where E.Id = @Id");
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarLectura();
 
@@ -117,7 +147,10 @@ namespace negocio
                     aux.CodigoPostal = (string)Datos.Reader["CodigoPostal"];
                     aux.FechaEnvio = Datos.Reader["FechaEnvio"] == DBNull.Value ? (DateTime?)null : (DateTime)Datos.Reader["FechaEnvio"];
                     aux.FechaEntrega = Datos.Reader["FechaEntrega"] == DBNull.Value ? (DateTime?)null : (DateTime)Datos.Reader["FechaEntrega"];
-                    aux.Estado = (string)Datos.Reader["Estado"];
+
+                    aux.IdEstadoEnvio = (int)Datos.Reader["IdEstadoEnvio"];
+                    aux.EstadoDescripcion = (string)Datos.Reader["EstadoDescripcion"];
+
                     aux.IdPedido = (int)Datos.Reader["IdPedido"];
                 }
                 return aux;
@@ -132,6 +165,7 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+
         public void Eliminar(int Id)
         {
             AccesoDatos Datos = new AccesoDatos();
@@ -147,9 +181,5 @@ namespace negocio
                 throw;
             }
         }
-
-        
-
     }
 }
-    

@@ -77,7 +77,7 @@ namespace tpc_equipo_7A
                 <p><strong>Total:</strong> ${pedido.Total}</p>
                 <p><strong>Método de Pago:</strong> {pago.MetodoPagoNombre}</p>
                 <p><strong>Estado del Pago:</strong> {pago.Estado.Nombre}</p>
-                <p><strong>Estado del Envío:</strong> {envio.Estado}</p>
+                <p><strong>Estado del Envío:</strong> {envio.EstadoDescripcion}</p>
 
                 <hr/>
                 <p>¡Que tengas un excelente día!</p>

@@ -157,7 +157,7 @@ namespace tpc_equipo_7A
                             txtProvincia.Text = envio.Provincia;
                             txtCodigoPostal.Text = envio.CodigoPostal;
                             if (envio.FechaEnvio != null) txtFechaEnvio.Text = envio.FechaEnvio.Value.ToString("yyyy-MM-dd");
-                            txtEstadoEnvio.Text = envio.Estado;
+                            txtEstadoEnvio.Text = envio.EstadoDescripcion;
                             if (envio.FechaEntrega != null) txtFechaEntrega.Text = envio.FechaEntrega.Value.ToString("yyyy-MM-dd");
                             ddlEnvioPedido.SelectedValue = envio.IdPedido.ToString();
                         }
@@ -314,7 +314,8 @@ namespace tpc_equipo_7A
             envio.Ciudad = txtCiudad.Text;
             envio.Provincia = txtProvincia.Text;
             envio.CodigoPostal = txtCodigoPostal.Text;
-            envio.Estado = txtEstadoEnvio.Text;
+            envio.IdEstadoEnvio = negocio.ListarEstados()
+                                         .First(x => x.Value == txtEstadoEnvio.Text).Key;
             envio.IdPedido = int.Parse(ddlEnvioPedido.SelectedValue);
             envio.FechaEnvio = DateTime.Parse(txtFechaEnvio.Text);
             DateTime fechaEntrega;

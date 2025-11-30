@@ -15,8 +15,11 @@ namespace dominio
         public string CodigoPostal { get; set; }
         public DateTime? FechaEnvio { get; set; }
         public DateTime? FechaEntrega { get; set; }
-        public string Estado { get; set; }
+
+        // Changed from string to object/int reference
+        public int IdEstadoEnvio { get; set; }
+        public string EstadoDescripcion { get; set; } // Helper property for display
+
         public int IdPedido { get; set; }
-        //public string InfoAdicional { get; set; }
     }
 }

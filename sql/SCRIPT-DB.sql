@@ -310,3 +310,60 @@ SELECT * FROM Envios
 SELECT * FROM Clientes
 
 Select Id, FechaPedido, Estado, Total, IdCliente, IdEnvio, IdPago From Pedidos
+
+
+-- ... existing code ...
+-- Envíos
+CREATE TABLE Envios (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    DireccionEnvio VARCHAR(50) NULL,
+    Ciudad VARCHAR(50) NULL,
+    Provincia VARCHAR(50) NULL,
+    CodigoPostal VARCHAR(50) NULL,
+    FechaEnvio DATETIME NULL,
+    FechaEntrega DATETIME NULL,
+    Estado VARCHAR(50) NULL, -- This will be replaced/updated
+    IdPedido INT NOT NULL,
+    CONSTRAINT FK_Envios_Pedidos FOREIGN KEY (IdPedido)
+        REFERENCES Pedidos(Id)
+);
+GO
+
+-- NEW TABLE: EstadoEnvio
+CREATE TABLE EstadoEnvio (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Descripcion VARCHAR(50) NOT NULL
+);
+GO
+
+-- POPULATE EstadoEnvio
+INSERT INTO EstadoEnvio (Descripcion) VALUES 
+('Pendiente'), 
+('Preparando'), 
+('En Camino'), 
+('Entregado'), 
+('Cancelado'), 
+('Retiro en Local');
+GO
+
+-- MODIFY Envios table to use IdEstadoEnvio instead of Estado string
+-- First, add the new column
+ALTER TABLE Envios ADD IdEstadoEnvio INT NULL;
+GO
+
+-- Migrate existing data (assuming 'Estado' string matches descriptions)
+UPDATE Envios SET IdEstadoEnvio = (SELECT Id FROM EstadoEnvio WHERE Descripcion = Envios.Estado);
+GO
+
+-- If data migration leaves NULLs (because string didn't match), default to 1 (Pendiente)
+UPDATE Envios SET IdEstadoEnvio = 1 WHERE IdEstadoEnvio IS NULL;
+GO
+
+-- Make it NOT NULL and add Foreign Key
+ALTER TABLE Envios ALTER COLUMN IdEstadoEnvio INT NOT NULL;
+ALTER TABLE Envios ADD CONSTRAINT FK_Envios_EstadoEnvio FOREIGN KEY (IdEstadoEnvio) REFERENCES EstadoEnvio(Id);
+GO
+
+-- Drop the old string column
+ALTER TABLE Envios DROP COLUMN Estado;
+GO

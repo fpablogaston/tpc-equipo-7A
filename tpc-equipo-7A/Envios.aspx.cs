@@ -53,7 +53,8 @@ namespace tpc_equipo_7A
                     Ciudad = txtCiudad.Text,
                     Provincia = txtProvincia.Text,
                     CodigoPostal = txtCodigoPostal.Text,
-                    Estado = "Pendiente", // Estado inicial por defecto
+                    IdEstadoEnvio = 1, // Estado inicial por defecto
+                    EstadoDescripcion = "Pendiente", // Estado inicial por defecto
                     FechaEnvio = DateTime.Now // Fecha de creación del registro
                 };
                 Session["envio"] = envio;

@@ -36,7 +36,7 @@ namespace tpc_equipo_7A
                         DireccionEnvio = envio?.DireccionEnvio,
                         Ciudad = envio?.Ciudad,
                         Provincia = envio?.Provincia,
-                        EstadoEnvio = envio?.Estado,
+                        EstadoEnvio = envio?.EstadoDescripcion,
                         MetodoPago = pago?.MetodoPago?.Nombre,
                         EstadoPago = pago?.Estado?.Nombre
                     });
