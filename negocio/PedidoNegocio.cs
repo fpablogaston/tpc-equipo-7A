@@ -139,10 +139,12 @@ namespace negocio
                 }
 
                 // 3. INSERTAR ENVIO
-                SqlCommand cmdEnvio = new SqlCommand("INSERT INTO Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, Estado, IdPedido, IdEstadoEnvio) OUTPUT INSERTED.Id VALUES (@Dir, @Ciudad, 'Provincia', '0000', @Fecha, 'Pendiente', @IdPedido, 1)", conexion, transaccion);
-                cmdEnvio.Parameters.AddWithValue("@Dir", envio.DireccionEnvio);
-                cmdEnvio.Parameters.AddWithValue("@Ciudad", envio.Ciudad); // Usando Ciudad como localidad
-                cmdEnvio.Parameters.AddWithValue("@Fecha", DateTime.Now.AddDays(1)); // Fecha estimada mañana
+                SqlCommand cmdEnvio = new SqlCommand("INSERT INTO Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, IdEstadoEnvio, IdPedido) OUTPUT INSERTED.Id VALUES (@DireccionEnvio, @Ciudad, @Provincia, @CodigoPostal, @IdEstadoEnvio, @IdPedido)", conexion, transaccion);
+                cmdEnvio.Parameters.AddWithValue("@DireccionEnvio", envio.DireccionEnvio);
+                cmdEnvio.Parameters.AddWithValue("@Ciudad", envio.Ciudad); 
+                cmdEnvio.Parameters.AddWithValue("@Provincia", envio.Provincia); 
+                cmdEnvio.Parameters.AddWithValue("@CodigoPostal", envio.CodigoPostal);
+                cmdEnvio.Parameters.AddWithValue("@IdEstadoEnvio", 1); // Asumiendo 1 es 'Pendiente'
                 cmdEnvio.Parameters.AddWithValue("@IdPedido", idPedido);
 
                 int idEnvio = (int)cmdEnvio.ExecuteScalar();
