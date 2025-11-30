@@ -367,3 +367,4 @@ GO
 -- Drop the old string column
 ALTER TABLE Envios DROP COLUMN Estado;
 GO
+

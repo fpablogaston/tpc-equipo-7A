@@ -10,6 +10,11 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["cliente"] == null || ((Cliente)Session["cliente"]).Rol != 1)
+            {
+                Response.Redirect("Default.aspx");
+            }
+
             if (!IsPostBack)
             {
                 var cliente = (Cliente)Session["cliente"];
@@ -46,8 +51,5 @@ namespace tpc_equipo_7A
                 gvCompras.DataBind();
             }
         }
-
-
-
     }
 }

@@ -59,13 +59,10 @@ namespace tpc_equipo_7A
 
                 Session["pedido"] = pedido;
 
- 
-
                 if (this.Master is Site master)
                 {
                     master.UpdateTotals();
                 }
-
 
                 EmailService email = new EmailService();
 

@@ -1,5 +1,7 @@
 ﻿using dominio;
+using negocio;
 using System;
+using System.Linq;
 using System.Web.UI;
 
 namespace tpc_equipo_7A
@@ -53,9 +55,7 @@ namespace tpc_equipo_7A
                     Ciudad = txtCiudad.Text,
                     Provincia = txtProvincia.Text,
                     CodigoPostal = txtCodigoPostal.Text,
-                    IdEstadoEnvio = 1, // Estado inicial por defecto
-                    EstadoDescripcion = "Pendiente", // Estado inicial por defecto
-                    FechaEnvio = DateTime.Now // Fecha de creación del registro
+                    IdEstadoEnvio = new EnvioNegocio().ListarEstados().First(x => x.Value == "Pendiente").Key, // Estado inicial por defecto
                 };
                 Session["envio"] = envio;
                 Response.Redirect("Pagos.aspx");
