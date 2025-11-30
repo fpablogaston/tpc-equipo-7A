@@ -1,11 +1,10 @@
 ﻿<%@ Page Title="Admin Panel" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="PanelAdmin.aspx.cs" Inherits="tpc_equipo_7A.PanelAdmin" UnobtrusiveValidationMode="None" %>
+
 <%@ MasterType VirtualPath="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* Styles for PO Diagram */
         .step-icon {
             font-size: 1.2rem;
             width: 30px;
@@ -15,6 +14,7 @@
             justify-content: center;
             border-radius: 50%;
         }
+
         .step-line {
             display: inline-block;
             width: 40px;
@@ -23,10 +23,26 @@
             vertical-align: middle;
             margin: 0 5px;
         }
-        .step-active { background-color: #0d6efd; color: white; }
-        .step-completed { background-color: #198754; color: white; }
-        .step-pending { background-color: #e9ecef; color: #6c757d; }
-        .step-warning { background-color: #ffc107; color: #000; }
+
+        .step-active {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .step-completed {
+            background-color: #198754;
+            color: white;
+        }
+
+        .step-pending {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .step-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -63,7 +79,6 @@
                     </div>
                 </asp:PlaceHolder>
 
-                <!-- VISTA PEDIDOS (PO DIAGRAM) -->
                 <asp:PlaceHolder ID="phPedidos" runat="server" Visible="false">
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -82,11 +97,9 @@
                             CssClass="table table-hover align-middle shadow-sm bg-white rounded"
                             AutoGenerateColumns="false"
                             DataKeyNames="Id"
-                            OnRowDataBound="gvPedidos_RowDataBound"
-                            OnRowCommand="gvPedidos_RowCommand">
+                            OnRowDataBound="gvPedidos_RowDataBound">
 
                             <Columns>
-                                <%-- ID y Cliente --%>
                                 <asp:TemplateField HeaderText="Orden">
                                     <ItemTemplate>
                                         <div class="fw-bold">#<%# Eval("Id") %></div>
@@ -94,13 +107,9 @@
                                         <div><%# Eval("Cliente.Nombre") %> <%# Eval("Cliente.Apellido") %></div>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-
-                                <%-- Diagrama de Hitos (Milestones) --%>
                                 <asp:TemplateField HeaderText="Progreso (PO)">
                                     <ItemTemplate>
                                         <div class="d-flex align-items-center">
-
-                                            <%-- 1. PAGO --%>
                                             <div class="text-center" title="Pago">
                                                 <asp:Panel ID="pnlPagoIcon" runat="server" CssClass="step-icon">
                                                     <i class="bi bi-currency-dollar"></i>
@@ -109,8 +118,6 @@
                                             </div>
 
                                             <div class="step-line"></div>
-
-                                            <%-- 2. ENVIO / RETIRO --%>
                                             <div class="text-center" title="Logística">
                                                 <asp:Panel ID="pnlEnvioIcon" runat="server" CssClass="step-icon">
                                                     <i id="iconEnvio" runat="server" class="bi bi-truck"></i>
@@ -121,8 +128,6 @@
                                             </div>
 
                                             <div class="step-line"></div>
-
-                                            <%-- 3. ESTADO FINAL --%>
                                             <div class="text-center" title="Estado Actual">
                                                 <span class="badge rounded-pill bg-primary">
                                                     <%# Eval("Estado.Descripcion") %>
@@ -131,7 +136,6 @@
 
                                         </div>
 
-                                        <%-- Alerta Visual si es Efectivo --%>
                                         <asp:Panel ID="pnlCashWarning" runat="server" Visible="false" CssClass="mt-2 badge bg-warning text-dark">
                                             <i class="bi bi-exclamation-triangle"></i>Pago en Efectivo (Validar en caja)
                                         </asp:Panel>
@@ -141,27 +145,11 @@
 
                                 <asp:BoundField DataField="Total" HeaderText="Total" DataFormatString="{0:C}" ItemStyle-CssClass="fw-bold text-success" />
 
-                                <%-- Acciones (Cambiar Estado) --%>
-                                <asp:TemplateField HeaderText="Acciones">
-                                    <ItemTemplate>
-                                        <div class="input-group input-group-sm mb-1">
-                                            <asp:DropDownList ID="ddlCambiarEstado" runat="server" CssClass="form-select">
-                                                <%-- Se llena en RowDataBound --%>
-                                            </asp:DropDownList>
-                                            <asp:LinkButton ID="btnUpdateEstado" runat="server" CommandName="ActualizarEstado" CommandArgument='<%# Container.DataItemIndex %>' CssClass="btn btn-outline-primary" ToolTip="Guardar Estado">
-                                                <i class="bi bi-save"></i>
-                                            </asp:LinkButton>
-                                        </div>
-                                        <asp:LinkButton ID="btnVerDetalle" runat="server" CssClass="btn btn-sm btn-info text-white w-100" CommandName="VerDetalle" CommandArgument='<%# Eval("Id") %>'>
-                                            <i class="bi bi-eye"></i> Ver Detalle
-                                        </asp:LinkButton>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
                             </Columns>
                         </asp:GridView>
                     </div>
                 </asp:PlaceHolder>
+
 
                 <asp:PlaceHolder ID="phCategorias" runat="server" Visible="false">
                     <div class="mt-4">

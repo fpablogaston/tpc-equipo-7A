@@ -34,38 +34,7 @@ namespace negocio
                 data.EjecutarLectura();
                 while (data.Reader.Read())
                 {
-                    Pedido aux = new Pedido();
-                    aux.Id = (int)data.Reader["Id"];
-                    aux.FechaPedido = (DateTime)data.Reader["FechaPedido"];
-                    aux.Total = (decimal)data.Reader["Total"];
-
-                    aux.Estado = new EstadoPedido();
-                    aux.Estado.Id = (int)data.Reader["IdEstadoPedido"];
-                    aux.Estado.Descripcion = (string)data.Reader["EstadoDescripcion"];
-
-                    aux.Cliente = new Cliente();
-                    aux.Cliente.Id = (int)data.Reader["IdCliente"];
-                    aux.Cliente.Nombre = (string)data.Reader["ClienteNombre"];
-                    aux.Cliente.Apellido = (string)data.Reader["ClienteApellido"];
-
-                    aux.Envio = new Envio();
-                    if (data.Reader["IdEnvio"] != DBNull.Value)
-                    {
-                        aux.Envio.Id = (int)data.Reader["IdEnvio"];
-                        aux.Envio.IdEstadoEnvio = data.Reader["EstadoEnvioId"] != DBNull.Value ? (int)data.Reader["EstadoEnvioId"] : 0;
-                        aux.Envio.EstadoDescripcion = data.Reader["EstadoEnvioDesc"] != DBNull.Value ? (string)data.Reader["EstadoEnvioDesc"] : "";
-                    }
-
-                    aux.Pago = new Pago();
-                    if (data.Reader["IdPago"] != DBNull.Value)
-                    {
-                        aux.Pago.Id = (int)data.Reader["IdPago"];
-                        aux.Pago.MetodoPago = new MetodoPago { Nombre = (string)data.Reader["MetodoPagoStr"] };
-                        aux.Pago.Estado = new EstadoPago { Nombre = (string)data.Reader["EstadoPago"] };
-                        if (aux.Pago.MetodoPago.Nombre.ToLower().Contains("efectivo")) aux.Pago.MetodoPago.Id = 2;
-                    }
-
-                    list.Add(aux);
+                    list.Add(MapPedido(data.Reader));
                 }
                 return list;
             }
@@ -88,30 +57,23 @@ namespace negocio
                 data.SetQuery(@"
                     SELECT P.Id, P.FechaPedido, P.Total, P.IdCliente, 
                            P.IdEstadoPedido, EP.Descripcion as EstadoDescripcion,
-                           P.IdEnvio, P.IdPago 
+                           P.IdEnvio, P.IdPago,
+                           C.Nombre as ClienteNombre, C.Apellido as ClienteApellido,
+                           PA.MetodoPago as MetodoPagoStr, PA.Estado as EstadoPago,
+                           E.IdEstadoEnvio as EstadoEnvioId, EE.Descripcion as EstadoEnvioDesc
                     FROM Pedidos P
                     INNER JOIN EstadoPedido EP ON P.IdEstadoPedido = EP.Id
+                    INNER JOIN Clientes C ON P.IdCliente = C.Id
+                    LEFT JOIN Pagos PA ON P.IdPago = PA.Id
+                    LEFT JOIN Envios E ON P.IdEnvio = E.Id
+                    LEFT JOIN EstadoEnvio EE ON E.IdEstadoEnvio = EE.Id
                     WHERE P.Id = @Id");
 
                 data.SetearParametro("@Id", id);
                 data.EjecutarLectura();
                 while (data.Reader.Read())
                 {
-                    aux.Id = (int)data.Reader["Id"];
-                    aux.FechaPedido = (DateTime)data.Reader["FechaPedido"];
-                    aux.Total = (decimal)data.Reader["Total"];
-
-                    aux.Estado = new EstadoPedido();
-                    aux.Estado.Id = (int)data.Reader["IdEstadoPedido"];
-                    aux.Estado.Descripcion = (string)data.Reader["EstadoDescripcion"];
-
-                    aux.Cliente = new ClienteNegocio().GetById((int)data.Reader["IdCliente"]);
-
-                    if (data.Reader["IdEnvio"] != DBNull.Value)
-                        aux.Envio = new EnvioNegocio().GetById((int)data.Reader["IdEnvio"]);
-
-                    if (data.Reader["IdPago"] != DBNull.Value)
-                        aux.Pago = new PagoNegocio().GetById((int)data.Reader["IdPago"]);
+                    aux = MapPedido(data.Reader);
                 }
                 return aux;
             }
@@ -123,6 +85,88 @@ namespace negocio
             {
                 data.CerrarConexion();
             }
+        }
+
+        public List<Pedido> ListarPorCliente(int idCliente)
+        {
+            List<Pedido> list = new List<Pedido>();
+            AccesoDatos data = new AccesoDatos();
+            try
+            {
+                data.SetQuery(@"
+                    SELECT P.Id, P.FechaPedido, P.Total, P.IdCliente, 
+                           P.IdEstadoPedido, EP.Descripcion as EstadoDescripcion,
+                           P.IdEnvio, P.IdPago,
+                           C.Nombre as ClienteNombre, C.Apellido as ClienteApellido,
+                           PA.MetodoPago as MetodoPagoStr, PA.Estado as EstadoPago,
+                           E.IdEstadoEnvio as EstadoEnvioId, EE.Descripcion as EstadoEnvioDesc
+                    FROM Pedidos P
+                    INNER JOIN EstadoPedido EP ON P.IdEstadoPedido = EP.Id
+                    INNER JOIN Clientes C ON P.IdCliente = C.Id
+                    LEFT JOIN Pagos PA ON P.IdPago = PA.Id
+                    LEFT JOIN Envios E ON P.IdEnvio = E.Id
+                    LEFT JOIN EstadoEnvio EE ON E.IdEstadoEnvio = EE.Id
+                    WHERE P.IdCliente = @IdCliente
+                ");
+
+                data.SetearParametro("@IdCliente", idCliente);
+                data.EjecutarLectura();
+
+                while (data.Reader.Read())
+                {
+                    list.Add(MapPedido(data.Reader));
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                data.CerrarConexion();
+            }
+        }
+
+        // Helper method to map reader to object (DRY principle)
+        private Pedido MapPedido(SqlDataReader reader)
+        {
+            Pedido aux = new Pedido();
+            aux.Id = (int)reader["Id"];
+            aux.FechaPedido = (DateTime)reader["FechaPedido"];
+            aux.Total = (decimal)reader["Total"];
+
+            // Estado
+            aux.Estado = new EstadoPedido();
+            aux.Estado.Id = (int)reader["IdEstadoPedido"];
+            aux.Estado.Descripcion = (string)reader["EstadoDescripcion"];
+
+            // Cliente
+            aux.Cliente = new Cliente();
+            aux.Cliente.Id = (int)reader["IdCliente"];
+            aux.Cliente.Nombre = (string)reader["ClienteNombre"];
+            aux.Cliente.Apellido = (string)reader["ClienteApellido"];
+
+            // Envio
+            aux.Envio = new Envio();
+            if (reader["IdEnvio"] != DBNull.Value)
+            {
+                aux.Envio.Id = (int)reader["IdEnvio"];
+                aux.Envio.IdEstadoEnvio = reader["EstadoEnvioId"] != DBNull.Value ? (int)reader["EstadoEnvioId"] : 0;
+                aux.Envio.EstadoDescripcion = reader["EstadoEnvioDesc"] != DBNull.Value ? (string)reader["EstadoEnvioDesc"] : "";
+            }
+
+            // Pago
+            aux.Pago = new Pago();
+            if (reader["IdPago"] != DBNull.Value)
+            {
+                aux.Pago.Id = (int)reader["IdPago"];
+                aux.Pago.MetodoPago = new MetodoPago { Nombre = (string)reader["MetodoPagoStr"] };
+                aux.Pago.Estado = new EstadoPago { Nombre = (string)reader["EstadoPago"] };
+                if (aux.Pago.MetodoPago.Nombre.ToLower().Contains("efectivo")) aux.Pago.MetodoPago.Id = 2;
+            }
+
+            return aux;
         }
 
         public void ActualizarEstado(int idPedido, int idEstado)
@@ -176,10 +220,10 @@ namespace negocio
 
             try
             {
-                // 1. INSERTAR PEDIDO (Default State: 1 - Pendiente de Pago)
+                // 1. INSERTAR PEDIDO
                 SqlCommand cmdPedido = new SqlCommand("INSERT INTO Pedidos (FechaPedido, IdEstadoPedido, Total, IdCliente) OUTPUT INSERTED.Id VALUES (@Fecha, @IdEstado, @Total, @IdCliente)", conexion, transaccion);
                 cmdPedido.Parameters.AddWithValue("@Fecha", DateTime.Now);
-                cmdPedido.Parameters.AddWithValue("@IdEstado", 1); // Pendiente
+                cmdPedido.Parameters.AddWithValue("@IdEstado", 1); // 1 = Pendiente de Pago
                 cmdPedido.Parameters.AddWithValue("@Total", carrito.Total());
                 cmdPedido.Parameters.AddWithValue("@IdCliente", cliente.Id);
 
@@ -219,7 +263,7 @@ namespace negocio
                 // 4. INSERTAR PAGO
                 SqlCommand cmdPago = new SqlCommand("INSERT INTO Pagos (MetodoPago, Estado, Monto, FechaPago, IdPedido) OUTPUT INSERTED.Id VALUES (@Metodo, @EstadoPago, @Monto, @Fecha, @IdPedido)", conexion, transaccion);
                 cmdPago.Parameters.AddWithValue("@Metodo", pago.MetodoPago.Nombre);
-                // Logic: If Cash/Transfer -> Pendiente, if Card -> Aprobado (Simulated)
+
                 string estadoPago = "Aprobado";
                 if (pago.MetodoPago.Nombre.ToLower().Contains("efectivo") || pago.MetodoPago.Nombre.ToLower().Contains("transferencia"))
                     estadoPago = "Pendiente";
@@ -252,33 +296,18 @@ namespace negocio
                 conexion.Close();
             }
         }
+
         public void Actualizar(Pedido pedido)
         {
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.SetQuery("UPDATE Pedidos SET " +
-                              "FechaPedido = @Fecha, " +
-                              "Estado = @Estado, " +
-                              "Total = @Total, " +
-                              "IdCliente = @Cliente, " +
-                              "IdEnvio = @Envio, " +
-                              "IdPago = @Pago " +
-                              "WHERE Id = @Id");
-
+                datos.SetQuery("UPDATE Pedidos SET FechaPedido = @Fecha, Total = @Total, IdCliente = @Cliente WHERE Id = @Id");
                 datos.SetearParametro("@Fecha", pedido.FechaPedido);
-                datos.SetearParametro("@Estado", pedido.Estado);
                 datos.SetearParametro("@Total", pedido.Total);
                 datos.SetearParametro("@Cliente", pedido.Cliente.Id);
-                datos.SetearParametro("@Envio", pedido.Envio.Id);
-                datos.SetearParametro("@Pago", pedido.Pago.Id);
                 datos.SetearParametro("@Id", pedido.Id);
-
                 datos.EjecutarAccion();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
             finally
             {
@@ -290,11 +319,10 @@ namespace negocio
             AccesoDatos data = new AccesoDatos();
             try
             {
-                data.SetQuery("INSERT INTO Pedidos (FechaPedido, Estado, Total, IdCliente) " +
-                              "OUTPUT INSERTED.Id VALUES (@Fecha, @Estado, @Total, @Cliente)");
+                data.SetQuery("INSERT INTO Pedidos (FechaPedido, IdEstadoPedido, Total, IdCliente) OUTPUT INSERTED.Id VALUES (@Fecha, @IdEstado, @Total, @Cliente)");
 
                 data.SetearParametro("@Fecha", pedido.FechaPedido);
-                data.SetearParametro("@Estado", pedido.Estado);
+                data.SetearParametro("@IdEstado", pedido.Estado != null ? pedido.Estado.Id : 1);
                 data.SetearParametro("@Total", pedido.Total);
                 data.SetearParametro("@Cliente", pedido.Cliente.Id);
 
@@ -304,45 +332,6 @@ namespace negocio
             {
                 data.CerrarConexion();
             }
-        }
-        public List<Pedido> ListarPorCliente(int idCliente)
-        {
-            List<Pedido> lista = new List<Pedido>();
-            AccesoDatos data = new AccesoDatos();
-
-            try
-            {
-                data.SetQuery("SELECT Id, FechaPedido, Estado, Total, IdCliente, IdEnvio, IdPago FROM Pedidos WHERE IdCliente = @IdCliente");
-                data.SetearParametro("@IdCliente", idCliente);
-                data.EjecutarLectura();
-
-                while (data.Reader.Read())
-                {
-                    Pedido aux = new Pedido();
-                    aux.Id = (int)data.Reader["Id"];
-                    aux.FechaPedido = (DateTime)data.Reader["FechaPedido"];
-                    aux.Estado = new EstadoPedido { Id = 1, Descripcion = (string)data.Reader["Estado"] };
-                    aux.Total = (decimal)data.Reader["Total"];
-
-                    aux.Cliente = new Cliente { Id = idCliente };
-                    if (data.Reader["IdEnvio"] != DBNull.Value)
-                    {
-                        aux.Envio = new EnvioNegocio().GetById((int)data.Reader["IdEnvio"]);
-                    }
-                    if (data.Reader["IdPago"] != DBNull.Value)
-                    {
-                        aux.Pago = new PagoNegocio().GetById((int)data.Reader["IdPago"]);
-                    }
-
-                    lista.Add(aux);
-                }
-                return lista;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally { data.CerrarConexion(); }
         }
     }
 }
