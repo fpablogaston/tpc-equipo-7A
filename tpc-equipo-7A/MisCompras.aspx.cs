@@ -1,8 +1,8 @@
 ﻿using dominio;
 using negocio;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace tpc_equipo_7A
 {
@@ -10,45 +10,47 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["cliente"] == null || ((Cliente)Session["cliente"]).Rol != 1)
+            if (Session["cliente"] == null)
             {
-                Response.Redirect("Default.aspx");
+                Response.Redirect("Login.aspx");
+                return;
             }
 
             if (!IsPostBack)
             {
-                var cliente = (Cliente)Session["cliente"];
-                int idCliente = cliente.Id;
-
-                PedidoNegocio pedidoNeg = new PedidoNegocio();
-                EnvioNegocio envNeg = new EnvioNegocio();
-                PagoNegocio pagoNeg = new PagoNegocio();
-
-                var pedidos = pedidoNeg.ListarPorCliente(idCliente);
-
-                var lista = new List<dynamic>();
-
-                foreach (var p in pedidos)
+                try
                 {
-                    var envio = envNeg.GetById(p.Id);
-                    var pago = pagoNeg.GetById(p.Id);
+                    var cliente = (Cliente)Session["cliente"];
+                    int idCliente = cliente.Id;
 
-                    lista.Add(new
+                    PedidoNegocio pedidoNeg = new PedidoNegocio();
+                    var pedidos = pedidoNeg.ListarPorCliente(idCliente);
+
+                    var lista = new List<dynamic>();
+
+                    foreach (var p in pedidos)
                     {
-                        IdPedido = p.Id,
-                        Total = p.Total,
-                        FechaPedido = p.FechaPedido,
-                        DireccionEnvio = envio?.DireccionEnvio,
-                        Ciudad = envio?.Ciudad,
-                        Provincia = envio?.Provincia,
-                        EstadoEnvio = envio?.EstadoDescripcion,
-                        MetodoPago = pago?.MetodoPago?.Nombre,
-                        EstadoPago = pago?.Estado?.Nombre
-                    });
-                }
+                        lista.Add(new
+                        {
+                            IdPedido = p.Id,
+                            Total = p.Total,
+                            FechaPedido = p.FechaPedido,
+                            DireccionEnvio = p.Envio?.DireccionEnvio ?? "-",
+                            Ciudad = p.Envio?.Ciudad ?? "-",
+                            Provincia = p.Envio?.Provincia ?? "-",
+                            EstadoEnvio = p.Envio?.EstadoDescripcion ?? "Pendiente",
+                            MetodoPago = p.Pago?.MetodoPago?.Nombre ?? "-",
+                            EstadoPago = p.Pago?.Estado?.Nombre ?? "-"
+                        });
+                    }
 
-                gvCompras.DataSource = lista;
-                gvCompras.DataBind();
+                    gvCompras.DataSource = lista.OrderByDescending(x => x.FechaPedido).ToList();
+                    gvCompras.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    Session.Add("error", ex.ToString());
+                }
             }
         }
     }

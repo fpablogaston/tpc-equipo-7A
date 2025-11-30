@@ -139,11 +139,10 @@ namespace negocio
                 }
 
                 // 3. INSERTAR ENVIO
-                SqlCommand cmdEnvio = new SqlCommand("INSERT INTO Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, IdEstadoEnvio, IdPedido) OUTPUT INSERTED.Id VALUES (@Dir, @Ciudad, 'Provincia', '0000', @Fecha, @IdEstadoEnvio, @IdPedido)", conexion, transaccion);
+                SqlCommand cmdEnvio = new SqlCommand("INSERT INTO Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, FechaEnvio, Estado, IdPedido, IdEstadoEnvio) OUTPUT INSERTED.Id VALUES (@Dir, @Ciudad, 'Provincia', '0000', @Fecha, 'Pendiente', @IdPedido, 1)", conexion, transaccion);
                 cmdEnvio.Parameters.AddWithValue("@Dir", envio.DireccionEnvio);
                 cmdEnvio.Parameters.AddWithValue("@Ciudad", envio.Ciudad); // Usando Ciudad como localidad
                 cmdEnvio.Parameters.AddWithValue("@Fecha", DateTime.Now.AddDays(1)); // Fecha estimada mañana
-                cmdEnvio.Parameters.AddWithValue("@IdEstadoEnvio", envio.IdEstadoEnvio);
                 cmdEnvio.Parameters.AddWithValue("@IdPedido", idPedido);
 
                 int idEnvio = (int)cmdEnvio.ExecuteScalar();
@@ -180,8 +179,8 @@ namespace negocio
             }
         }
 
-            public void Actualizar(Pedido pedido)
-            {
+        public void Actualizar(Pedido pedido)
+        {
             AccesoDatos datos = new AccesoDatos();
             try
             {
@@ -212,35 +211,46 @@ namespace negocio
             {
                 datos.CerrarConexion();
             }
-
-
-            }
+        }
 
         public List<Pedido> ListarPorCliente(int idCliente)
         {
             List<Pedido> lista = new List<Pedido>();
-            AccesoDatos datos = new AccesoDatos();
+            AccesoDatos data = new AccesoDatos();
 
             try
             {
-                datos.SetQuery("SELECT Id, FechaPedido, Total FROM Pedidos WHERE IdCliente = @IdCliente");
-                datos.SetearParametro("@IdCliente", idCliente);
-                datos.EjecutarLectura();
+                data.SetQuery("SELECT Id, FechaPedido, Estado, Total, IdCliente, IdEnvio, IdPago FROM Pedidos WHERE IdCliente = @IdCliente");
+                data.SetearParametro("@IdCliente", idCliente);
+                data.EjecutarLectura();
 
-                while (datos.Reader.Read())
+                while (data.Reader.Read())
                 {
-                    Pedido p = new Pedido();
-                    p.Id = (int)datos.Reader["Id"];
-                    p.FechaPedido = (DateTime)datos.Reader["FechaPedido"];
-                    p.Total = (decimal)datos.Reader["Total"];
-                    lista.Add(p);
+                    Pedido aux = new Pedido();
+                    aux.Id = (int)data.Reader["Id"];
+                    aux.FechaPedido = (DateTime)data.Reader["FechaPedido"];
+                    aux.Estado = (string)data.Reader["Estado"];
+                    aux.Total = (decimal)data.Reader["Total"];
+
+                    aux.Cliente = new Cliente { Id = idCliente };
+                    if (data.Reader["IdEnvio"] != DBNull.Value)
+                    {
+                        aux.Envio = new EnvioNegocio().GetById((int)data.Reader["IdEnvio"]);
+                    }
+                    if (data.Reader["IdPago"] != DBNull.Value)
+                    {
+                        aux.Pago = new PagoNegocio().GetById((int)data.Reader["IdPago"]);
+                    }
+
+                    lista.Add(aux);
                 }
                 return lista;
             }
-            finally { datos.CerrarConexion(); }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally { data.CerrarConexion(); }
         }
-
-
     }
 }
-
