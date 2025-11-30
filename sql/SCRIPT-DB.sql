@@ -368,3 +368,41 @@ GO
 ALTER TABLE Envios DROP COLUMN Estado;
 GO
 
+-- 1. Create table for Order Statuses (Milestones)
+CREATE TABLE EstadoPedido (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Descripcion VARCHAR(50) NOT NULL
+);
+GO
+
+-- 2. Populate standard milestones
+INSERT INTO EstadoPedido (Descripcion) VALUES 
+('Pendiente de Pago'), 
+('Pagado'), 
+('En Preparación'), 
+('En Camino'), 
+('Listo para Retiro'),
+('Entregado'), 
+('Cancelado');
+GO
+
+-- 3. Update Pedidos table to use IdEstadoPedido
+-- Add column
+ALTER TABLE Pedidos ADD IdEstadoPedido INT NULL;
+GO
+
+-- Migrate existing string data to IDs (Best effort)
+UPDATE Pedidos SET IdEstadoPedido = 1 WHERE Estado = 'Pendiente';
+UPDATE Pedidos SET IdEstadoPedido = 6 WHERE Estado = 'Entregado';
+UPDATE Pedidos SET IdEstadoPedido = 4 WHERE Estado = 'Enviado';
+UPDATE Pedidos SET IdEstadoPedido = 1 WHERE IdEstadoPedido IS NULL; -- Default
+GO
+
+-- Make NOT NULL and add Foreign Key
+ALTER TABLE Pedidos ALTER COLUMN IdEstadoPedido INT NOT NULL;
+ALTER TABLE Pedidos ADD CONSTRAINT FK_Pedidos_EstadoPedido FOREIGN KEY (IdEstadoPedido) REFERENCES EstadoPedido(Id);
+GO
+
+-- Drop old string column
+ALTER TABLE Pedidos DROP COLUMN Estado;
+GO

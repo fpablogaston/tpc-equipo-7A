@@ -7,13 +7,16 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <div class="container mt-5">
-        <h2 class="mb-4 text-center">Historial de Compras</h2>
-        
+        <h2 class="display-4">Historial de Compras</h2>
+        <p class="lead">Lista de pedidos y compras historicas.</p>
+        <div class="alert alert-info mt-3">
+            *Los envios se realizan en el dia a la persona que realizo el pago, debe disponer de su DNI para recibir la compra
+        </div>
+        <hr />
         <div class="table-responsive">
             <asp:GridView ID="gvCompras" runat="server"
                 AutoGenerateColumns="False"
-                CssClass="table table-hover table-bordered shadow align-middle"
-                HeaderStyle-CssClass="table-dark"
+                CssClass="table table-striped table-bordered table-hover"
                 GridLines="None"
                 EmptyDataText="No has realizado compras aún.">
 

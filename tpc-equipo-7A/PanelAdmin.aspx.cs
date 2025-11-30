@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.UI.HtmlControls;
 
 namespace tpc_equipo_7A
 {
@@ -71,6 +72,140 @@ namespace tpc_equipo_7A
                 default:
                     phInicio.Visible = true;
                     break;
+            }
+        }
+
+        // --- PEDIDOS (NEW PO LOGIC) ---
+        private void BindPedidosGrid()
+        {
+            try
+            {
+                PedidoNegocio negocio = new PedidoNegocio();
+                var lista = negocio.Listar().OrderByDescending(x => x.FechaPedido).ToList();
+                Session["listaPedidos"] = lista;
+                gvPedidos.DataSource = lista;
+                gvPedidos.DataBind();
+            }
+            catch (Exception ex)
+            {
+                lblMensajePedido.Text = "Error al cargar pedidos: " + ex.Message;
+                lblMensajePedido.CssClass = "text-danger";
+            }
+        }
+
+        protected void gvPedidos_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                Pedido pedido = (Pedido)e.Row.DataItem;
+
+                // 1. Populate DropDownList for Status
+                DropDownList ddl = (DropDownList)e.Row.FindControl("ddlCambiarEstado");
+                if (ddl != null)
+                {
+                    PedidoNegocio negocio = new PedidoNegocio();
+                    ddl.DataSource = negocio.ListarEstados();
+                    ddl.DataTextField = "Descripcion";
+                    ddl.DataValueField = "Id";
+                    ddl.DataBind();
+                    ddl.SelectedValue = pedido.Estado.Id.ToString();
+                }
+
+                // 2. VISUAL LOGIC FOR "DIAGRAM" (PO)
+
+                // --- PAGO ---
+                Panel pnlPago = (Panel)e.Row.FindControl("pnlPagoIcon");
+                Panel pnlCashWarning = (Panel)e.Row.FindControl("pnlCashWarning");
+
+                bool isCash = pedido.EsPagoEfectivo;
+                // Assuming logic: if Payment State is "Aprobado" then it's paid.
+                bool isPaid = pedido.Pago != null && pedido.Pago.Estado.Nombre == "Aprobado";
+
+                if (isPaid)
+                {
+                    pnlPago.CssClass += " step-completed"; // Green
+                }
+                else if (isCash)
+                {
+                    pnlPago.CssClass += " step-warning"; // Yellow (User request)
+                    pnlCashWarning.Visible = true;
+                }
+                else
+                {
+                    pnlPago.CssClass += " step-pending"; // Grey
+                }
+
+                // --- ENVIO / RETIRO ---
+                Panel pnlEnvio = (Panel)e.Row.FindControl("pnlEnvioIcon");
+                HtmlGenericControl iconEnvio = (HtmlGenericControl)e.Row.FindControl("iconEnvio");
+                Label lblTipoEnvio = (Label)e.Row.FindControl("lblTipoEnvio");
+
+                bool isPickup = pedido.EsRetiroEnTienda;
+
+                if (isPickup)
+                {
+                    iconEnvio.Attributes["class"] = "bi bi-shop"; // Change icon to Shop
+                    lblTipoEnvio.Text = "Retiro";
+
+                    // Logic based on Order Status ID (Assuming 5 is 'Listo para Retiro')
+                    if (pedido.Estado.Id >= 5)
+                        pnlEnvio.CssClass += " step-completed";
+                    else if (pedido.Estado.Id >= 3) // Preparing
+                        pnlEnvio.CssClass += " step-active"; // Blue
+                    else
+                        pnlEnvio.CssClass += " step-pending";
+                }
+                else
+                {
+                    iconEnvio.Attributes["class"] = "bi bi-truck"; // Standard Truck
+
+                    if (pedido.Estado.Id >= 6) // Delivered
+                        pnlEnvio.CssClass += " step-completed";
+                    else if (pedido.Estado.Id == 4) // En Camino
+                        pnlEnvio.CssClass += " step-active"; // Blue
+                    else
+                        pnlEnvio.CssClass += " step-pending";
+                }
+            }
+        }
+
+        protected void gvPedidos_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "ActualizarEstado")
+            {
+                int index = Convert.ToInt32(e.CommandArgument);
+                GridViewRow row = gvPedidos.Rows[index];
+
+                int idPedido = (int)gvPedidos.DataKeys[index].Value;
+                DropDownList ddl = (DropDownList)row.FindControl("ddlCambiarEstado");
+                int nuevoEstadoId = int.Parse(ddl.SelectedValue);
+
+                PedidoNegocio negocio = new PedidoNegocio();
+                negocio.ActualizarEstado(idPedido, nuevoEstadoId);
+
+                // Refresh grid
+                BindPedidosGrid();
+            }
+            else if (e.CommandName == "VerDetalle")
+            {
+                string id = e.CommandArgument.ToString();
+                Response.Redirect("Formulario.aspx?entity=Pedido&id=" + id);
+            }
+        }
+
+        protected void txtFiltroPedido_TextChanged(object sender, EventArgs e)
+        {
+            var lista = (List<Pedido>)Session["listaPedidos"];
+            if (lista != null)
+            {
+                string filtro = txtFiltroPedido.Text.ToUpper();
+                var filtrada = lista.FindAll(x =>
+                    x.Id.ToString().Contains(filtro) ||
+                    x.Cliente.Nombre.ToUpper().Contains(filtro) ||
+                    x.Estado.Descripcion.ToUpper().Contains(filtro)
+                );
+                gvPedidos.DataSource = filtrada;
+                gvPedidos.DataBind();
             }
         }
 
@@ -258,49 +393,6 @@ namespace tpc_equipo_7A
             }
         }
 
-        // --- PEDIDOS ---
-        private void BindPedidosGrid()
-        {
-            try
-            {
-                PedidoNegocio negocio = new PedidoNegocio();
-                var lista = negocio.Listar();
-                Session["listaPedidos"] = lista;
-                gvPedidos.DataSource = lista;
-                gvPedidos.DataBind();
-            }
-            catch (Exception ex)
-            {
-                lblMensajePedido.Text = "Error al cargar pedidos: " + ex.Message;
-                lblMensajePedido.CssClass = "text-danger";
-            }
-        }
-
-        protected void gvPedidos_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            int id = Convert.ToInt32(e.CommandArgument);
-            if (e.CommandName == "Editar")
-            {
-                Response.Redirect($"Formulario.aspx?entity=Pedido&id={id}");
-            }
-        }
-
-        protected void txtFiltroPedido_TextChanged(object sender, EventArgs e)
-        {
-            var lista = (List<Pedido>)Session["listaPedidos"];
-            if (lista != null)
-            {
-                string filtro = txtFiltroPedido.Text.ToUpper();
-                var filtrada = lista.FindAll(x =>
-                    x.Id.ToString().Contains(filtro) ||
-                    x.Cliente.Nombre.ToUpper().Contains(filtro) ||
-                    x.Estado.ToUpper().Contains(filtro)
-                );
-                gvPedidos.DataSource = filtrada;
-                gvPedidos.DataBind();
-            }
-        }
-
         // --- PAGOS ---
         private void BindPagosGrid()
         {
@@ -344,7 +436,6 @@ namespace tpc_equipo_7A
                 }
                 catch (Exception ex)
                 {
-                    // Use the correct label for error message
                     lblMensajePago.Text = "Error al eliminar pago: " + ex.Message;
                     lblMensajePago.CssClass = "text-danger";
                 }
@@ -376,7 +467,7 @@ namespace tpc_equipo_7A
                 Session["listaEnvios"] = lista;
                 gvEnvios.DataSource = lista;
                 gvEnvios.DataBind();
-                
+
             }
             catch (Exception ex)
             {
@@ -389,6 +480,7 @@ namespace tpc_equipo_7A
         {
             Response.Redirect("Formulario.aspx?entity=Envio");
         }
+
         protected void gvEnvios_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "ActualizarEstado")
@@ -462,6 +554,7 @@ namespace tpc_equipo_7A
                 }
             }
         }
+
         protected void gvEnvios_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
@@ -478,6 +571,7 @@ namespace tpc_equipo_7A
                 }
             }
         }
+
         protected void txtFiltroEnvio_TextChanged(object sender, EventArgs e)
         {
             var lista = (List<Envio>)Session["listaEnvios"];

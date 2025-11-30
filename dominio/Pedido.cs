@@ -12,9 +12,23 @@ namespace dominio
         public Cliente Cliente { get; set; }
         public DateTime FechaPedido { get; set; }
         public decimal Total { get; set; }
-        public string Estado { get; set; }
+        public EstadoPedido Estado { get; set; }
         public Pago Pago { get; set; }
         public Envio Envio { get; set; }
         public List<DetallesPedido> Detalles { get; set; }
+        public bool EsRetiroEnTienda
+        {
+            get
+            {
+                return Envio != null && Envio.IdEstadoEnvio == 6;
+            }
+        }
+        public bool EsPagoEfectivo
+        {
+            get
+            {
+                return Pago != null && (Pago.MetodoPago.Id == 2 || Pago.MetodoPago.Nombre.ToLower().Contains("efectivo"));
+            }
+        }
     }
 }

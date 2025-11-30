@@ -340,7 +340,7 @@ namespace tpc_equipo_7A
                 Cliente = new ClienteNegocio().GetById(int.Parse(ddlPedidoCliente.SelectedValue)),
                 FechaPedido = DateTime.Parse(txtPedidoFecha.Text),
                 Total = decimal.Parse(txtPedidoTotal.Text),
-                Estado = txtPedidoEstado.Text,
+                Estado = new EstadoPedido { Id = 1, Descripcion = txtPedidoEstado.Text },
                 Pago = new PagoNegocio().GetById(int.Parse(ddlPedidoPago.SelectedValue)),
                 Envio = new EnvioNegocio().GetById(int.Parse(ddlPedidoEnvio.SelectedValue)),
             };
