@@ -15,6 +15,7 @@ namespace dominio
         public int Stock { get; set; }
         public string ImagenUrl { get; set; }
         public Categoria Categoria { get; set; }
+        public bool Activo { get; set; }
 
         public override string ToString()
         {

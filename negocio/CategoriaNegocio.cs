@@ -1,6 +1,7 @@
 ﻿using dominio;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace negocio
 {
@@ -51,18 +52,31 @@ namespace negocio
         }
         public void Eliminar(int id)
         {
+            //AccesoDatos Datos = new AccesoDatos();
+            //try
+            //{
+            //    Datos.SetQuery("Delete From Categorias Where id = @id");
+            //    Datos.SetearParametro("@id", id);
+            //    Datos.EjecutarAccion();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Error: {ex.ToString()}");
+            //    throw;
+            //}
+
             AccesoDatos Datos = new AccesoDatos();
             try
             {
-                Datos.SetQuery("Delete From Categorias Where id = @id");
-                Datos.SetearParametro("@id", id);
+                Datos.SetQuery("UPDATE Categorias SET Activo = 0 WHERE Id = @Id");
+                Datos.SetearParametro("@Id", id);
                 Datos.EjecutarAccion();
             }
-            catch (Exception ex)
+            finally
             {
-                Console.WriteLine($"Error: {ex.ToString()}");
-                throw;
+                Datos.CerrarConexion();
             }
+
         }
         public List<Categoria> Listar()
         {
@@ -71,7 +85,10 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Descripcion from Categorias");
+                //Datos.SetQuery("Select Id, Nombre, Descripcion from Categorias");
+                ///nuevo
+                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Activo FROM Categorias WHERE Activo = 1");
+
                 Datos.EjecutarLectura();
 
                 while (Datos.Reader.Read())
@@ -80,6 +97,8 @@ namespace negocio
                     aux.Id = (int)Datos.Reader["Id"];
                     aux.Nombre = (string)Datos.Reader["Nombre"];
                     aux.Descripcion = (string)Datos.Reader["Descripcion"];
+                    ///nuevo
+                    aux.Activo = (bool)Datos.Reader["Activo"];
                     Lista.Add(aux);
                 }
                 return Lista;
@@ -100,7 +119,10 @@ namespace negocio
             Categoria aux = new Categoria();
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Descripcion from Categorias where Id = @Id");
+                //Datos.SetQuery("Select Id, Nombre, Descripcion from Categorias where Id = @Id");
+
+                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Activo FROM Categorias WHERE Id = @Id AND Activo = 1");
+
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarLectura();
 
@@ -109,6 +131,8 @@ namespace negocio
                     aux.Id = (int)Datos.Reader["Id"];
                     aux.Nombre = (string)Datos.Reader["Nombre"];
                     aux.Descripcion = (string)Datos.Reader["Descripcion"];
+                    ///nuevo
+                    aux.Activo = (bool)Datos.Reader["Activo"];
                 }
             }
             catch (Exception ex)

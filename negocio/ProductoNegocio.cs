@@ -1,6 +1,7 @@
 ﻿using dominio;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -61,18 +62,31 @@ namespace negocio
         }
         public void Eliminar(int id)
         {
+            //AccesoDatos Datos = new AccesoDatos();
+            //try
+            //{
+            //    Datos.SetQuery("Delete From Productos Where Id = @Id");
+            //    Datos.SetearParametro("@Id", id);
+            //    Datos.EjecutarAccion();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Error: {ex.ToString()}");
+            //    throw;
+            //}
+
             AccesoDatos Datos = new AccesoDatos();
             try
             {
-                Datos.SetQuery("Delete From Productos Where Id = @Id");
+                Datos.SetQuery("UPDATE Productos SET Activo = 0 WHERE Id = @Id");
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarAccion();
             }
-            catch (Exception ex)
+            finally
             {
-                Console.WriteLine($"Error: {ex.ToString()}");
-                throw;
+                Datos.CerrarConexion();
             }
+
         }
         public List<Producto> Listar()
         {
@@ -81,7 +95,9 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select P.Id, P.Nombre, P.Descripcion, P.Precio, P.Stock, P.ImagenUrl, C.Id as IdCategoria, C.Nombre as CategoriaNombre, C.Descripcion as CategoriaDescripcion From Productos as P, Categorias as C Where P.IdCategoria = C.Id");
+                //Datos.SetQuery("Select P.Id, P.Nombre, P.Descripcion, P.Precio, P.Stock, P.ImagenUrl, C.Id as IdCategoria, C.Nombre as CategoriaNombre, C.Descripcion as CategoriaDescripcion From Productos as P, Categorias as C Where P.IdCategoria = C.Id");
+
+                Datos.SetQuery("SELECT P.Id, P.Nombre, P.Descripcion, P.Precio, P.Stock, P.ImagenUrl, P.Activo,C.Id AS IdCategoria, C.Nombre AS CategoriaNombre, C.Descripcion AS CategoriaDescripcion,C.Activo AS CategoriaActivo FROM Productos P INNER JOIN Categorias C ON P.IdCategoria = C.Id WHERE P.Activo = 1 AND C.Activo = 1");
                 Datos.EjecutarLectura();
 
                 while (Datos.Reader.Read())
@@ -93,10 +109,14 @@ namespace negocio
                     aux.Precio = (decimal)Datos.Reader["Precio"];
                     aux.Stock = (int)Datos.Reader["Stock"];
                     aux.ImagenUrl = (string)Datos.Reader["ImagenUrl"];
+                    ///nuevo
+                    aux.Activo = (bool)Datos.Reader["Activo"];
                     aux.Categoria = new Categoria();
                     aux.Categoria.Id = (int)Datos.Reader["IdCategoria"];
                     aux.Categoria.Nombre = (string)Datos.Reader["CategoriaNombre"];
                     aux.Categoria.Descripcion = (string)Datos.Reader["CategoriaDescripcion"];
+                    /// nuevo
+                    aux.Categoria.Activo = (bool)Datos.Reader["CategoriaActivo"];
                     Lista.Add(aux);
                 }
                 return Lista;
@@ -118,8 +138,12 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria From Productos Where Id = @Id");
+                //Datos.SetQuery("Select Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria From Productos Where Id = @Id");
+                //Datos.SetearParametro("@Id", id);
+
+                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria, Activo  FROM Productos WHERE Id = @Id AND Activo = 1");
                 Datos.SetearParametro("@Id", id);
+
                 Datos.EjecutarLectura();
 
                 while (Datos.Reader.Read())
@@ -130,6 +154,7 @@ namespace negocio
                     aux.Precio = (decimal)Datos.Reader["Precio"];
                     aux.Stock = (int)Datos.Reader["Stock"];
                     aux.ImagenUrl = (string)Datos.Reader["ImagenUrl"];
+                    aux.Activo = (bool)Datos.Reader["Activo"];
                     aux.Categoria = new CategoriaNegocio().GetById((int)Datos.Reader["IdCategoria"]);
                 }
                 return aux;
@@ -150,7 +175,11 @@ namespace negocio
             AccesoDatos Datos = new AccesoDatos();
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria From Productos Where IdCategoria = @idCategoria");
+                //Datos.SetQuery("Select Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria From Productos Where IdCategoria = @idCategoria");
+
+                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Precio, Stock, ImagenUrl, IdCategoria, Activo  FROM Productos WHERE IdCategoria = @idCategoria AND Activo = 1");
+
+
                 Datos.SetearParametro("@idCategoria", idCategoria);
                 Datos.EjecutarLectura();
                 while (Datos.Reader.Read())
@@ -162,6 +191,8 @@ namespace negocio
                     aux.Precio = (decimal)Datos.Reader["Precio"];
                     aux.Stock = (int)Datos.Reader["Stock"];
                     aux.ImagenUrl = (string)Datos.Reader["ImagenUrl"];
+                    ///nuevo
+                    aux.Activo = (bool)Datos.Reader["Activo"];
                     aux.Categoria = new CategoriaNegocio().GetById((int)Datos.Reader["IdCategoria"]);
                     list.Add(aux);
                 }
@@ -171,7 +202,10 @@ namespace negocio
             {
                 throw ex;
             }
-
+            finally
+            {
+                Datos.CerrarConexion();
+            }
         }
     }
 
