@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dominio
 {
@@ -14,11 +11,16 @@ namespace dominio
         public int Rol { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
-        public string Nombre { get; set; } 
+        public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string Telefono { get; set; }
-        public Direccion Direccion { get; set; }
+        public List<Direccion> Direcciones { get; set; }
+        public Direccion DireccionSeleccionada { get; set; }
         public DateTime FechaRegistro { get; set; }
-
+        public Cliente()
+        {
+            Direcciones = new List<Direccion>();
+            DireccionSeleccionada = new Direccion();
+        }
     }
 }

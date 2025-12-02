@@ -1,51 +1,142 @@
 ﻿<%@ Page Title="Datos de Envío" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Envios.aspx.cs" Inherits="tpc_equipo_7A.Envios" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .address-card {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .address-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .selected-card {
+            border: 2px solid #0d6efd !important;
+            background-color: #f8f9fa;
+        }
+    </style>
 </asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+            <div class="col-md-10 col-lg-8">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white text-center">
-                        <h3>Datos de Envío</h3>
+                        <h3><i class="bi bi-truck"></i> ¿Cómo quieres recibir tu compra?</h3>
                     </div>
                     <div class="card-body p-4">
-                        <%-- Dirección --%>
-                        <div class="mb-3">
-                            <label for="txtDireccion" class="form-label fw-bold">Dirección de Entrega</label>
-                            <asp:TextBox ID="txtDireccion" class="form-control" runat="server" placeholder="Ej: Av. Siempre Viva 742"></asp:TextBox>
-                            <asp:RequiredFieldValidator ErrorMessage="La dirección es requerida." ControlToValidate="txtDireccion" ForeColor="Red" Display="Dynamic" runat="server" />
+
+                        <asp:UpdatePanel ID="upEnvios" runat="server">
+                            <ContentTemplate>
+                                
+                                <%-- OPCIÓN 1: RETIRO EN TIENDA --%>
+                                <div class="form-check mb-3 p-3 border rounded shadow-sm">
+                                    <asp:RadioButton ID="rbRetiro" runat="server" GroupName="TipoEnvio" 
+                                        AutoPostBack="true" OnCheckedChanged="TipoEnvio_CheckedChanged"
+                                        CssClass="form-check-input fs-5" />
+                                    <label class="form-check-label ms-2" for="<%= rbRetiro.ClientID %>">
+                                        <strong>Retiro en el Local</strong> <span class="badge bg-success ms-2">Gratis</span>
+                                        <br />
+                                        <small class="text-muted">Av. Siempreviva 742, Springfield. (Lun-Vie 9-18hs)</small>
+                                    </label>
+                                </div>
+
+                                <%-- OPCIÓN 2: ENVIO A DOMICILIO --%>
+                                <div class="mb-3">
+                                    <h5 class="mb-3">Envío a Domicilio</h5>
+                                    
+                                    <%-- LISTA DE DIRECCIONES --%>
+                                    <asp:Repeater ID="repDirecciones" runat="server" OnItemCommand="repDirecciones_ItemCommand">
+                                        <ItemTemplate>
+                                            <div class='card mb-2 address-card <%# Eval("Id").ToString() == IdDireccionSeleccionada.ToString() ? "selected-card" : "" %>'>
+                                                <div class="card-body d-flex align-items-center">
+                                                    
+                                                    <div class="me-3">
+                                                        <asp:Button ID="btnSeleccionar" runat="server" 
+                                                            CommandName="Seleccionar" CommandArgument='<%# Eval("Id") %>'
+                                                            CssClass='<%# Eval("Id").ToString() == IdDireccionSeleccionada.ToString() ? "btn btn-primary btn-sm" : "btn btn-outline-secondary btn-sm" %>'
+                                                            Text='<%# Eval("Id").ToString() == IdDireccionSeleccionada.ToString() ? "Seleccionada" : "Seleccionar" %>' />
+                                                    </div>
+
+                                                    <div class="flex-grow-1">
+                                                        <strong><%# Eval("Alias") %></strong><br />
+                                                        <%# Eval("Calle") %>, <%# Eval("Ciudad") %> (<%# Eval("CodigoPostal") %>)
+                                                    </div>
+
+                                                    <div>
+                                                        <%-- BOTÓN ELIMINAR --%>
+                                                        <asp:LinkButton ID="btnEliminar" runat="server" 
+                                                            CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' 
+                                                            CssClass="btn btn-link text-danger p-0" 
+                                                            ToolTip="Eliminar dirección"
+                                                            OnClientClick="return confirm('¿Estás seguro de que deseas eliminar esta dirección?');">
+                                                            <i class="bi bi-trash fs-5"></i>
+                                                        </asp:LinkButton>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </ItemTemplate>
+                                    </asp:Repeater>
+
+                                    <%-- BOTÓN NUEVA DIRECCIÓN --%>
+                                    <div class="mt-3">
+                                        <asp:RadioButton ID="rbNuevaDireccion" runat="server" GroupName="TipoEnvio"
+                                            AutoPostBack="true" OnCheckedChanged="TipoEnvio_CheckedChanged" 
+                                            Text="" CssClass="form-check-input" />
+                                        <label class="form-check-label ms-2" for="<%= rbNuevaDireccion.ClientID %>">
+                                            <strong>Agregar nueva dirección</strong>
+                                        </label>
+                                    </div>
+
+                                </div>
+
+                                <%-- FORMULARIO NUEVA DIRECCIÓN --%>
+                                <asp:Panel ID="pnlNuevaDireccion" runat="server" Visible="false" CssClass="border-top pt-3 mt-3">
+                                    <h5 class="text-primary">Nueva Dirección</h5>
+                                    
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Alias (Ej: Casa, Trabajo)</label>
+                                            <asp:TextBox ID="txtAlias" runat="server" CssClass="form-control" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Calle y Número</label>
+                                            <asp:TextBox ID="txtCalle" runat="server" CssClass="form-control" />
+                                            <asp:RequiredFieldValidator ErrorMessage="*" ControlToValidate="txtCalle" ValidationGroup="NuevaDir" ForeColor="Red" runat="server" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Ciudad</label>
+                                            <asp:TextBox ID="txtCiudad" runat="server" CssClass="form-control" />
+                                            <asp:RequiredFieldValidator ErrorMessage="*" ControlToValidate="txtCiudad" ValidationGroup="NuevaDir" ForeColor="Red" runat="server" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Provincia</label>
+                                            <asp:TextBox ID="txtProvincia" runat="server" CssClass="form-control" />
+                                            <asp:RequiredFieldValidator ErrorMessage="*" ControlToValidate="txtProvincia" ValidationGroup="NuevaDir" ForeColor="Red" runat="server" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">CP</label>
+                                            <asp:TextBox ID="txtCP" runat="server" CssClass="form-control" />
+                                            <asp:RequiredFieldValidator ErrorMessage="*" ControlToValidate="txtCP" ValidationGroup="NuevaDir" ForeColor="Red" runat="server" />
+                                        </div>
+                                    </div>
+                                </asp:Panel>
+
+                                <asp:Label ID="lblError" runat="server" CssClass="text-danger fw-bold d-block mt-3" Visible="false"></asp:Label>
+
+                            </ContentTemplate>
+                        </asp:UpdatePanel>
+
+                        <hr class="mt-4"/>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="CarritoPage.aspx" class="btn btn-outline-secondary">Volver al Carrito</a>
+                            <asp:Button ID="btnContinuar" runat="server" Text="Continuar al Pago" CssClass="btn btn-primary px-4 btn-lg" OnClick="btnContinuar_Click" />
                         </div>
-                        <div class="row">
-                            <%-- Ciudad --%>
-                            <div class="col-md-6 mb-3">
-                                <label for="txtCiudad" class="form-label fw-bold">Ciudad / Localidad</label>
-                                <asp:TextBox ID="txtCiudad" class="form-control" runat="server" placeholder="Ej: Springfield"></asp:TextBox>
-                                <asp:RequiredFieldValidator ErrorMessage="La ciudad es requerida." ControlToValidate="txtCiudad" ForeColor="Red" Display="Dynamic" runat="server" />
-                            </div>
-                            <%-- Provincia --%>
-                            <div class="col-md-6 mb-3">
-                                <label for="txtProvincia" class="form-label fw-bold">Provincia</label>
-                                <asp:TextBox ID="txtProvincia" class="form-control" runat="server" placeholder="Ej: Buenos Aires"></asp:TextBox>
-                                <asp:RequiredFieldValidator ErrorMessage="La provincia es requerida." ControlToValidate="txtProvincia" ForeColor="Red" Display="Dynamic" runat="server" />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <%-- Código Postal --%>
-                            <div class="col-md-6 mb-3">
-                                <label for="txtCodigoPostal" class="form-label fw-bold">Código Postal</label>
-                                <asp:TextBox ID="txtCodigoPostal" class="form-control" runat="server" placeholder="Ej: 1648" MaxLength="8"></asp:TextBox>
-                                <asp:RequiredFieldValidator ErrorMessage="El código postal es requerido." ControlToValidate="txtCodigoPostal" ForeColor="Red" Display="Dynamic" runat="server" />
-                                <asp:RegularExpressionValidator ErrorMessage="Solo números." ControlToValidate="txtCodigoPostal" ValidationExpression="^[0-9]+$" ForeColor="Red" Display="Dynamic" runat="server" />
-                            </div>
-                        </div>
-                        <hr />
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
-                            <a href="CarritoPage.aspx" class="btn btn-outline-secondary px-4">
-                                Volver al Carrito
-                            </a>
-                            <asp:Button ID="btnContinuar" runat="server" CssClass="btn btn-primary px-4" Text="Continuar al Pago" OnClick="btnContinuar_Click" />
-                        </div>
+
                     </div>
                 </div>
             </div>

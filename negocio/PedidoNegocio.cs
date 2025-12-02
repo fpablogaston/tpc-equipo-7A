@@ -128,7 +128,7 @@ namespace negocio
             }
         }
 
-        // Helper method to map reader to object (DRY principle)
+        // Helper privado para mapear los datos repetitivos
         private Pedido MapPedido(SqlDataReader reader)
         {
             Pedido aux = new Pedido();
@@ -163,7 +163,12 @@ namespace negocio
                 aux.Pago.Id = (int)reader["IdPago"];
                 aux.Pago.MetodoPago = new MetodoPago { Nombre = (string)reader["MetodoPagoStr"] };
                 aux.Pago.Estado = new EstadoPago { Nombre = (string)reader["EstadoPago"] };
-                if (aux.Pago.MetodoPago.Nombre.ToLower().Contains("efectivo")) aux.Pago.MetodoPago.Id = 2;
+
+                // Pequeña corrección de ID para lógica de frontend
+                if (aux.Pago.MetodoPago.Nombre.ToLower().Contains("efectivo"))
+                    aux.Pago.MetodoPago.Id = 2;
+                else
+                    aux.Pago.MetodoPago.Id = 1;
             }
 
             return aux;
@@ -220,15 +225,22 @@ namespace negocio
 
             try
             {
+                DateTime fecha = DateTime.Now;
+                decimal total = carrito.Total();
+
                 // 1. INSERTAR PEDIDO
                 SqlCommand cmdPedido = new SqlCommand("INSERT INTO Pedidos (FechaPedido, IdEstadoPedido, Total, IdCliente) OUTPUT INSERTED.Id VALUES (@Fecha, @IdEstado, @Total, @IdCliente)", conexion, transaccion);
-                cmdPedido.Parameters.AddWithValue("@Fecha", DateTime.Now);
-                cmdPedido.Parameters.AddWithValue("@IdEstado", 1); // 1 = Pendiente de Pago
-                cmdPedido.Parameters.AddWithValue("@Total", carrito.Total());
+                cmdPedido.Parameters.AddWithValue("@Fecha", fecha);
+                cmdPedido.Parameters.AddWithValue("@IdEstado", 1); // 1 = Pendiente
+                cmdPedido.Parameters.AddWithValue("@Total", total);
                 cmdPedido.Parameters.AddWithValue("@IdCliente", cliente.Id);
 
                 int idPedido = (int)cmdPedido.ExecuteScalar();
+
+                // IMPORTANT: Populate the object to return it correctly to the view
                 pedido.Id = idPedido;
+                pedido.FechaPedido = fecha;
+                pedido.Total = total;
 
                 // 2. INSERTAR DETALLES
                 foreach (var item in carrito.ListaCarrito)
@@ -249,12 +261,13 @@ namespace negocio
                 }
 
                 // 3. INSERTAR ENVIO
+                // Nota: Usamos las propiedades string del objeto 'envio' que ya vienen cargadas desde la pantalla Envios.aspx
                 SqlCommand cmdEnvio = new SqlCommand("INSERT INTO Envios (DireccionEnvio, Ciudad, Provincia, CodigoPostal, IdEstadoEnvio, IdPedido) OUTPUT INSERTED.Id VALUES (@DireccionEnvio, @Ciudad, @Provincia, @CodigoPostal, @IdEstadoEnvio, @IdPedido)", conexion, transaccion);
                 cmdEnvio.Parameters.AddWithValue("@DireccionEnvio", envio.DireccionEnvio);
                 cmdEnvio.Parameters.AddWithValue("@Ciudad", envio.Ciudad);
                 cmdEnvio.Parameters.AddWithValue("@Provincia", envio.Provincia);
                 cmdEnvio.Parameters.AddWithValue("@CodigoPostal", envio.CodigoPostal);
-                cmdEnvio.Parameters.AddWithValue("@IdEstadoEnvio", 1);
+                cmdEnvio.Parameters.AddWithValue("@IdEstadoEnvio", envio.IdEstadoEnvio);
                 cmdEnvio.Parameters.AddWithValue("@IdPedido", idPedido);
 
                 int idEnvio = (int)cmdEnvio.ExecuteScalar();
@@ -265,18 +278,19 @@ namespace negocio
                 cmdPago.Parameters.AddWithValue("@Metodo", pago.MetodoPago.Nombre);
 
                 string estadoPago = "Aprobado";
+                // Si es efectivo o transferencia, queda pendiente de verificación
                 if (pago.MetodoPago.Nombre.ToLower().Contains("efectivo") || pago.MetodoPago.Nombre.ToLower().Contains("transferencia"))
                     estadoPago = "Pendiente";
 
                 cmdPago.Parameters.AddWithValue("@EstadoPago", estadoPago);
-                cmdPago.Parameters.AddWithValue("@Monto", carrito.Total());
-                cmdPago.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                cmdPago.Parameters.AddWithValue("@Monto", total);
+                cmdPago.Parameters.AddWithValue("@Fecha", fecha);
                 cmdPago.Parameters.AddWithValue("@IdPedido", idPedido);
 
                 int idPago = (int)cmdPago.ExecuteScalar();
                 pedido.Pago.Id = idPago;
 
-                // 5. UPDATE REFERENCIAS
+                // 5. UPDATE REFERENCIAS CRUZADAS EN PEDIDO
                 SqlCommand cmdUpdate = new SqlCommand("UPDATE Pedidos SET IdEnvio = @IdEnvio, IdPago = @IdPago WHERE Id = @IdPedido", conexion, transaccion);
                 cmdUpdate.Parameters.AddWithValue("@IdEnvio", idEnvio);
                 cmdUpdate.Parameters.AddWithValue("@IdPago", idPago);
@@ -314,6 +328,7 @@ namespace negocio
                 datos.CerrarConexion();
             }
         }
+
         public int Agregar(Pedido pedido)
         {
             AccesoDatos data = new AccesoDatos();

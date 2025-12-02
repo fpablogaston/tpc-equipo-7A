@@ -1,13 +1,7 @@
 ﻿using dominio;
 using negocio;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace tpc_equipo_7A
 {
@@ -15,78 +9,108 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["cliente"] != null)
+            {
+                Response.Redirect("Default.aspx");
+            }
         }
 
         protected void btnRegistrar_Click(object sender, EventArgs e)
         {
+            Page.Validate("Registro");
+            if (!Page.IsValid) return;
+
             ClienteNegocio negocioVerificacion = new ClienteNegocio();
 
-            if(negocioVerificacion.ExisteUsuario(txtUsuario.Text))
+            // 1. Validar si el usuario ya existe
+            if (negocioVerificacion.ExisteUsuario(txtUsuario.Text))
             {
                 lblResultado.CssClass = "text-danger";
-                lblResultado.Text = "El nombre de usuario ya existe. Por favor, elija otro.";
+                lblResultado.Text = "El nombre de usuario ya existe.";
+                MostrarModal();
+                return;
+            }
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(),
-                "ShowModal", @"
-                    var myModal = new bootstrap.Modal(document.getElementById('registroModal'));
-                    myModal.show();
-                ", true);
-
+            // 2. Validar si el email ya existe
+            if (negocioVerificacion.ExisteEmail(txtEmail.Text))
+            {
+                lblResultado.CssClass = "text-danger";
+                lblResultado.Text = "El email ya está registrado.";
+                MostrarModal();
                 return;
             }
 
             try
             {
                 Cliente nuevo = new Cliente();
-                nuevo.Direccion = new Direccion();
-                nuevo.Email = txtEmail.Text;
+
+                // Datos Personales
                 nuevo.Nombre = txtNombre.Text;
                 nuevo.Apellido = txtApellido.Text;
+                nuevo.Email = txtEmail.Text;
                 nuevo.Telefono = txtTelefono.Text;
-                nuevo.Direccion.Calle = txtDireccion.Text;
-                nuevo.Direccion.Ciudad = txtCiudad.Text;
-                nuevo.Direccion.CodigoPostal = txtCodigoPostal.Text;   
-                nuevo.Direccion.Provincia = txtProvincia.Text;
                 nuevo.Usuario = txtUsuario.Text;
-                nuevo.Password = txtPassword.Text;
+                nuevo.Password = txtPassword.Text; // Recuerda hashear esto en producción
+
+                // Datos de Dirección (Mapeo a la nueva estructura)
+                nuevo.DireccionSeleccionada = new Direccion
+                {
+                    Calle = txtDireccion.Text,
+                    Ciudad = txtCiudad.Text,
+                    Provincia = txtProvincia.Text,
+                    CodigoPostal = txtCodigoPostal.Text,
+                    Alias = "Principal" // Asignamos un alias por defecto al registrarse
+                };
+
+                // Guardar
                 ClienteNegocio negocio = new ClienteNegocio();
                 negocio.Agregar(nuevo);
 
-                ScriptManager.RegisterStartupScript(
-                this,
-                this.GetType(),
-                "toastRegistro",
-                "setTimeout(mostrarToastRegistro, 500);",
-                true);
+                // Éxito
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "toastRegistro", "mostrarToastRegistro();", true);
 
-
+                // Opcional: Loguear al usuario automáticamente
+                // Cliente clienteLogueado = negocio.Login(nuevo.Usuario, nuevo.Password);
+                // Session["cliente"] = clienteLogueado;
+                // Response.Redirect("Default.aspx");
             }
             catch (Exception ex)
             {
                 lblResultado.CssClass = "text-danger";
-                lblResultado.Text = "Error: " + ex.Message;
+                lblResultado.Text = "Error al registrar: " + ex.Message;
+                MostrarModal();
             }
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            ClienteNegocio negocio = new ClienteNegocio();
-            Cliente cliente = negocio.Login(txtLoginUser.Text, txtLoginPass.Text);
+            try
+            {
+                ClienteNegocio negocio = new ClienteNegocio();
+                Cliente cliente = negocio.Login(txtLoginUser.Text, txtLoginPass.Text);
 
-            if (cliente != null)
-            {
-                Session["cliente"] = cliente;
-                Session["Login"] = 1; 
-                Response.Redirect("Default.aspx", false);
-                Context.ApplicationInstance.CompleteRequest();
+                if (cliente != null)
+                {
+                    Session["cliente"] = cliente;
+                    Response.Redirect("Default.aspx", false);
+                }
+                else
+                {
+                    lblError.Text = "Usuario o contraseña incorrectos.";
+                    lblError.Visible = true;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                lblError.Text = "Usuario o contraseña incorrectos.";
-                lblError.CssClass = "text-danger";
+                lblError.Text = "Error: " + ex.Message;
+                lblError.Visible = true;
             }
         }
 
-
+        private void MostrarModal()
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowModal",
+                "var myModal = new bootstrap.Modal(document.getElementById('registroModal')); myModal.show();", true);
+        }
     }
 }

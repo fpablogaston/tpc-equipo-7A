@@ -413,3 +413,34 @@ go
 
 ALTER TABLE Categorias ADD Activo BIT NOT NULL DEFAULT 1;
 ALTER TABLE Productos ADD Activo BIT NOT NULL DEFAULT 1;
+
+USE Ecommerce;
+GO
+
+-- 1. Create Direcciones table
+CREATE TABLE Direcciones (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    IdCliente INT NOT NULL,
+    Calle VARCHAR(100) NOT NULL,
+    Ciudad VARCHAR(100) NOT NULL,
+    Provincia VARCHAR(100) NOT NULL,
+    CodigoPostal VARCHAR(20) NOT NULL,
+    Alias VARCHAR(50) NULL, -- Useful for "Home", "Work", etc.
+    Activo BIT DEFAULT 1,
+    CONSTRAINT FK_Direcciones_Clientes FOREIGN KEY (IdCliente) REFERENCES Clientes(Id)
+);
+GO
+
+-- 2. Migrate existing data from Clientes to Direcciones
+INSERT INTO Direcciones (IdCliente, Calle, Ciudad, Provincia, CodigoPostal, Alias)
+SELECT Id, Direccion, Ciudad, Provincia, CodigoPostal, 'Principal'
+FROM Clientes
+WHERE Direccion IS NOT NULL;
+GO
+
+-- 3. Drop old columns from Clientes (Cleanup)
+ALTER TABLE Clientes DROP COLUMN Direccion;
+ALTER TABLE Clientes DROP COLUMN Ciudad;
+ALTER TABLE Clientes DROP COLUMN Provincia;
+ALTER TABLE Clientes DROP COLUMN CodigoPostal;
+GO

@@ -39,19 +39,15 @@
 
                         <h1 class="text-success fw-bold mb-3">¡Compra realizada con éxito!</h1>
 
-                        <!-- Nro de Pedido -->
                         <asp:Label ID="lblPedido" runat="server"
                             CssClass="h5 text-muted d-block mb-3"></asp:Label>
 
-                        <!-- Fecha del Pedido -->
                         <asp:Label ID="lblFecha" runat="server"
                             CssClass="text-muted d-block mb-3"></asp:Label>
 
-                        <!-- Dirección de Envío -->
                         <asp:Label ID="lblEnvio" runat="server"
                             CssClass="text-muted d-block mb-3"></asp:Label>
 
-                        <!-- Método de Pago -->
                         <asp:Label ID="lblPago" runat="server"
                             CssClass="text-muted d-block mb-4"></asp:Label>
 
@@ -68,7 +64,7 @@
                                         <tr>
                                             <th>Producto</th>
                                             <th>Cant.</th>
-                                            <th>Precio</th>
+                                            <th>Precio Unit.</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -76,9 +72,10 @@
 
                             <ItemTemplate>
                                 <tr>
-                                    <td><%# Eval("Nombre") %></td>
+                                    <%-- CORRECCIÓN AQUÍ: Acceder a las propiedades del Producto --%>
+                                    <td><%# Eval("Producto.Nombre") %></td>
                                     <td><%# Eval("Cantidad") %></td>
-                                    <td>$ <%# Eval("Precio", "{0:N2}") %></td>
+                                    <td>$ <%# Eval("Producto.Precio", "{0:N2}") %></td>
                                 </tr>
                             </ItemTemplate>
 

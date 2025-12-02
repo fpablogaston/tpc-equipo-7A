@@ -8,26 +8,39 @@ namespace negocio
 {
     public class ClienteNegocio
     {
-       public int Agregar (Cliente cliente)
-       {
+        public int Agregar(Cliente cliente)
+        {
             AccesoDatos Datos = new AccesoDatos();
             int idCliente;
 
             try
             {
-                Datos.SetearProcedimiento("CrearUsuarioYCliente");
-                Datos.SetearParametro("@Username", cliente.Usuario);
-                Datos.SetearParametro("@PasswordHash", cliente.Password);
-                Datos.SetearParametro("@Email", cliente.Email);
+                // 1. Insert Client Data (Profile only, no address columns)
+                Datos.SetQuery("INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, FechaRegistro, IdUsuario) OUTPUT INSERTED.Id VALUES (@Nombre, @Apellido, @Email, @Telefono, @FechaRegistro, @IdUsuario)");
+
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);
+                Datos.SetearParametro("@Email", cliente.Email);
                 Datos.SetearParametro("@Telefono", cliente.Telefono);
-                Datos.SetearParametro("@Direccion", cliente.Direccion.Calle);
-                Datos.SetearParametro("@Ciudad", cliente.Direccion.Ciudad);
-                Datos.SetearParametro("@Provincia", cliente.Direccion.Provincia);
-                Datos.SetearParametro("@CodigoPostal", cliente.Direccion.CodigoPostal);
+                Datos.SetearParametro("@FechaRegistro", DateTime.Now);
+                Datos.SetearParametro("@IdUsuario", cliente.IdUsuario);
 
-                return idCliente = Datos.EjecutarScalar();
+                idCliente = Datos.EjecutarScalar();
+
+                // 2. Insert the "Selected Address" as the first/principal address in the new table
+                if (cliente.DireccionSeleccionada != null && !string.IsNullOrEmpty(cliente.DireccionSeleccionada.Calle))
+                {
+                    cliente.DireccionSeleccionada.IdCliente = idCliente;
+
+                    // If no alias provided, default to 'Principal'
+                    if (string.IsNullOrEmpty(cliente.DireccionSeleccionada.Alias))
+                        cliente.DireccionSeleccionada.Alias = "Principal";
+
+                    DireccionNegocio direccionNegocio = new DireccionNegocio();
+                    direccionNegocio.Agregar(cliente.DireccionSeleccionada);
+                }
+
+                return idCliente;
             }
             catch (Exception ex)
             {
@@ -38,27 +51,23 @@ namespace negocio
             {
                 Datos.CerrarConexion();
             }
-       }
+        }
+
         public void Actualizar(Cliente cliente)
         {
             AccesoDatos Datos = new AccesoDatos();
 
             try
             {
-                Datos.SetQuery("UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono, Direccion = @Direccion, Ciudad = @Ciudad, Provincia = @Provincia, CodigoPostal = @CodigoPostal, FechaRegistro = @FechaRegistro WHERE Id = @Id");
+                // Update only the Client profile data. 
+                // Address updates are now handled exclusively by DireccionNegocio.
+                Datos.SetQuery("UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono WHERE Id = @Id");
 
                 Datos.SetearParametro("@Id", cliente.Id);
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
                 Datos.SetearParametro("@Apellido", cliente.Apellido);
                 Datos.SetearParametro("@Email", cliente.Email);
                 Datos.SetearParametro("@Telefono", cliente.Telefono);
-
-                Datos.SetearParametro("@Direccion", cliente.Direccion.Calle);
-                Datos.SetearParametro("@Ciudad", cliente.Direccion.Ciudad);
-                Datos.SetearParametro("@Provincia", cliente.Direccion.Provincia);
-                Datos.SetearParametro("@CodigoPostal", cliente.Direccion.CodigoPostal);
-
-                Datos.SetearParametro("@FechaRegistro", cliente.FechaRegistro);
 
                 Datos.EjecutarAccion();
             }
@@ -72,12 +81,22 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+
         public void Eliminar(int Id)
         {
             AccesoDatos Datos = new AccesoDatos();
             try
             {
-                Datos.SetQuery("Delete From Clientes Where Id = @Id");
+                // 1. Delete associated addresses first (to prevent FK constraints issues)
+                // We use a manual query here or could call DireccionNegocio logic if it had a "DeleteAllByClient" method.
+                AccesoDatos datosDir = new AccesoDatos();
+                datosDir.SetQuery("DELETE FROM Direcciones WHERE IdCliente = @IdCliente");
+                datosDir.SetearParametro("@IdCliente", Id);
+                datosDir.EjecutarAccion();
+                datosDir.CerrarConexion();
+
+                // 2. Delete the client
+                Datos.SetQuery("DELETE FROM Clientes WHERE Id = @Id");
                 Datos.SetearParametro("@Id", Id);
                 Datos.EjecutarAccion();
             }
@@ -86,7 +105,12 @@ namespace negocio
                 Console.WriteLine($"Error: {ex.ToString()}");
                 throw;
             }
+            finally
+            {
+                Datos.CerrarConexion();
+            }
         }
+
         public List<Cliente> Listar()
         {
             List<Cliente> Lista = new List<Cliente>();
@@ -94,23 +118,26 @@ namespace negocio
 
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Apellido, Email, Telefono, Direccion, Ciudad, Provincia, CodigoPostal, FechaRegistro from Clientes");
+                // Removed address columns from the query
+                Datos.SetQuery("SELECT Id, Nombre, Apellido, Email, Telefono, FechaRegistro, IdUsuario FROM Clientes");
                 Datos.EjecutarLectura();
 
                 while (Datos.Reader.Read())
                 {
                     Cliente aux = new Cliente();
-                    aux.Direccion = new Direccion();
                     aux.Id = (int)Datos.Reader["Id"];
+                    aux.IdUsuario = (int)Datos.Reader["IdUsuario"];
                     aux.Nombre = (string)Datos.Reader["Nombre"];
                     aux.Apellido = (string)Datos.Reader["Apellido"];
                     aux.Email = (string)Datos.Reader["Email"];
                     aux.Telefono = (string)Datos.Reader["Telefono"];
-                    aux.Direccion.Calle = (string)Datos.Reader["Direccion"];
-                    aux.Direccion.Ciudad = (string)Datos.Reader["Ciudad"];
-                    aux.Direccion.Provincia = (string)Datos.Reader["Provincia"];
-                    aux.Direccion.CodigoPostal= (string)Datos.Reader["CodigoPostal"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
+
+                    // Initialize empty lists/objects to avoid NullReferenceExceptions in UI
+                    // We typically DON'T load full address lists for every client in a bulk list for performance
+                    aux.Direcciones = new List<Direccion>();
+                    aux.DireccionSeleccionada = new Direccion();
+
                     Lista.Add(aux);
                 }
                 return Lista;
@@ -125,32 +152,28 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+
         public Cliente GetById(int id)
         {
             Cliente aux = new Cliente();
-            aux.Direccion = new Direccion();
             AccesoDatos Datos = new AccesoDatos();
 
             try
             {
-                Datos.SetQuery("Select Id, Nombre, Apellido, Email, Telefono, Direccion, Ciudad, Provincia, CodigoPostal, FechaRegistro from Clientes where Id = @Id");
+                Datos.SetQuery("SELECT Id, Nombre, Apellido, Email, Telefono, FechaRegistro, IdUsuario FROM Clientes WHERE Id = @Id");
                 Datos.SetearParametro("@Id", id);
                 Datos.EjecutarLectura();
 
-                while (Datos.Reader.Read())
+                if (Datos.Reader.Read())
                 {
                     aux.Id = (int)Datos.Reader["Id"];
+                    aux.IdUsuario = (int)Datos.Reader["IdUsuario"];
                     aux.Nombre = (string)Datos.Reader["Nombre"];
                     aux.Apellido = (string)Datos.Reader["Apellido"];
                     aux.Email = (string)Datos.Reader["Email"];
                     aux.Telefono = (string)Datos.Reader["Telefono"];
-                    aux.Direccion.Calle = (string)Datos.Reader["Direccion"];
-                    aux.Direccion.Ciudad = (string)Datos.Reader["Ciudad"];
-                    aux.Direccion.Provincia = (string)Datos.Reader["Provincia"];
-                    aux.Direccion.CodigoPostal = (string)Datos.Reader["CodigoPostal"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
                 }
-                return aux;
             }
             catch (Exception ex)
             {
@@ -161,6 +184,25 @@ namespace negocio
             {
                 Datos.CerrarConexion();
             }
+
+            // 3. Load Addresses into 'Direcciones' list and set 'DireccionSeleccionada'
+            if (aux.Id != 0)
+            {
+                DireccionNegocio dirNegocio = new DireccionNegocio();
+                aux.Direcciones = dirNegocio.ListarPorCliente(aux.Id);
+
+                if (aux.Direcciones.Count > 0)
+                {
+                    // By default, select the first one (or logic for 'Principal' alias)
+                    aux.DireccionSeleccionada = aux.Direcciones[0];
+                }
+                else
+                {
+                    aux.DireccionSeleccionada = new Direccion();
+                }
+            }
+
+            return aux;
         }
 
         public Cliente Login(string usuario, string password)
@@ -169,8 +211,9 @@ namespace negocio
 
             try
             {
+                // Query updated: removed Direccion/Ciudad/Provincia/CP columns
                 datos.SetQuery(
-                    "SELECT c.Id, c.Nombre, c.Apellido, c.Email, c.Telefono, c.Direccion, c.Ciudad, c.Provincia, c.CodigoPostal, " +
+                    "SELECT c.Id, c.Nombre, c.Apellido, c.Email, c.Telefono, c.FechaRegistro, " +
                     "u.Id AS IdUsuario, u.Username, u.IdRol " +
                     "FROM Clientes c " +
                     "RIGHT JOIN Usuarios u ON u.Id = c.IdUsuario " +
@@ -185,28 +228,52 @@ namespace negocio
                 if (datos.Reader.Read())
                 {
                     Cliente cliente = new Cliente();
-                    cliente.Direccion = new Direccion();
 
                     cliente.Rol = (int)datos.Reader["IdRol"];
-                    if (cliente.Rol == 1)
-                    {
-                    cliente.Id = (int)datos.Reader["Id"];
-                    cliente.Nombre = (string)datos.Reader["Nombre"];
-                    cliente.Apellido = (string)datos.Reader["Apellido"];
-                    cliente.Email = (string)datos.Reader["Email"];
-                    cliente.Telefono = (string)datos.Reader["Telefono"];
-                    cliente.Direccion.Calle = (string)datos.Reader["Direccion"];
-                    cliente.Direccion.Ciudad = (string)datos.Reader["Ciudad"];
-                    cliente.Direccion.Provincia = (string)datos.Reader["Provincia"];
-                    cliente.Direccion.CodigoPostal = (string)datos.Reader["CodigoPostal"];
-                    }
                     cliente.Usuario = (string)datos.Reader["Username"];
                     cliente.IdUsuario = (int)datos.Reader["IdUsuario"];
+
+                    // If user is a Client (Role 1) and has a Client profile created
+                    if (cliente.Rol == 1 && datos.Reader["Id"] != DBNull.Value)
+                    {
+                        cliente.Id = (int)datos.Reader["Id"];
+                        cliente.Nombre = (string)datos.Reader["Nombre"];
+                        cliente.Apellido = (string)datos.Reader["Apellido"];
+                        cliente.Email = (string)datos.Reader["Email"];
+                        cliente.Telefono = (string)datos.Reader["Telefono"];
+                        cliente.FechaRegistro = (DateTime)datos.Reader["FechaRegistro"];
+                    }
+
+                    // Close connection before calling another Negocio method
+                    datos.CerrarConexion();
+
+                    // Load Addresses if client exists
+                    if (cliente.Id != 0)
+                    {
+                        DireccionNegocio dirNegocio = new DireccionNegocio();
+                        cliente.Direcciones = dirNegocio.ListarPorCliente(cliente.Id);
+
+                        if (cliente.Direcciones.Count > 0)
+                            cliente.DireccionSeleccionada = cliente.Direcciones[0];
+                        else
+                            cliente.DireccionSeleccionada = new Direccion();
+                    }
+                    else
+                    {
+                        // Even if no client ID (new user), initialize lists
+                        cliente.Direcciones = new List<Direccion>();
+                        cliente.DireccionSeleccionada = new Direccion();
+                    }
 
                     return cliente;
                 }
 
                 return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
             }
             finally
             {
@@ -224,21 +291,22 @@ namespace negocio
             if (datos.Reader.Read())
                 return (int)datos.Reader[0] > 0;
 
+            datos.CerrarConexion();
             return false;
         }
+
         public bool ExisteEmail(string email)
         {
             AccesoDatos datos = new AccesoDatos();
-            datos.SetQuery(@"SELECT COUNT(*) 
-                         FROM Clientes c 
-                         INNER JOIN Usuarios u ON u.Id = c.IdUsuario
-                         WHERE c.Email = @e");
+            // Email column remains in Clientes table
+            datos.SetQuery(@"SELECT COUNT(*) FROM Clientes WHERE Email = @e");
             datos.SetearParametro("@e", email);
             datos.EjecutarLectura();
 
             if (datos.Reader.Read())
                 return (int)datos.Reader[0] > 0;
 
+            datos.CerrarConexion();
             return false;
         }
     }

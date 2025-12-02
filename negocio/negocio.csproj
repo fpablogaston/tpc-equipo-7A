@@ -48,6 +48,7 @@
     <Compile Include="CategoriaNegocio.cs" />
     <Compile Include="ClienteNegocio.cs" />
     <Compile Include="DetallePedidoNegocio.cs" />
+    <Compile Include="DireccionNegocio.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="EnvioNegocio.cs" />
     <Compile Include="PagoNegocio.cs" />
