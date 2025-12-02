@@ -406,3 +406,10 @@ GO
 -- Drop old string column
 ALTER TABLE Pedidos DROP COLUMN Estado;
 GO
+
+
+Use Ecommerce
+go
+
+ALTER TABLE Categorias ADD Activo BIT NOT NULL DEFAULT 1;
+ALTER TABLE Productos ADD Activo BIT NOT NULL DEFAULT 1;
