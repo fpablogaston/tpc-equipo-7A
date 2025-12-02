@@ -174,10 +174,18 @@
                                 <asp:BoundField DataField="Id" HeaderText="ID" />
                                 <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
                                 <asp:BoundField DataField="Descripcion" HeaderText="Descripción" />
+
+                                <asp:TemplateField HeaderText="Activo">
+                                    <ItemTemplate>
+                                        <asp:CheckBox ID="chkActivo" runat="server"
+                                            Checked='<%# Eval("Activo") %>' Enabled="false" />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
                                         <asp:Button ID="btnEditarCategoria" runat="server" Text="✏️" ToolTip="Editar Categoria" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:Button ID="btnEliminarCategoria" runat="server" Text="🗑️" ToolTip="Eliminar Categoria" CssClass="btn btn-sm btn-danger" CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea eliminar esta categoría?');" />
+                                        <asp:Button ID="btnInactivarCategoria" runat="server" Text='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>' ToolTip="Inactivar Categoria" CssClass="btn btn-sm btn-warning" CommandName='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>' CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea inactivar esta categoría?');" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>

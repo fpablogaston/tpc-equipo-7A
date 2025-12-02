@@ -240,19 +240,35 @@ namespace tpc_equipo_7A
             {
                 Response.Redirect($"Formulario.aspx?entity=Categoria&id={id}");
             }
-            else if (e.CommandName == "Eliminar")
+            else if (e.CommandName == "Inactivar")
             {
                 try
                 {
                     CategoriaNegocio negocio = new CategoriaNegocio();
-                    negocio.Eliminar(id);
-                    lblMensajeCategoria.Text = "Categoría eliminada.";
+                    negocio.Eliminar(id); // Activo = 0
+                    lblMensajeCategoria.Text = "Categoría inactivada.";
                     lblMensajeCategoria.CssClass = "text-success";
                     BindCategoriasGrid();
                 }
                 catch (Exception ex)
                 {
-                    lblMensajeCategoria.Text = "Error al eliminar categoría: " + ex.Message;
+                    lblMensajeCategoria.Text = "Error al inactivar categoría: " + ex.Message;
+                    lblMensajeCategoria.CssClass = "text-danger";
+                }
+            }
+            else if (e.CommandName == "Reactivar")
+            {
+                try
+                {
+                    CategoriaNegocio negocio = new CategoriaNegocio();
+                    negocio.Habilitar(id); // Activo = 1
+                    lblMensajeCategoria.Text = "Categoría reactivada.";
+                    lblMensajeCategoria.CssClass = "text-success";
+                    BindCategoriasGrid();
+                }
+                catch (Exception ex)
+                {
+                    lblMensajeCategoria.Text = "Error al reactivar categoría: " + ex.Message;
                     lblMensajeCategoria.CssClass = "text-danger";
                 }
             }

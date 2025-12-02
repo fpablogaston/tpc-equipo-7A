@@ -87,7 +87,7 @@ namespace negocio
             {
                 //Datos.SetQuery("Select Id, Nombre, Descripcion from Categorias");
                 ///nuevo
-                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Activo FROM Categorias WHERE Activo = 1");
+                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Activo FROM Categorias");/// WHERE Activo = 1
 
                 Datos.EjecutarLectura();
 
@@ -146,5 +146,21 @@ namespace negocio
             }
             return aux;
         }
+
+        public void Habilitar(int id)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetQuery("UPDATE Categorias SET Activo = 1 WHERE Id = @Id");
+                datos.SetearParametro("@Id", id);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
     }
 }
