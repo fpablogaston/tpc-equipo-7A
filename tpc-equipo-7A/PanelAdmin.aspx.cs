@@ -215,7 +215,7 @@ namespace tpc_equipo_7A
             try
             {
                 CategoriaNegocio negocio = new CategoriaNegocio();
-                var lista = negocio.Listar();
+                var lista = negocio.ListarTodos();
                 Session["listaCategorias"] = lista;
                 gvCategorias.DataSource = lista;
                 gvCategorias.DataBind();
@@ -291,7 +291,7 @@ namespace tpc_equipo_7A
             try
             {
                 ProductoNegocio negocio = new ProductoNegocio();
-                var lista = negocio.Listar();
+                var lista = negocio.ListarTodos();
                 Session["listaProductos"] = lista;
                 gvProductos.DataSource = lista;
                 gvProductos.DataBind();
@@ -316,22 +316,41 @@ namespace tpc_equipo_7A
             {
                 Response.Redirect($"Formulario.aspx?entity=Producto&id={id}");
             }
-            else if (e.CommandName == "Eliminar")
+            else if (e.CommandName == "Inactivar") 
             {
                 try
                 {
                     ProductoNegocio negocio = new ProductoNegocio();
-                    negocio.Eliminar(id);
-                    lblMensajeProducto.Text = "Producto eliminado.";
+                    negocio.Eliminar(id); 
+                    lblMensajeProducto.Text = "Producto inactivado";
                     lblMensajeProducto.CssClass = "text-success";
                     BindProductosGrid();
                 }
                 catch (Exception ex)
                 {
-                    lblMensajeProducto.Text = "Error al eliminar producto: " + ex.Message;
+                    lblMensajeProducto.Text = "Error al inactivar producto " + ex.Message;
                     lblMensajeProducto.CssClass = "text-danger";
                 }
             }
+            else if (e.CommandName == "Reactivar") 
+            {
+                try
+                {
+                    ProductoNegocio negocio = new ProductoNegocio();
+                    negocio.Habilitar(id); // Esto pone Activo = 1
+                    lblMensajeProducto.Text = "Producto reactivado";
+                    lblMensajeProducto.CssClass = "text-success";
+                    BindProductosGrid();
+                }
+                catch (Exception ex)
+                {
+                    lblMensajeProducto.Text = "Error al reactivar producto " + ex.Message;
+                    lblMensajeProducto.CssClass = "text-danger";
+                }
+            }
+
+
+
         }
 
         protected void txtFiltroProducto_TextChanged(object sender, EventArgs e)

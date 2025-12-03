@@ -193,6 +193,7 @@
                     </div>
                 </asp:PlaceHolder>
 
+
                 <asp:PlaceHolder ID="phProductos" runat="server" Visible="false">
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -218,10 +219,18 @@
                                 <asp:BoundField DataField="Categoria.Nombre" HeaderText="Categoría" />
                                 <asp:BoundField DataField="Precio" HeaderText="Precio" DataFormatString="{0:C}" />
                                 <asp:BoundField DataField="Stock" HeaderText="Stock" />
+
+                                <asp:TemplateField HeaderText="Activo">
+                                    <ItemTemplate>
+                                        <asp:CheckBox ID="chkActivoProd" runat="server"
+                                            Checked='<%# Eval("Activo") %>' Enabled="false" />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
                                         <asp:Button ID="btnEditarProducto" runat="server" Text="✏️" ToolTip="Editar Producto" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:Button ID="btnEliminarProducto" runat="server" Text="🗑️" ToolTip="Eliminar Producto" CssClass="btn btn-sm btn-danger" CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea eliminar este producto?');" />
+                                        <asp:Button ID="btnInactivarProducto" runat="server" Text='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>' ToolTip="inactivar Producto" CssClass="btn btn-sm btn-warning"  CommandName='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>'  CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea inactivar este producto?');" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>

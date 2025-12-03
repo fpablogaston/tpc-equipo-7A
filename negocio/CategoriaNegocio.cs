@@ -87,8 +87,7 @@ namespace negocio
             {
                 //Datos.SetQuery("Select Id, Nombre, Descripcion from Categorias");
                 ///nuevo
-                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Activo FROM Categorias");/// WHERE Activo = 1
-
+                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Activo FROM Categorias WHERE Activo = 1"); 
                 Datos.EjecutarLectura();
 
                 while (Datos.Reader.Read())
@@ -113,6 +112,36 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
+
+        public List<Categoria> ListarTodos()
+        {
+            List<Categoria> Lista = new List<Categoria>();
+            AccesoDatos Datos = new AccesoDatos();
+
+            try
+            {
+                Datos.SetQuery("SELECT Id, Nombre, Descripcion, Activo FROM Categorias");
+                Datos.EjecutarLectura();
+
+                while (Datos.Reader.Read())
+                {
+                    Categoria aux = new Categoria();
+                    aux.Id = (int)Datos.Reader["Id"];
+                    aux.Nombre = (string)Datos.Reader["Nombre"];
+                    aux.Descripcion = (string)Datos.Reader["Descripcion"];
+                    aux.Activo = (bool)Datos.Reader["Activo"];
+
+                    Lista.Add(aux);
+                }
+
+                return Lista;
+            }
+            finally
+            {
+                Datos.CerrarConexion();
+            }
+        }
+
         public Categoria GetById(int id)
         {
             AccesoDatos Datos = new AccesoDatos();

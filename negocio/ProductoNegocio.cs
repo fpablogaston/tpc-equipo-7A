@@ -9,7 +9,7 @@ namespace negocio
 {
     public class ProductoNegocio
     {
-        public int Agregar (Producto producto)
+        public int Agregar(Producto producto)
         {
             AccesoDatos Datos = new AccesoDatos();
             int idProducto;
@@ -35,7 +35,7 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
-        public void Actualizar (Producto producto)
+        public void Actualizar(Producto producto)
         {
             AccesoDatos Datos = new AccesoDatos();
             try
@@ -88,7 +88,7 @@ namespace negocio
             }
 
         }
-        public List<Producto> Listar()
+        public List<Producto> Listar() ///lista Activos
         {
             List<Producto> Lista = new List<Producto>();
             AccesoDatos Datos = new AccesoDatos();
@@ -131,7 +131,51 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
-        public Producto GetById (int id)
+
+        public List<Producto> ListarTodos() ///Tambien inactivos
+        {
+            List<Producto> Lista = new List<Producto>();
+            AccesoDatos Datos = new AccesoDatos();
+
+            try
+            {
+                Datos.SetQuery("SELECT P.Id, P.Nombre, P.Descripcion, P.Precio, P.Stock, P.ImagenUrl, P.Activo, C.Id AS IdCategoria, C.Nombre AS CategoriaNombre, C.Descripcion AS CategoriaDescripcion,C.Activo AS CategoriaActivo FROM Productos P INNER JOIN Categorias C ON P.IdCategoria = C.Id");
+                Datos.EjecutarLectura();
+
+                while (Datos.Reader.Read())
+                {
+                    Producto aux = new Producto();
+                    aux.Id = (int)Datos.Reader["Id"];
+                    aux.Nombre = (string)Datos.Reader["Nombre"];
+                    aux.Descripcion = (string)Datos.Reader["Descripcion"];
+                    aux.Precio = (decimal)Datos.Reader["Precio"];
+                    aux.Stock = (int)Datos.Reader["Stock"];
+                    aux.ImagenUrl = (string)Datos.Reader["ImagenUrl"];
+                    aux.Activo = (bool)Datos.Reader["Activo"];
+
+                    aux.Categoria = new Categoria();
+                    aux.Categoria.Id = (int)Datos.Reader["IdCategoria"];
+                    aux.Categoria.Nombre = (string)Datos.Reader["CategoriaNombre"];
+                    aux.Categoria.Descripcion = (string)Datos.Reader["CategoriaDescripcion"];
+                    aux.Categoria.Activo = (bool)Datos.Reader["CategoriaActivo"];
+
+                    Lista.Add(aux);
+                }
+
+                return Lista;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            finally
+            {
+                Datos.CerrarConexion();
+            }
+        }
+
+        public Producto GetById(int id)
         {
             Producto aux = new Producto();
             AccesoDatos Datos = new AccesoDatos();
@@ -207,6 +251,22 @@ namespace negocio
                 Datos.CerrarConexion();
             }
         }
-    }
 
+        public void Habilitar(int id)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetQuery("UPDATE Productos SET Activo = 1 WHERE Id = @Id");
+                datos.SetearParametro("@Id", id);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+    }
 }
