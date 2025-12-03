@@ -230,7 +230,7 @@
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
                                         <asp:Button ID="btnEditarProducto" runat="server" Text="✏️" ToolTip="Editar Producto" CssClass="btn btn-sm btn-warning me-2" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:Button ID="btnInactivarProducto" runat="server" Text='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>' ToolTip="inactivar Producto" CssClass="btn btn-sm btn-warning"  CommandName='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>'  CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea inactivar este producto?');" />
+                                        <asp:Button ID="btnInactivarProducto" runat="server" Text='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>' ToolTip="inactivar Producto" CssClass="btn btn-sm btn-warning" CommandName='<%# (bool)Eval("Activo") ? "Inactivar" : "Reactivar" %>' CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea inactivar este producto?');" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
@@ -276,6 +276,7 @@
                     </div>
                 </asp:PlaceHolder>
 
+
                 <asp:PlaceHolder ID="phPagos" runat="server" Visible="false">
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -302,17 +303,37 @@
                                 <asp:BoundField DataField="MetodoPago.Nombre" HeaderText="Método" />
                                 <asp:BoundField DataField="Monto" HeaderText="Monto" DataFormatString="{0:C}" />
                                 <asp:BoundField DataField="FechaPago" HeaderText="Fecha" DataFormatString="{0:g}" />
-                                <asp:BoundField DataField="Estado.Nombre" HeaderText="Estado" />
+                                <%--<asp:BoundField DataField="Estado.Nombre" HeaderText="Estado" />--%>
+
+                                <asp:TemplateField HeaderText="Estado">
+                                    <ItemTemplate>
+                                        <asp:DropDownList ID="ddlEstadoPago"
+                                            runat="server"
+                                            CssClass="form-select form-select-sm"
+                                            SelectedValue='<%# Eval("Estado.Nombre") %>'>
+                                            <asp:ListItem>Pendiente</asp:ListItem>
+                                            <asp:ListItem>Aprobado</asp:ListItem>
+                                        </asp:DropDownList>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
                                 <asp:TemplateField HeaderText="Acciones">
                                     <ItemTemplate>
-                                        <asp:Button ID="btnEditarPago" runat="server" Text="✏️" ToolTip="Editar Pago" CssClass="btn btn-sm btn-warning me-2 disabled" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' />
-                                        <asp:Button ID="btnEliminarPago" runat="server" Text="🗑️" ToolTip="Eliminar Pago" CssClass="btn btn-sm btn-danger disabled" CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' OnClientClick="return confirm('¿Está seguro de que desea eliminar este pago?');" />
+                                        <asp:Button ID="btnGuardarPago"
+                                            runat="server"
+                                            Text="Guardar"
+                                            CssClass="btn btn-primary btn-sm mt-2"
+                                            CommandName="GuardarPago"
+                                            CommandArgument='<%# Eval("Id") %>' />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
                         </asp:GridView>
+
                     </div>
                 </asp:PlaceHolder>
+
+
 
                 <asp:PlaceHolder ID="phEnvios" runat="server" Visible="false">
                     <div class="mt-4">
