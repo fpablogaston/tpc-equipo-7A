@@ -126,6 +126,24 @@
                                 <asp:RequiredFieldValidator ControlToValidate="txtClienteTelefono" ID="RequiredFieldValidator4" runat="server" ErrorMessage="El teléfono es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
                                 <asp:RegularExpressionValidator ErrorMessage="Máximo 20 caracteres permitidos." ControlToValidate="txtClienteTelefono" ValidationExpression="^[\s\S]{0,20}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                             </div>
+
+                            <div class="mb-3">
+                                <asp:Label ID="lblUsuario" for="txtClienteUsuario" class="form-label" runat="server">Usuario: </asp:Label>
+                                <asp:TextBox ID="txtClienteUsuario" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                                <asp:RequiredFieldValidator ControlToValidate="txtClienteUsuario" ID="RequiredFieldValidator5" runat="server" ErrorMessage="El usuario es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ErrorMessage="Máximo 20 caracteres permitidos." ControlToValidate="txtClienteUsuario" ValidationExpression="^[\s\S]{0,20}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                            </div>
+
+                            <div class="mb-3">
+                                <asp:Label ID="lblPass" for="txtClientePassword" runat="server" class="form-label">Password: </asp:Label>
+                                <asp:TextBox ID="txtClientePassword" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                                <asp:RequiredFieldValidator ControlToValidate="txtClientePassword" ID="RequiredFieldValidator6" runat="server" ErrorMessage="La contraseña es requerida" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ErrorMessage="Máximo 20 caracteres permitidos." ControlToValidate="txtClientePassword" ValidationExpression="^[\s\S]{0,20}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                            </div>
+
+                            <div class="px-3 pb-3 text-center">
+                                <asp:Label ID="lblResultado" runat="server" />
+                            </div>
                         </div>
                     </div>
                 </asp:PlaceHolder>

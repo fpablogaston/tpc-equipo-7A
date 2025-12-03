@@ -61,7 +61,7 @@
                         <asp:ListItem Value="Inicio" Text="Seleccionar entidad..."></asp:ListItem>
                         <asp:ListItem Value="Categorias" Text="Categorías"></asp:ListItem>
                         <asp:ListItem Value="Productos" Text="Productos"></asp:ListItem>
-                        <asp:ListItem Value="Clientes" Text="Clientes"></asp:ListItem>
+                        <asp:ListItem Value="Clientes" Text="Administradores"></asp:ListItem>
                         <asp:ListItem Value="Pedidos" Text="Pedidos"></asp:ListItem>
                         <asp:ListItem Value="Pagos" Text="Pagos"></asp:ListItem>
                         <asp:ListItem Value="Envios" Text="Envíos"></asp:ListItem>
@@ -232,15 +232,15 @@
                 <asp:PlaceHolder ID="phClientes" runat="server" Visible="false">
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="mb-0">Gestión de Clientes</h3>
-                            <asp:Button ID="btnNuevoCliente" runat="server" Text="Nuevo Cliente" CssClass="btn btn-success" OnClick="btnNuevoCliente_Click" />
+                            <h3 class="mb-0">Gestión de Administradores</h3>
+                            <asp:Button ID="btnNuevoCliente" runat="server" Text="Nuevo Administrador" CssClass="btn btn-success" OnClick="btnNuevoCliente_Click" />
                         </div>
                         <asp:Label ID="lblMensajeCliente" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
                         <div class="mb-3">
                             <asp:Label ID="Label2" runat="server" Text="Filtrar" CssClass="text-dark fw-bold"></asp:Label>
                             <asp:TextBox ID="txtFiltroCliente" runat="server" CssClass="form-control"
-                                Placeholder="Buscar cliente..." AutoPostBack="true"
+                                Placeholder="Buscar administrador..." AutoPostBack="true"
                                 OnTextChanged="txtFiltroCliente_TextChanged" />
                         </div>
 

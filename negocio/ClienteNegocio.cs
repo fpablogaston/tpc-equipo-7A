@@ -59,8 +59,6 @@ namespace negocio
 
             try
             {
-                // Update only the Client profile data. 
-                // Address updates are now handled exclusively by DireccionNegocio.
                 Datos.SetQuery("UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono WHERE Id = @Id");
 
                 Datos.SetearParametro("@Id", cliente.Id);
@@ -87,8 +85,6 @@ namespace negocio
             AccesoDatos Datos = new AccesoDatos();
             try
             {
-                // 1. Delete associated addresses first (to prevent FK constraints issues)
-                // We use a manual query here or could call DireccionNegocio logic if it had a "DeleteAllByClient" method.
                 AccesoDatos datosDir = new AccesoDatos();
                 datosDir.SetQuery("DELETE FROM Direcciones WHERE IdCliente = @IdCliente");
                 datosDir.SetearParametro("@IdCliente", Id);
@@ -118,8 +114,11 @@ namespace negocio
 
             try
             {
-                // Removed address columns from the query
-                Datos.SetQuery("SELECT Id, Nombre, Apellido, Email, Telefono, FechaRegistro, IdUsuario FROM Clientes");
+  
+                Datos.SetQuery("SELECT c.Id, c.Nombre, c.Apellido, c.Email, c.Telefono, c.FechaRegistro, " +
+                                "c.IdUsuario, u.IdRol AS Rol " +
+                                "FROM Clientes c " +
+                                "INNER JOIN Usuarios u ON u.Id = c.IdUsuario");
                 Datos.EjecutarLectura();
 
                 while (Datos.Reader.Read())
@@ -132,9 +131,9 @@ namespace negocio
                     aux.Email = (string)Datos.Reader["Email"];
                     aux.Telefono = (string)Datos.Reader["Telefono"];
                     aux.FechaRegistro = (DateTime)Datos.Reader["FechaRegistro"];
+                    aux.Rol = (int)Datos.Reader["Rol"];
 
-                    // Initialize empty lists/objects to avoid NullReferenceExceptions in UI
-                    // We typically DON'T load full address lists for every client in a bulk list for performance
+
                     aux.Direcciones = new List<Direccion>();
                     aux.DireccionSeleccionada = new Direccion();
 
@@ -185,7 +184,6 @@ namespace negocio
                 Datos.CerrarConexion();
             }
 
-            // 3. Load Addresses into 'Direcciones' list and set 'DireccionSeleccionada'
             if (aux.Id != 0)
             {
                 DireccionNegocio dirNegocio = new DireccionNegocio();
@@ -193,7 +191,6 @@ namespace negocio
 
                 if (aux.Direcciones.Count > 0)
                 {
-                    // By default, select the first one (or logic for 'Principal' alias)
                     aux.DireccionSeleccionada = aux.Direcciones[0];
                 }
                 else
@@ -211,7 +208,6 @@ namespace negocio
 
             try
             {
-                // Query updated: removed Direccion/Ciudad/Provincia/CP columns
                 datos.SetQuery(
                     "SELECT c.Id, c.Nombre, c.Apellido, c.Email, c.Telefono, c.FechaRegistro, " +
                     "u.Id AS IdUsuario, u.Username, u.IdRol " +
@@ -233,7 +229,6 @@ namespace negocio
                     cliente.Usuario = (string)datos.Reader["Username"];
                     cliente.IdUsuario = (int)datos.Reader["IdUsuario"];
 
-                    // If user is a Client (Role 1) and has a Client profile created
                     if (cliente.Rol == 1 && datos.Reader["Id"] != DBNull.Value)
                     {
                         cliente.Id = (int)datos.Reader["Id"];
@@ -244,10 +239,8 @@ namespace negocio
                         cliente.FechaRegistro = (DateTime)datos.Reader["FechaRegistro"];
                     }
 
-                    // Close connection before calling another Negocio method
                     datos.CerrarConexion();
 
-                    // Load Addresses if client exists
                     if (cliente.Id != 0)
                     {
                         DireccionNegocio dirNegocio = new DireccionNegocio();
@@ -260,7 +253,6 @@ namespace negocio
                     }
                     else
                     {
-                        // Even if no client ID (new user), initialize lists
                         cliente.Direcciones = new List<Direccion>();
                         cliente.DireccionSeleccionada = new Direccion();
                     }
@@ -298,7 +290,6 @@ namespace negocio
         public bool ExisteEmail(string email)
         {
             AccesoDatos datos = new AccesoDatos();
-            // Email column remains in Clientes table
             datos.SetQuery(@"SELECT COUNT(*) FROM Clientes WHERE Email = @e");
             datos.SetearParametro("@e", email);
             datos.EjecutarLectura();
@@ -309,5 +300,74 @@ namespace negocio
             datos.CerrarConexion();
             return false;
         }
+
+        public void ActualizarAdmin(Cliente cliente)
+        {
+            AccesoDatos Datos = new AccesoDatos();
+
+            try
+            {
+                Datos.SetQuery("UPDATE Clientes SET Nombre = @Nombre, Apellido = @Apellido, Email = @Email, Telefono = @Telefono WHERE Id = @Id");
+
+                Datos.SetearParametro("@Id", cliente.Id);
+                Datos.SetearParametro("@Nombre", cliente.Nombre);
+                Datos.SetearParametro("@Apellido", cliente.Apellido);
+                Datos.SetearParametro("@Email", cliente.Email);
+                Datos.SetearParametro("@Telefono", cliente.Telefono);
+
+                Datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            finally
+            {
+                Datos.CerrarConexion();
+            }
+        }
+
+        public int AgregarAdmin(Cliente cliente)
+        {
+            AccesoDatos Datos = new AccesoDatos();
+
+            try
+            {
+                Datos.SetQuery(
+                    "INSERT INTO Usuarios (Username, PasswordHash, IdRol) " +
+                    "OUTPUT INSERTED.Id " +
+                    "VALUES (@Username, @Password, 2)"
+                );
+
+                Datos.SetearParametro("@Username", cliente.Usuario);
+                Datos.SetearParametro("@Password", cliente.Password);
+
+                int idUsuario = (int)Datos.EjecutarScalar();
+                Datos.CerrarConexion();
+
+                Datos = new AccesoDatos();
+                Datos.SetQuery(
+                    "INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, FechaRegistro, IdUsuario) " +
+                    "OUTPUT INSERTED.Id " +
+                    "VALUES (@Nombre, @Apellido, @Email, @Telefono, @FechaRegistro, @IdUsuario)"
+                );
+
+                Datos.SetearParametro("@Nombre", cliente.Nombre);
+                Datos.SetearParametro("@Apellido", cliente.Apellido);
+                Datos.SetearParametro("@Email", cliente.Email);
+                Datos.SetearParametro("@Telefono", cliente.Telefono);
+                Datos.SetearParametro("@FechaRegistro", DateTime.Now);
+                Datos.SetearParametro("@IdUsuario", idUsuario);
+
+                int idCliente = (int)Datos.EjecutarScalar();
+                return idCliente;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }

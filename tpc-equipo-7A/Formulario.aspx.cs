@@ -80,7 +80,7 @@ namespace tpc_equipo_7A
                     break;
                 case "Cliente":
                     phCliente.Visible = true;
-                    lblFormTitulo.Text = IdEntidad != 0 ? "Modificar Cliente" : "Nuevo Cliente";
+                    lblFormTitulo.Text = IdEntidad != 0 ? "Modificar Administrador" : "Nuevo Administrador";
                     break;
                 case "Pago":
                     phPago.Visible = true;
@@ -144,6 +144,12 @@ namespace tpc_equipo_7A
                             txtClienteApellido.Text = cliente.Apellido;
                             txtClienteEmail.Text = cliente.Email;
                             txtClienteTelefono.Text = cliente.Telefono;
+                            txtClientePassword.Text = "nada";
+                            txtClienteUsuario.Text = "nada";
+                            lblUsuario.Visible = false;
+                            lblPass.Visible = false;
+                            txtClienteUsuario.Visible = false;
+                            txtClientePassword.Visible = false;
                         }
                         break;
                     case "Envio":
@@ -213,7 +219,7 @@ namespace tpc_equipo_7A
                         GuardarCategoria();
                         break;
                     case "Cliente":
-                        GuardarCliente();
+                        GuardarAdmin();
                         break;
                     case "Envio":
                         GuardarEnvio();
@@ -283,26 +289,45 @@ namespace tpc_equipo_7A
             else
                 negocio.Agregar(categoria);
         }
-        private void GuardarCliente()
+        private void GuardarAdmin()
         {
             ClienteNegocio negocio = new ClienteNegocio();
 
-            Cliente cliente = new Cliente
+            Cliente cliente = new Cliente();
+                cliente.Id = IdEntidad;
+                cliente.Nombre = txtClienteNombre.Text;
+                cliente.Apellido = txtClienteApellido.Text;
+                cliente.Email = txtClienteEmail.Text;
+                cliente.Telefono = txtClienteTelefono.Text;
+                cliente.Rol = 2;
+                cliente.FechaRegistro = (IdEntidad == 0) ? DateTime.Now : new ClienteNegocio().GetById(IdEntidad).FechaRegistro;
+
+            ClienteNegocio negocioVerificacion = new ClienteNegocio();
+
+            if (negocioVerificacion.ExisteUsuario(txtClienteUsuario.Text))
             {
-                Id = IdEntidad,
-                Nombre = txtClienteNombre.Text,
-                Apellido = txtClienteApellido.Text,
-                Email = txtClienteEmail.Text,
-                Telefono = txtClienteTelefono.Text,
-                //Direccion = ,
-                //Password = "",
-                FechaRegistro = (IdEntidad == 0) ? DateTime.Now : new ClienteNegocio().GetById(IdEntidad).FechaRegistro,
-            };
+                lblResultado.CssClass = "text-danger";
+                lblResultado.Text = "El nombre de usuario ya existe.";
+                return;
+            }
+
+            if (negocioVerificacion.ExisteEmail(txtClienteEmail.Text))
+            {
+                lblResultado.CssClass = "text-danger";
+                lblResultado.Text = "El email ya está registrado.";
+                return;
+            }
 
             if (IdEntidad != 0)
+            {
                 negocio.Actualizar(cliente);
+            }
             else
-                negocio.Agregar(cliente);
+            {
+                cliente.Usuario = txtClienteUsuario.Text;
+                cliente.Password = txtClientePassword.Text;
+                negocio.AgregarAdmin(cliente);
+            }
         }
         private void GuardarEnvio()
         {
@@ -393,7 +418,7 @@ namespace tpc_equipo_7A
             ddlPedidoCliente.DataTextField = "Nombre";
             ddlPedidoCliente.DataValueField = "Id";
             ddlPedidoCliente.DataBind();
-            ddlPedidoCliente.Items.Insert(0, new ListItem("Seleccionar Cliente", "0"));
+            ddlPedidoCliente.Items.Insert(0, new ListItem("Seleccionar Administrador", "0"));
 
             PagoNegocio pagoNeg = new PagoNegocio();
             ddlPedidoPago.DataSource = pagoNeg.Listar();

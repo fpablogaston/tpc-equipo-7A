@@ -354,13 +354,14 @@ namespace tpc_equipo_7A
             {
                 ClienteNegocio negocio = new ClienteNegocio();
                 var lista = negocio.Listar();
-                Session["listaClientes"] = lista;
-                gvClientes.DataSource = lista;
+                var listaAdmin = lista.Where(admin => admin.Rol == 2).ToList();
+                Session["listaClientes"] = listaAdmin;
+                gvClientes.DataSource = listaAdmin;
                 gvClientes.DataBind();
             }
             catch (Exception ex)
             {
-                lblMensajeCliente.Text = "Error al cargar clientes: " + ex.Message;
+                lblMensajeCliente.Text = "Error al cargar administradores: " + ex.Message;
                 lblMensajeCliente.CssClass = "text-danger";
             }
         }
