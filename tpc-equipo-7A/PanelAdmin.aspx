@@ -281,7 +281,7 @@
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0">Gestión de Pagos</h3>
-                            <asp:Button runat="server" Text="Nuevo Pago" CssClass="btn btn-success disabled" OnClick="btnNuevoPago_Click" />
+                            <%--<asp:Button runat="server" Text="Nuevo Pago" CssClass="btn btn-success disabled" OnClick="btnNuevoPago_Click" />--%>
                         </div>
                         <asp:Label ID="lblMensajePago" runat="server" CssClass="fw-bold d-block mt-3 mb-2"></asp:Label>
 
@@ -296,7 +296,8 @@
                             CssClass="table table-striped table-bordered table-hover"
                             AutoGenerateColumns="false"
                             DataKeyNames="Id"
-                            OnRowCommand="gvPagos_RowCommand">
+                            OnRowCommand="gvPagos_RowCommand"
+                            OnRowDataBound="gvPagos_RowDataBound">
                             <Columns>
                                 <asp:BoundField DataField="Id" HeaderText="ID" />
                                 <asp:BoundField DataField="IdPedido" HeaderText="ID Pedido" />

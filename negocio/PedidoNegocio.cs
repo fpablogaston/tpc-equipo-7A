@@ -348,5 +348,27 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
+
+        public void ActualizarEstadoPedido(int idPedido, int nuevoEstado)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetQuery("UPDATE Pedidos SET IdEstadoPedido = @estado WHERE Id = @id");
+                datos.SetearParametro("@estado", nuevoEstado);
+                datos.SetearParametro("@id", idPedido);
+                datos.EjecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
     }
 }

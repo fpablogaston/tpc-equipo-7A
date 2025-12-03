@@ -454,26 +454,63 @@ namespace tpc_equipo_7A
 
         protected void gvPagos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            int id = Convert.ToInt32(e.CommandArgument);
+            if (e.CommandName == "GuardarPago")
+            {
+                int idPago = Convert.ToInt32(e.CommandArgument);
 
-            if (e.CommandName == "Editar")
-            {
-                Response.Redirect($"Formulario.aspx?entity=Pago&id={id}");
-            }
-            else if (e.CommandName == "Eliminar")
-            {
+                GridViewRow row = ((Button)e.CommandSource).NamingContainer as GridViewRow;
+
+                DropDownList ddl = row.FindControl("ddlEstadoPago") as DropDownList;
+                string nuevoEstado = ddl.SelectedValue;
+
                 try
                 {
                     PagoNegocio negocio = new PagoNegocio();
-                    negocio.Eliminar(id);
-                    lblMensajePago.Text = "Pago eliminado.";
+                    negocio.ActualizarEstado(idPago, nuevoEstado);
+
+                    int idPedido = Convert.ToInt32(row.Cells[1].Text);
+
+                    PedidoNegocio pedidoNegocio = new PedidoNegocio();
+
+                    if (nuevoEstado == "Aprobado")
+                        pedidoNegocio.ActualizarEstadoPedido(idPedido, 2); 
+                    else
+                        pedidoNegocio.ActualizarEstadoPedido(idPedido, 1); 
+
+                    lblMensajePago.Text = "Estado actualizado correctamente";
                     lblMensajePago.CssClass = "text-success";
+
                     BindPagosGrid();
                 }
                 catch (Exception ex)
                 {
-                    lblMensajePago.Text = "Error al eliminar pago: " + ex.Message;
+                    lblMensajePago.Text = "Error al actualizar " + ex.Message;
                     lblMensajePago.CssClass = "text-danger";
+                }
+
+                return;
+            }
+        }
+
+        protected void gvPagos_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                // Obtener el objeto Pago que se está enlazando en esta fila
+                Pago pago = (Pago)e.Row.DataItem;
+
+                DropDownList ddl = (DropDownList)e.Row.FindControl("ddlEstadoPago");
+
+                if (ddl != null && pago != null)
+                {
+                    // Si el método de pago es tarjeta → bloquear cambios
+                    if (pago.MetodoPago.Nombre.ToLower().Contains("tarjeta"))
+                    {
+                        ddl.Items.Clear();
+                        ddl.Items.Add("Aprobado");
+                        ddl.SelectedValue = "Aprobado";
+                        ddl.Enabled = false; // No se puede editar
+                    }
                 }
             }
         }

@@ -164,5 +164,16 @@ namespace negocio
                 throw;
             }
         }
+
+        public void ActualizarEstado(int idPago, string nuevoEstado)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            datos.SetQuery("UPDATE Pagos SET Estado = @estado WHERE Id = @id");
+            datos.SetearParametro("@estado", nuevoEstado);
+            datos.SetearParametro("@id", idPago);
+            datos.EjecutarAccion();
+            datos.CerrarConexion();
+        }
+
     }
 }
