@@ -71,7 +71,7 @@
                             </asp:TemplateField>
 
                             <%-- Diagrama Visual (Timeline) --%>
-                            <asp:TemplateField HeaderText="Estado del Pedido">
+                            <asp:TemplateField HeaderText="Número de pedido">
                                 <ItemTemplate>
                                     <div class="d-flex align-items-center py-2">
                                         
@@ -100,7 +100,7 @@
                                         <%-- 3. ESTADO FINAL --%>
                                         <div class="text-center position-relative" title="Estado Actual">
                                             <span class="badge rounded-pill bg-light text-dark border">
-                                                <%# Eval("Estado.Descripcion") %>
+                                                <%# Eval("Envio.EstadoDescripcion") %>
                                             </span>
                                         </div>
 
@@ -114,9 +114,36 @@
                                 </ItemTemplate>
                             </asp:TemplateField>
 
+                                <asp:TemplateField HeaderText="Pago.">
+                                    <ItemTemplate>
+                                                <div class="fw-bold text-secondary">
+                                                    <%# Eval("Pago.Estado.Nombre") %>
+                                                </div>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                
+                                <asp:TemplateField HeaderText="Envío.">
+                                    <ItemTemplate>
+                                                <div class="fw-bold text-secondary">
+                                                     <%# Eval("Envio.EstadoDescripcion") %>
+                                                </div>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+
                             <%-- Total --%>
-                            <asp:BoundField DataField="Total" HeaderText="Total"
-                                DataFormatString="{0:C}" HtmlEncode="false" ItemStyle-CssClass="fw-bold text-success fs-5 text-end pe-4" />
+                       
+                                  
+                                <asp:BoundField DataField="Total" HeaderText="Total" DataFormatString="{0:C}" HtmlEncode="false" ItemStyle-CssClass="fw-bold text-success fs-5 text-center" />
+                           
+                   
+                            <%-- Estado --%>
+                                <asp:TemplateField HeaderText="Estado">
+                                    <ItemTemplate>
+                                        <span id="lblEstado" runat="server" class="badge"></span>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
 
                             <%-- Boton Detalle --%>
                             <asp:TemplateField>

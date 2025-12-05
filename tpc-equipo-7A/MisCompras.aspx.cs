@@ -1,6 +1,7 @@
 ﻿using dominio;
 using negocio;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
@@ -29,13 +30,26 @@ namespace tpc_equipo_7A
                     PedidoNegocio pedidoNeg = new PedidoNegocio();
                     List<Pedido> pedidos = pedidoNeg.ListarPorCliente(idCliente);
 
-                    // Sort by newest first
-                    gvCompras.DataSource = pedidos.OrderByDescending(x => x.FechaPedido).ToList();
+                    var listaOrdenada = pedidos
+                       .Select(p => new
+                       {
+                           Pedido = p,
+                           PrioridadEstado =
+                               p.Envio.IdEstadoEnvio == 5 ? 3 :
+                               p.Envio.IdEstadoEnvio == 4 ? 2 :
+                               1
+                       })
+                        .OrderBy(x => x.PrioridadEstado)
+                        .ThenByDescending(x => x.Pedido.FechaPedido)
+                        .Select(x => x.Pedido)
+                        .ToList();
+
+                    gvCompras.DataSource = listaOrdenada;
                     gvCompras.DataBind();
+
                 }
                 catch (Exception ex)
                 {
-                    // In a real app, log error or show user friendly message
                     Session.Add("error", ex.ToString());
                 }
             }
@@ -47,9 +61,8 @@ namespace tpc_equipo_7A
             {
                 Pedido pedido = (Pedido)e.Row.DataItem;
 
-                // --- VISUAL LOGIC FOR "PO DIAGRAM" ---
-
                 // 1. PAGO
+
                 Panel pnlPago = (Panel)e.Row.FindControl("pnlPagoIcon");
                 Panel pnlCashWarning = (Panel)e.Row.FindControl("pnlCashWarning");
 
@@ -79,32 +92,47 @@ namespace tpc_equipo_7A
 
                 if (isPickup)
                 {
-                    // It's a Store Pickup
                     iconEnvio.Attributes["class"] = "bi bi-shop";
                     lblTipoEnvio.Text = "Retiro";
 
-                    // Logic based on Order Status IDs (Standardized)
-                    // 3 = En Preparacion, 5 = Listo para Retiro, 6 = Entregado
-                    if (pedido.Estado.Id >= 6) // Finalizado/Entregado
+                    if (pedido.Estado.Id >= 6) // 
                         pnlEnvio.CssClass += " step-completed";
-                    else if (pedido.Estado.Id >= 3) // Being Prepared or Ready
-                        pnlEnvio.CssClass += " step-active"; // Blue
+                    else if (pedido.Estado.Id >= 3) // 
+                        pnlEnvio.CssClass += " step-active"; // 
                     else
                         pnlEnvio.CssClass += " step-pending";
                 }
                 else
                 {
-                    // It's a Delivery
                     iconEnvio.Attributes["class"] = "bi bi-truck";
                     lblTipoEnvio.Text = "Envío";
 
-                    // 4 = En Camino, 6 = Entregado
-                    if (pedido.Estado.Id >= 6) // Delivered
+                    if (pedido.Envio.IdEstadoEnvio == 4)
                         pnlEnvio.CssClass += " step-completed";
-                    else if (pedido.Estado.Id == 4) // On the way
-                        pnlEnvio.CssClass += " step-active"; // Blue
+                    else if (pedido.Envio.IdEstadoEnvio == 2 || pedido.Envio.IdEstadoEnvio == 3)
+                        pnlEnvio.CssClass += " step-active";
+                    else if (pedido.Envio.IdEstadoEnvio == 1)
+                        pnlEnvio.CssClass += " step-warning";
                     else
                         pnlEnvio.CssClass += " step-pending";
+                }
+
+                HtmlGenericControl lblEstado = (HtmlGenericControl)e.Row.FindControl("lblEstado");
+
+                if (pedido.Envio.EstadoDescripcion == "Entregado")
+                {
+                    lblEstado.InnerText = "Cerrado";
+                    lblEstado.Attributes["class"] = "badge bg-success";
+                }
+                else if (pedido.Envio.EstadoDescripcion == "Cancelado")
+                {
+                    lblEstado.InnerText = "Cancelado";
+                    lblEstado.Attributes["class"] = "badge bg-danger text-dark";
+                }
+                else
+                {
+                    lblEstado.InnerText = "Abierto";
+                    lblEstado.Attributes["class"] = "badge bg-warning text-dark";
                 }
             }
         }
