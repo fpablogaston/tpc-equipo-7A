@@ -14,7 +14,6 @@ namespace tpc_equipo_7A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check for admin access (Rol 2 is Admin)
             if (Session["cliente"] == null || ((Cliente)Session["cliente"]).Rol != 2)
             {
                 Response.Redirect("Default.aspx");
@@ -81,9 +80,24 @@ namespace tpc_equipo_7A
             try
             {
                 PedidoNegocio negocio = new PedidoNegocio();
-                var lista = negocio.Listar().OrderByDescending(x => x.FechaPedido).ToList();
-                Session["listaPedidos"] = lista;
-                gvPedidos.DataSource = lista;
+                var lista = negocio.Listar();
+
+                var listaOrdenada = lista
+                    .Select(p => new
+                    {
+                        Pedido = p,
+                        PrioridadEstado =
+                            p.Envio.IdEstadoEnvio== 5 ? 3 :
+                            p.Envio.IdEstadoEnvio == 4 ? 2 :
+                            1                   
+                    })
+                    .OrderBy(x => x.PrioridadEstado)
+                    .ThenByDescending(x => x.Pedido.Id)
+                    .Select(x => x.Pedido)
+                    .ToList();
+
+                Session["listaPedidos"] = listaOrdenada;
+                gvPedidos.DataSource = listaOrdenada;
                 gvPedidos.DataBind();
             }
             catch (Exception ex)
@@ -92,6 +106,7 @@ namespace tpc_equipo_7A
                 lblMensajePedido.CssClass = "text-danger";
             }
         }
+
 
         protected void gvPedidos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -141,28 +156,85 @@ namespace tpc_equipo_7A
 
                 if (isPickup)
                 {
-                    iconEnvio.Attributes["class"] = "bi bi-shop"; 
+                    iconEnvio.Attributes["class"] = "bi bi-shop";
                     lblTipoEnvio.Text = "Retiro";
 
-                    if (pedido.Estado.Id >= 5)
-                        pnlEnvio.CssClass += " step-completed";
-                    else if (pedido.Estado.Id >= 3) 
-                        pnlEnvio.CssClass += " step-active"; 
-                    else
-                        pnlEnvio.CssClass += " step-pending";
+                    switch (pedido.Envio.EstadoDescripcion)
+                    {
+                        case "Retiro en local": // Retiro en local
+                            pnlEnvio.CssClass += " step-completed"; // VERDE
+                            break;
+
+                        case "Preparando": // Preparando
+                            pnlEnvio.CssClass += " step-active"; // NARANJA
+                            break;
+
+                        case "En Camino":
+                            pnlEnvio.CssClass += " step-active";
+                            break;
+
+                        case "Pendiente":
+                            pnlEnvio.CssClass += " step-warning"; // AMARILLO
+                            break;
+
+                        default:
+                            pnlEnvio.CssClass += " step-pending"; // GRIS
+                            break;
+                    }
+                }
+                else // ENVÍO A DOMICILIO
+                {
+                    iconEnvio.Attributes["class"] = "bi bi-truck";
+                    lblTipoEnvio.Text = "Envío";
+
+                    switch (pedido.Envio.EstadoDescripcion)
+                    {
+                        case "Entregado":
+                            pnlEnvio.CssClass += " step-completed";
+                            break;
+
+                        case "En Camino":
+                            pnlEnvio.CssClass += " step-active";
+                            break;
+
+                        case "Preparando":
+                            pnlEnvio.CssClass += " step-active";
+                            break;
+
+                        case "Pendiente":
+                            pnlEnvio.CssClass += " step-warning";
+                            break;
+
+                        case "Cancelado":
+                            pnlEnvio.CssClass += " step-cancelled";
+                            break;
+
+                        default:
+                            pnlEnvio.CssClass += " step-pending";
+                            break;
+                    }
+                }
+
+                HtmlGenericControl lblCaja = (HtmlGenericControl)e.Row.FindControl("lblCajaEstado");
+
+                if (pedido.Envio.EstadoDescripcion == "Entregado") 
+                {
+                    lblCaja.InnerText = "Cerrado";
+                    lblCaja.Attributes["class"] = "badge bg-success"; 
+                }
+                else if (pedido.Envio.EstadoDescripcion == "Cancelado")
+                {
+                    lblCaja.InnerText = "Cancelado";
+                    lblCaja.Attributes["class"] = "badge bg-danger text-dark";
                 }
                 else
                 {
-                    iconEnvio.Attributes["class"] = "bi bi-truck";
-
-                    if (pedido.Estado.Id >= 6) 
-                        pnlEnvio.CssClass += " step-completed";
-                    else if (pedido.Estado.Id == 4) 
-                        pnlEnvio.CssClass += " step-active"; 
-                    else
-                        pnlEnvio.CssClass += " step-pending";
+                    lblCaja.InnerText = "Abierto";
+                    lblCaja.Attributes["class"] = "badge bg-warning text-dark";
                 }
             }
+
+
         }
 
         protected void gvPedidos_RowCommand(object sender, GridViewCommandEventArgs e)

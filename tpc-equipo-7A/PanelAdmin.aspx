@@ -4,7 +4,13 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
+        <style>
+        .badge {
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
         .step-icon {
             font-size: 1.2rem;
             width: 30px;
@@ -129,8 +135,6 @@
                                                 </div>
                                             </div>
 
-                                            >
-
                                         </div>
 
                                         <asp:Panel ID="pnlCashWarning" runat="server" Visible="false" CssClass="mt-2 badge bg-warning text-dark">
@@ -140,15 +144,31 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Información de pago - Estado de envío.">
+                                <asp:TemplateField HeaderText="Pago.">
                                     <ItemTemplate>
                                                 <div class="fw-bold text-secondary">
-                                                    <%# Eval("Pago.Estado.Nombre") %> - <%# Eval("Estado.Descripcion") %>
+                                                    <%# Eval("Pago.Estado.Nombre") %>
+                                                </div>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                
+                                <asp:TemplateField HeaderText="Envío.">
+                                    <ItemTemplate>
+                                                <div class="fw-bold text-secondary">
+                                                     <%# Eval("Envio.EstadoDescripcion") %>
                                                 </div>
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
                                 <asp:BoundField DataField="Total" HeaderText="Total" DataFormatString="{0:C}" ItemStyle-CssClass="fw-bold text-success" />
+
+                                <asp:TemplateField HeaderText="Estado">
+                                    <ItemTemplate>
+                                        <span id="lblCajaEstado" runat="server" class="badge"></span>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
 
                             </Columns>
                         </asp:GridView>

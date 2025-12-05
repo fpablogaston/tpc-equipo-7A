@@ -230,6 +230,7 @@ namespace negocio
             {
                 data.SetQuery("SELECT Id, Descripcion FROM EstadoPedido");
                 data.EjecutarLectura();
+
                 while (data.Reader.Read())
                 {
                     list.Add(new EstadoPedido
@@ -238,6 +239,7 @@ namespace negocio
                         Descripcion = (string)data.Reader["Descripcion"]
                     });
                 }
+
                 return list;
             }
             finally
@@ -245,6 +247,7 @@ namespace negocio
                 data.CerrarConexion();
             }
         }
+
 
         public Pedido GuardarPedidoCompleto(Cliente cliente, Carrito carrito, Envio envio, Pago pago)
         {
@@ -381,26 +384,22 @@ namespace negocio
             }
         }
 
-        public void ActualizarEstadoPedido(int idPedido, int nuevoEstado)
-        {
-            AccesoDatos datos = new AccesoDatos();
-
-            try
-            {
-                datos.SetQuery("UPDATE Pedidos SET IdEstadoPedido = @estado WHERE Id = @id");
-                datos.SetearParametro("@estado", nuevoEstado);
-                datos.SetearParametro("@id", idPedido);
-                datos.EjecutarAccion();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                datos.CerrarConexion();
-            }
+        public void ActualizarEstadoPedido(int idPedido, int nuevoEstado) 
+            { AccesoDatos datos = new AccesoDatos(); 
+                try 
+                { 
+                    datos.SetQuery("UPDATE Pedidos SET IdEstadoPedido = @estado WHERE Id = @id");
+                    datos.SetearParametro("@estado", nuevoEstado);
+                    datos.SetearParametro("@id", idPedido); datos.EjecutarAccion();
+                } 
+                catch (Exception ex)
+                { 
+                    throw ex; 
+                } 
+                finally 
+                { 
+                    datos.CerrarConexion(); 
+                } 
         }
-
     }
 }
