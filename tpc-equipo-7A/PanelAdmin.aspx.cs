@@ -75,7 +75,7 @@ namespace tpc_equipo_7A
             }
         }
 
-        // --- PEDIDOS (NEW PO LOGIC) ---
+        // --- PEDIDOS ---
         private void BindPedidosGrid()
         {
             try
@@ -99,7 +99,6 @@ namespace tpc_equipo_7A
             {
                 Pedido pedido = (Pedido)e.Row.DataItem;
 
-                // 1. Populate DropDownList for Status
                 DropDownList ddl = (DropDownList)e.Row.FindControl("ddlCambiarEstado");
                 if (ddl != null)
                 {
@@ -111,28 +110,26 @@ namespace tpc_equipo_7A
                     ddl.SelectedValue = pedido.Estado.Id.ToString();
                 }
 
-                // 2. VISUAL LOGIC FOR "DIAGRAM" (PO)
 
                 // --- PAGO ---
                 Panel pnlPago = (Panel)e.Row.FindControl("pnlPagoIcon");
                 Panel pnlCashWarning = (Panel)e.Row.FindControl("pnlCashWarning");
 
                 bool isCash = pedido.EsPagoEfectivo;
-                // Assuming logic: if Payment State is "Aprobado" then it's paid.
                 bool isPaid = pedido.Pago != null && pedido.Pago.Estado.Nombre == "Aprobado";
 
                 if (isPaid)
                 {
-                    pnlPago.CssClass += " step-completed"; // Green
+                    pnlPago.CssClass += " step-completed"; 
                 }
                 else if (isCash)
                 {
-                    pnlPago.CssClass += " step-warning"; // Yellow (User request)
+                    pnlPago.CssClass += " step-warning";
                     pnlCashWarning.Visible = true;
                 }
                 else
                 {
-                    pnlPago.CssClass += " step-pending"; // Grey
+                    pnlPago.CssClass += " step-pending";
                 }
 
                 // --- ENVIO / RETIRO ---
@@ -144,25 +141,24 @@ namespace tpc_equipo_7A
 
                 if (isPickup)
                 {
-                    iconEnvio.Attributes["class"] = "bi bi-shop"; // Change icon to Shop
+                    iconEnvio.Attributes["class"] = "bi bi-shop"; 
                     lblTipoEnvio.Text = "Retiro";
 
-                    // Logic based on Order Status ID (Assuming 5 is 'Listo para Retiro')
                     if (pedido.Estado.Id >= 5)
                         pnlEnvio.CssClass += " step-completed";
-                    else if (pedido.Estado.Id >= 3) // Preparing
-                        pnlEnvio.CssClass += " step-active"; // Blue
+                    else if (pedido.Estado.Id >= 3) 
+                        pnlEnvio.CssClass += " step-active"; 
                     else
                         pnlEnvio.CssClass += " step-pending";
                 }
                 else
                 {
-                    iconEnvio.Attributes["class"] = "bi bi-truck"; // Standard Truck
+                    iconEnvio.Attributes["class"] = "bi bi-truck";
 
-                    if (pedido.Estado.Id >= 6) // Delivered
+                    if (pedido.Estado.Id >= 6) 
                         pnlEnvio.CssClass += " step-completed";
-                    else if (pedido.Estado.Id == 4) // En Camino
-                        pnlEnvio.CssClass += " step-active"; // Blue
+                    else if (pedido.Estado.Id == 4) 
+                        pnlEnvio.CssClass += " step-active"; 
                     else
                         pnlEnvio.CssClass += " step-pending";
                 }

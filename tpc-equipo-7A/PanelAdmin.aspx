@@ -129,12 +129,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="step-line"></div>
-                                            <div class="text-center" title="Estado Actual">
-                                                <span class="badge rounded-pill bg-primary">
-                                                    <%# Eval("Estado.Descripcion") %>
-                                                </span>
-                                            </div>
+                                            >
 
                                         </div>
 
@@ -145,32 +140,11 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Estado">
+                                <asp:TemplateField HeaderText="Información de pago - Estado de envío.">
                                     <ItemTemplate>
-                                        <asp:DropDownList ID="ddlCambiarEstado"
-                                            runat="server"
-                                            CssClass="form-select form-select-sm">
-
-                                            <asp:ListItem Value="1">Pendiente de Pago</asp:ListItem>
-                                            <asp:ListItem Value="2">Pagado</asp:ListItem>
-                                            <asp:ListItem Value="3">En Preparación</asp:ListItem>
-                                            <asp:ListItem Value="4">En Camino</asp:ListItem>
-                                            <asp:ListItem Value="5">Listo para Retiro</asp:ListItem>
-                                            <asp:ListItem Value="6">Entregado</asp:ListItem>
-                                            <asp:ListItem Value="7">Cancelado</asp:ListItem>
-
-                                        </asp:DropDownList>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Acciones">
-                                    <ItemTemplate>
-                                        <asp:Button ID="btnGuardarPedido"
-                                            runat="server"
-                                            Text="Guardar"
-                                            CssClass="btn btn-primary btn-sm"
-                                            CommandName="ActualizarEstado"
-                                            CommandArgument='<%# Container.DataItemIndex %>' />
+                                                <div class="fw-bold text-secondary">
+                                                    <%# Eval("Pago.Estado.Nombre") %> - <%# Eval("Estado.Descripcion") %>
+                                                </div>
                                     </ItemTemplate>
                                 </asp:TemplateField>
 

@@ -27,7 +27,12 @@ namespace dominio
         {
             get
             {
-                return Pago != null && (Pago.MetodoPago.Id == 2 || Pago.MetodoPago.Nombre.ToLower().Contains("efectivo"));
+                if (Pago?.MetodoPago == null)
+                    return false;
+
+                string nombre = Pago.MetodoPago.Nombre?.ToLower() ?? "";
+
+                return Pago.MetodoPago.Id == 2 || nombre.Contains("efectivo");
             }
         }
     }

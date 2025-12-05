@@ -8,8 +8,14 @@ using System.Threading.Tasks;
 
 namespace negocio
 {
+
+
     public class PedidoNegocio
     {
+        private string GetString(SqlDataReader r, string col)
+        {
+            return r[col] == DBNull.Value ? null : r[col].ToString();
+        }
         public List<Pedido> Listar()
         {
             List<Pedido> list = new List<Pedido>();
@@ -137,15 +143,19 @@ namespace negocio
             aux.Total = (decimal)reader["Total"];
 
             // Estado
-            aux.Estado = new EstadoPedido();
-            aux.Estado.Id = (int)reader["IdEstadoPedido"];
-            aux.Estado.Descripcion = (string)reader["EstadoDescripcion"];
+            aux.Estado = new EstadoPedido
+            {
+                Id = (int)reader["IdEstadoPedido"],
+                Descripcion = GetString(reader, "EstadoDescripcion")
+            };
 
             // Cliente
-            aux.Cliente = new Cliente();
-            aux.Cliente.Id = (int)reader["IdCliente"];
-            aux.Cliente.Nombre = (string)reader["ClienteNombre"];
-            aux.Cliente.Apellido = (string)reader["ClienteApellido"];
+            aux.Cliente = new Cliente
+            {
+                Id = (int)reader["IdCliente"],
+                Nombre = GetString(reader, "ClienteNombre"),
+                Apellido = GetString(reader, "ClienteApellido")
+            };
 
             // Envio
             aux.Envio = new Envio();
@@ -153,26 +163,48 @@ namespace negocio
             {
                 aux.Envio.Id = (int)reader["IdEnvio"];
                 aux.Envio.IdEstadoEnvio = reader["EstadoEnvioId"] != DBNull.Value ? (int)reader["EstadoEnvioId"] : 0;
-                aux.Envio.EstadoDescripcion = reader["EstadoEnvioDesc"] != DBNull.Value ? (string)reader["EstadoEnvioDesc"] : "";
+                aux.Envio.EstadoDescripcion = GetString(reader, "EstadoEnvioDesc");
             }
 
             // Pago
             aux.Pago = new Pago();
+
             if (reader["IdPago"] != DBNull.Value)
             {
                 aux.Pago.Id = (int)reader["IdPago"];
-                aux.Pago.MetodoPago = new MetodoPago { Nombre = (string)reader["MetodoPagoStr"] };
-                aux.Pago.Estado = new EstadoPago { Nombre = (string)reader["EstadoPago"] };
 
-                // Pequeña corrección de ID para lógica de frontend
-                if (aux.Pago.MetodoPago.Nombre.ToLower().Contains("efectivo"))
+                aux.Pago.MetodoPago = new MetodoPago
+                {
+                    Nombre = GetString(reader, "MetodoPagoStr")
+                };
+
+                aux.Pago.Estado = new EstadoPago
+                {
+                    Nombre = GetString(reader, "EstadoPago")
+                };
+
+                if ((aux.Pago.MetodoPago.Nombre ?? "").ToLower().Contains("efectivo"))
                     aux.Pago.MetodoPago.Id = 2;
                 else
                     aux.Pago.MetodoPago.Id = 1;
             }
+            else
+            {
+                aux.Pago.MetodoPago = new MetodoPago
+                {
+                    Id = 0,
+                    Nombre = "Sin método"
+                };
+
+                aux.Pago.Estado = new EstadoPago
+                {
+                    Nombre = "Sin estado"
+                };
+            }
 
             return aux;
         }
+
 
         public void ActualizarEstado(int idPedido, int idEstado)
         {
