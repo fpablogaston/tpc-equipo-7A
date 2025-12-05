@@ -97,7 +97,9 @@
                             CssClass="table table-hover align-middle shadow-sm bg-white rounded"
                             AutoGenerateColumns="false"
                             DataKeyNames="Id"
-                            OnRowDataBound="gvPedidos_RowDataBound">
+                            OnRowDataBound="gvPedidos_RowDataBound"
+                            OnRowCommand="gvPedidos_RowCommand"
+                            >
 
                             <Columns>
                                 <asp:TemplateField HeaderText="Orden">
@@ -140,6 +142,35 @@
                                             <i class="bi bi-exclamation-triangle"></i>Pago en Efectivo (Validar en caja)
                                         </asp:Panel>
 
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <asp:TemplateField HeaderText="Estado">
+                                    <ItemTemplate>
+                                        <asp:DropDownList ID="ddlCambiarEstado"
+                                            runat="server"
+                                            CssClass="form-select form-select-sm">
+
+                                            <asp:ListItem Value="1">Pendiente de Pago</asp:ListItem>
+                                            <asp:ListItem Value="2">Pagado</asp:ListItem>
+                                            <asp:ListItem Value="3">En Preparación</asp:ListItem>
+                                            <asp:ListItem Value="4">En Camino</asp:ListItem>
+                                            <asp:ListItem Value="5">Listo para Retiro</asp:ListItem>
+                                            <asp:ListItem Value="6">Entregado</asp:ListItem>
+                                            <asp:ListItem Value="7">Cancelado</asp:ListItem>
+
+                                        </asp:DropDownList>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <asp:TemplateField HeaderText="Acciones">
+                                    <ItemTemplate>
+                                        <asp:Button ID="btnGuardarPedido"
+                                            runat="server"
+                                            Text="Guardar"
+                                            CssClass="btn btn-primary btn-sm"
+                                            CommandName="ActualizarEstado"
+                                            CommandArgument='<%# Container.DataItemIndex %>' />
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
@@ -376,6 +407,7 @@
                                             <asp:ListItem Text="Retiro en Local" Value="Retiro en Local"></asp:ListItem>
                                         </asp:DropDownList>
                                         <asp:HiddenField ID="hfEstadoActual" runat="server" Value='<%# Eval("EstadoDescripcion") %>' />
+                                        <%--<asp:Label ID="lblEstadoActual" runat="server" Text='<%# Eval("EstadoDescripcion") %>' Visible="false"></asp:Label>--%>
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
