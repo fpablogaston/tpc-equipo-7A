@@ -122,6 +122,7 @@ namespace tpc_equipo_7A
                             txtProductoImagenUrl.Text = producto.ImagenUrl;
                             imgProducto.ImageUrl = !string.IsNullOrEmpty(producto.ImagenUrl) ? producto.ImagenUrl : "https://placehold.co/600x400?text=No+Image";
                             ddlProductoCategoria.SelectedValue = producto.Categoria.Id.ToString();
+
                         }
                         break;
                     case "Categoria":
@@ -251,6 +252,10 @@ namespace tpc_equipo_7A
                 ImagenUrl = txtProductoImagenUrl.Text,
                 Categoria = new CategoriaNegocio().GetById(int.Parse(ddlProductoCategoria.SelectedValue))
             };
+            if (int.Parse(txtProductoStock.Text) > 0)
+            {
+
+            }
 
             if (IdEntidad != 0)
                 negocio.Actualizar(producto);
@@ -294,29 +299,20 @@ namespace tpc_equipo_7A
             ClienteNegocio negocio = new ClienteNegocio();
 
             Cliente cliente = new Cliente();
-                cliente.Id = IdEntidad;
+                IdEntidad = int.Parse(txtClienteId.Text);
+                cliente.Id = int.Parse(txtClienteId.Text);
                 cliente.Nombre = txtClienteNombre.Text;
                 cliente.Apellido = txtClienteApellido.Text;
                 cliente.Email = txtClienteEmail.Text;
                 cliente.Telefono = txtClienteTelefono.Text;
                 cliente.Rol = 2;
                 cliente.FechaRegistro = (IdEntidad == 0) ? DateTime.Now : new ClienteNegocio().GetById(IdEntidad).FechaRegistro;
+                txtClientePassword.Text = "nada";
+                txtClienteUsuario.Text = "nada";
 
             ClienteNegocio negocioVerificacion = new ClienteNegocio();
 
-            if (negocioVerificacion.ExisteUsuario(txtClienteUsuario.Text))
-            {
-                lblResultado.CssClass = "text-danger";
-                lblResultado.Text = "El nombre de usuario ya existe.";
-                return;
-            }
-
-            if (negocioVerificacion.ExisteEmail(txtClienteEmail.Text))
-            {
-                lblResultado.CssClass = "text-danger";
-                lblResultado.Text = "El email ya está registrado.";
-                return;
-            }
+ 
 
             if (IdEntidad != 0)
             {
@@ -326,6 +322,19 @@ namespace tpc_equipo_7A
             {
                 cliente.Usuario = txtClienteUsuario.Text;
                 cliente.Password = txtClientePassword.Text;
+                if (negocioVerificacion.ExisteUsuario(txtClienteUsuario.Text))
+                {
+                    lblResultado.CssClass = "text-danger";
+                    lblResultado.Text = "El nombre de usuario ya existe.";
+                    return;
+                }
+
+                if (negocioVerificacion.ExisteEmail(txtClienteEmail.Text))
+                {
+                    lblResultado.CssClass = "text-danger";
+                    lblResultado.Text = "El email ya está registrado.";
+                    return;
+                }
                 negocio.AgregarAdmin(cliente);
             }
         }

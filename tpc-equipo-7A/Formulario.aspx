@@ -32,11 +32,16 @@
                                 <asp:RegularExpressionValidator ControlToValidate="txtProductoPrecio" ValidationExpression="^\d{1,3}(\.\d{3})*(,\d{1,2})?$" ErrorMessage="Ingrese un precio válido (ej: 1234.56)" runat="server" ForeColor="DarkRed" />
 
                             </div>
-                            <div class="mb-3">
-                                <label for="txtProductoStock" class="form-label">Stock:</label>
-                                <asp:TextBox runat="server" ID="txtProductoStock" CssClass="form-control" TextMode="Number" />
-                                <asp:RequiredFieldValidator ErrorMessage="El stock es requerido." ControlToValidate="txtProductoStock" ForeColor="DarkRed" runat="server" Display="Dynamic" />
-                            </div>
+                                <div class="mb-3">
+                                    <label for="txtProductoStock" class="form-label">Stock:</label>
+
+                                    <asp:TextBox runat="server" ID="txtProductoStock" CssClass="form-control" TextMode="Number" />
+
+                                    <asp:RequiredFieldValidator ErrorMessage="El stock es requerido." ControlToValidate="txtProductoStock" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+
+                                    <asp:RangeValidator ID="rvStock" runat="server" ControlToValidate="txtProductoStock" MinimumValue="0" MaximumValue="99999" Type="Integer" ErrorMessage="El stock no puede ser menor a 0." ForeColor="DarkRed" Display="Dynamic" />
+                                </div>
+
                             <div class="mb-3">
                                 <label for="ddlProductoCategoria" class="form-label">Categoría:</label>
                                 <asp:DropDownList runat="server" ID="ddlProductoCategoria" CssClass="form-select" />
@@ -124,7 +129,7 @@
                                 <label for="txtClienteTelefono" class="form-label">Teléfono:</label>
                                 <asp:TextBox ID="txtClienteTelefono" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
                                 <asp:RequiredFieldValidator ControlToValidate="txtClienteTelefono" ID="RequiredFieldValidator4" runat="server" ErrorMessage="El teléfono es requerido" ForeColor="DarkRed" Display="Dynamic"></asp:RequiredFieldValidator>
-                                <asp:RegularExpressionValidator ErrorMessage="Máximo 20 caracteres permitidos." ControlToValidate="txtClienteTelefono" ValidationExpression="^[\s\S]{0,20}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
+                                <asp:RegularExpressionValidator ErrorMessage="Debe ingresar un teléfono en formato 15-1234-5678." ControlToValidate="txtClienteTelefono" ValidationExpression="^15-\d{4}-\d{4}$" ForeColor="DarkRed" runat="server" Display="Dynamic" />
                             </div>
 
                             <div class="mb-3">

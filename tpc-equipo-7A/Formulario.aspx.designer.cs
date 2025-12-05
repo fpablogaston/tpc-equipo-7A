@@ -69,6 +69,15 @@ namespace tpc_equipo_7A
         protected global::System.Web.UI.WebControls.TextBox txtProductoStock;
 
         /// <summary>
+        /// rvStock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RangeValidator rvStock;
+
+        /// <summary>
         /// ddlProductoCategoria control.
         /// </summary>
         /// <remarks>
