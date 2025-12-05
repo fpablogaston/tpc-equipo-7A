@@ -15,7 +15,17 @@ namespace negocio
 
             try
             {
-                // 1. Insert Client Data (Profile only, no address columns)
+                Datos.SetQuery(
+                    "INSERT INTO Usuarios (Username, PasswordHash, IdRol) " +
+                    "OUTPUT INSERTED.Id " +
+                    "VALUES (@Username, @Password, 1)"
+                );
+                Datos.SetearParametro("@Username", cliente.Usuario);
+                Datos.SetearParametro("@Password", cliente.Password);
+                cliente.IdUsuario = Datos.EjecutarScalar();
+                Datos.CerrarConexion();
+                Datos = new AccesoDatos();  
+
                 Datos.SetQuery("INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, FechaRegistro, IdUsuario) OUTPUT INSERTED.Id VALUES (@Nombre, @Apellido, @Email, @Telefono, @FechaRegistro, @IdUsuario)");
 
                 Datos.SetearParametro("@Nombre", cliente.Nombre);
@@ -27,7 +37,6 @@ namespace negocio
 
                 idCliente = Datos.EjecutarScalar();
 
-                // 2. Insert the "Selected Address" as the first/principal address in the new table
                 if (cliente.DireccionSeleccionada != null && !string.IsNullOrEmpty(cliente.DireccionSeleccionada.Calle))
                 {
                     cliente.DireccionSeleccionada.IdCliente = idCliente;
